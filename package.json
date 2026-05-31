@@ -1,5 +1,5 @@
 {
-  "name": "tanstack-starter-template",
+  "name": "bookmarks",
   "private": true,
   "type": "module",
   "imports": {
@@ -12,6 +12,7 @@
     "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs",
     "email:dev": "email dev --dir ./convex/email/templates --port 3001",
     "email:export": "email export --dir ./convex/email/templates --outDir ./.email-out",
+    "spike": "dotenv -e .env.local -- tsx scripts/spike-redcar.ts",
     "test": "vitest run",
     "lint": "oxfmt src && oxlint src",
     "lint:check": "oxfmt --check src && oxlint src",
@@ -30,6 +31,7 @@
     "@convex-dev/rate-limiter": "^0.3.2",
     "@convex-dev/react-query": "^0.1.0",
     "@fontsource-variable/geist": "^5.2.8",
+    "@google/genai": "^2.7.0",
     "@hugeicons/core-free-icons": "^4.1.1",
     "@hugeicons/react": "^1.1.6",
     "@posthog/react": "^1.9.0",

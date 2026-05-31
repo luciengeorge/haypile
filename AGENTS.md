@@ -6,8 +6,29 @@ etc.) working in this repo. Read it before making changes. Same content applies 
 
 ## What this repo is
 
-A private B2C SaaS starter template. Forked once per product. Goal: ship a paid SaaS in
-days, not weeks, by reusing auth, billing, email, observability, and AI plumbing.
+**bookmarks** — a unified, always-synced home for everything a user has saved across
+the internet (X bookmarks, GitHub stars, YouTube liked, Pinterest pins, Reddit saves,
+browser bookmarks), with **multimodal search**: "red car" surfaces the actual image or
+video moment, not just text matches.
+
+Built on the tanstack-starter-template (auth, billing, sync, email, observability all
+inherited). Bookmark-specific layer:
+
+- **Embedding engine:** `gemini-embedding-2` via Vertex AI — text + image + video in
+  ONE shared vector space. Wrapper at `convex/embeddings/gemini.ts` (Convex-free so the
+  spike can import it). `VERTEX_API_KEY` (express mode) or GCP service account.
+- **Pipeline:** `convex/embeddings/pipeline.ts` `embedItem` action — text→1 vector,
+  image→1 vector, video→N segment vectors (15s windows, 0.5 fps, via Gemini
+  `videoMetadata` offsets — no ffmpeg).
+- **Vectors:** Convex native `vectorIndex` on `itemVectors` (1536 dims). NOT
+  `@convex-dev/rag` (that's OpenAI text-only). EMBED_DIMS must match the schema index.
+- **Search:** `convex/search.ts` `search` action — embeds query in the same space,
+  `ctx.vectorSearch`, collapses video segments back to parent item + timestamp.
+- **Sources:** `convex/sync/adapters/<source>.ts` using the template's sync framework.
+- **Cost lever:** video is the COGS driver ($0.00079/frame). Keep fps low (0.25–0.5)
+  and gate video volume per plan. No free tier — capped trial + Starter/Pro.
+
+Schema: `items` (one per saved thing) + `itemVectors` (embeddings) + `syncJobs`.
 
 ## Stack snapshot
 

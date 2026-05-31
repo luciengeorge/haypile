@@ -1,7 +1,41 @@
-# tanstack-starter-template
+# bookmarks
 
-Private B2C SaaS starter. Auth, billing, AI, observability — all wired. Fork once,
-launch projects on top.
+A unified, always-synced home for everything you've saved across the internet, with
+**multimodal search**: type "red car" and the actual image or video moment surfaces —
+across X, GitHub, YouTube, Pinterest, Reddit, and browser bookmarks.
+
+Built on the `tanstack-starter-template` (auth, billing, sync, email, observability
+all inherited). The bookmark-specific layer: source adapters, the `gemini-embedding-2`
+pipeline, Convex vector search, and the search UI.
+
+## External setup (do this first)
+
+The search engine is Google's `gemini-embedding-2` (text + image + video → one shared
+vector space). You need a Vertex AI credential:
+
+**Express mode (simplest — a plain API key):**
+
+1. Create a Google Cloud project + enable billing.
+2. Enable the Vertex AI API.
+3. Create an API key (Vertex AI → "express mode" / API keys).
+4. Put it in `.env.local` as `VERTEX_API_KEY=...`.
+
+**Service-account fallback** (if express mode isn't available in your region): set
+`GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS` (path to a service-account
+JSON with the Vertex AI User role).
+
+### Prove it works (the spike)
+
+Before wiring anything into the app, validate the core thesis for ~$0.01:
+
+```bash
+cp .env.example .env.local      # set VERTEX_API_KEY
+pnpm install
+pnpm spike
+```
+
+This embeds ~8 real photos and ranks them against text queries. If **"red car"**
+ranks the red-car photo #1 (with no text hints), the product thesis holds.
 
 ## Stack
 
