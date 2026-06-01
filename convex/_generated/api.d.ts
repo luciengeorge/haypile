@@ -36,12 +36,14 @@ import type * as rateLimiter from "../rateLimiter.js";
 import type * as search from "../search.js";
 import type * as searchHydrate from "../searchHydrate.js";
 import type * as storage from "../storage.js";
+import type * as sync_adapters_x from "../sync/adapters/x.js";
 import type * as sync_dispatcher from "../sync/dispatcher.js";
 import type * as sync_registry from "../sync/registry.js";
 import type * as sync_run from "../sync/run.js";
 import type * as sync_state from "../sync/state.js";
 import type * as sync_types from "../sync/types.js";
 import type * as users from "../users.js";
+import type * as x from "../x.js";
 
 import type {
   ApiFromModules,
@@ -78,12 +80,14 @@ declare const fullApi: ApiFromModules<{
   search: typeof search;
   searchHydrate: typeof searchHydrate;
   storage: typeof storage;
+  "sync/adapters/x": typeof sync_adapters_x;
   "sync/dispatcher": typeof sync_dispatcher;
   "sync/registry": typeof sync_registry;
   "sync/run": typeof sync_run;
   "sync/state": typeof sync_state;
   "sync/types": typeof sync_types;
   users: typeof users;
+  x: typeof x;
 }>;
 
 /**

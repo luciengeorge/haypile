@@ -1,3 +1,4 @@
+import { xAdapter } from "./adapters/x";
 import type { SyncAdapter } from "./types";
 
 /**
@@ -15,7 +16,9 @@ import type { SyncAdapter } from "./types";
  *
  * Adapter files live in `convex/sync/adapters/<source>.ts` by convention.
  */
-export const REGISTRY: Record<string, SyncAdapter> = {};
+export const REGISTRY: Record<string, SyncAdapter> = {
+  [xAdapter.name]: xAdapter,
+};
 
 export function getAdapter(name: string): SyncAdapter {
   const adapter = REGISTRY[name];

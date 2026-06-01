@@ -3,7 +3,8 @@ import type { BetterAuthOptions } from "better-auth";
 import { createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
-import { admin, magicLink } from "better-auth/plugins";
+import { admin, genericOAuth, magicLink } from "better-auth/plugins";
+import z from "zod";
 
 function parseAdminUserIds(): string[] {
   const raw = process.env.ADMIN_USER_IDS;
@@ -32,6 +33,48 @@ export const authComponent = createClient<DataModel, typeof schema>(components.b
 function getScheduler(ctx: GenericCtx<DataModel>) {
   if (!("scheduler" in ctx)) throw new Error("scheduler unavailable in this context");
   return ctx.scheduler;
+}
+
+// X (Twitter) has no standard userinfo; /2/users/me returns { data: { id, name, username } }
+// with no email. We're *linking* X to an already-authenticated user, so email isn't used
+// to match/create a user — we synthesize a stable placeholder to satisfy the user shape.
+const xUserInfoSchema = z.object({
+  data: z.object({ id: z.string(), name: z.string(), username: z.string() }),
+});
+
+// Data-source OAuth connections (X bookmarks, etc.) via better-auth genericOAuth.
+// Tokens land in the `account` table; background sync reads them by userId (see convex/x.ts).
+function buildGenericOAuthConfig() {
+  const config = [];
+  if (process.env.X_CLIENT_ID && process.env.X_CLIENT_SECRET) {
+    config.push({
+      providerId: "x",
+      clientId: process.env.X_CLIENT_ID,
+      clientSecret: process.env.X_CLIENT_SECRET,
+      authorizationUrl: "https://x.com/i/oauth2/authorize",
+      tokenUrl: "https://api.x.com/2/oauth2/token",
+      userInfoUrl: "https://api.x.com/2/users/me",
+      scopes: ["tweet.read", "users.read", "bookmark.read", "offline.access"],
+      pkce: true,
+      authentication: "basic" as const,
+      getUserInfo: async (tokens: { accessToken?: string }) => {
+        const res = await fetch("https://api.x.com/2/users/me", {
+          headers: { Authorization: `Bearer ${tokens.accessToken}` },
+        });
+        if (!res.ok) throw new Error(`X userinfo failed: ${res.status}`);
+        const { data } = xUserInfoSchema.parse(await res.json());
+        return {
+          id: data.id,
+          name: data.name,
+          email: `${data.username}@users.x.invalid`,
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+      },
+    });
+  }
+  return config;
 }
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
@@ -74,7 +117,12 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         adminUserIds: parseAdminUserIds(),
         impersonationSessionDuration: 60 * 60, // 1 hour
       }),
+      genericOAuth({ config: buildGenericOAuthConfig() }),
     ],
+    account: {
+      // Lets an authenticated user attach data-source OAuth accounts (X, etc.).
+      accountLinking: { enabled: true, trustedProviders: ["x"] },
+    },
     emailAndPassword: {
       ...sharedAuthConfig.emailAndPassword,
       sendResetPassword: async ({ user, url }) => {

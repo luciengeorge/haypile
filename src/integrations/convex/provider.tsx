@@ -1,6 +1,7 @@
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { ConvexQueryClient } from "@convex-dev/react-query";
-import { ConvexProvider } from "convex/react";
 
+import { authClient } from "@/lib/auth-client";
 import { createLogger } from "@/lib/logger";
 
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL;
@@ -10,6 +11,12 @@ if (!CONVEX_URL) {
 }
 const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
 
+// ConvexBetterAuthProvider keeps the Convex client's auth token in sync with the
+// better-auth session, so authenticated queries/mutations/actions work client-side.
 export default function AppConvexProvider({ children }: { children: React.ReactNode }) {
-  return <ConvexProvider client={convexQueryClient.convexClient}>{children}</ConvexProvider>;
+  return (
+    <ConvexBetterAuthProvider client={convexQueryClient.convexClient} authClient={authClient}>
+      {children}
+    </ConvexBetterAuthProvider>
+  );
 }
