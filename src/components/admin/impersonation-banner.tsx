@@ -13,7 +13,8 @@ export function ImpersonationBanner() {
   const { data: session } = authClient.useSession();
   const navigate = useNavigate();
 
-  const impersonatedBy = (session?.session as { impersonatedBy?: string } | undefined)?.impersonatedBy;
+  const s = session?.session;
+  const impersonatedBy = s && "impersonatedBy" in s && typeof s.impersonatedBy === "string" ? s.impersonatedBy : null;
   if (!impersonatedBy) return null;
 
   const handleStop = async () => {

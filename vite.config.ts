@@ -26,6 +26,10 @@ const config = defineConfig({
     }),
   ],
   clearScreen: false,
+  // @resvg/resvg-js ships a native .node binary (used only by the server-side
+  // /api/og route). Keep it out of client/SSR pre-bundling and require it at runtime.
+  optimizeDeps: { exclude: ["@resvg/resvg-js"] },
+  ssr: { external: ["@resvg/resvg-js"] },
 });
 
 export default config;
