@@ -17,11 +17,11 @@ function LandingPage() {
             {APP_NAME}
           </Link>
           <nav className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/login">Sign in</Link>
+            <Button variant="ghost" size="sm" render={<Link to="/login" />}>
+              Sign in
             </Button>
-            <Button asChild size="sm">
-              <Link to="/signup">Get started</Link>
+            <Button size="sm" render={<Link to="/signup" />}>
+              Get started
             </Button>
           </nav>
         </div>
@@ -35,11 +35,11 @@ function LandingPage() {
             pitch.
           </p>
           <div className="mt-10 flex items-center justify-center gap-3">
-            <Button asChild size="lg">
-              <Link to="/signup">Get started</Link>
+            <Button size="lg" render={<Link to="/signup" />}>
+              Get started
             </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/login">Sign in</Link>
+            <Button size="lg" variant="outline" render={<Link to="/login" />}>
+              Sign in
             </Button>
           </div>
         </div>

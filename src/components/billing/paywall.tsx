@@ -1,15 +1,15 @@
-import type { ReactNode } from "react";
+import type { ReactElement } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { UpgradeModal } from "./upgrade-modal";
 
-interface PaywallProps {
+type PaywallProps = {
   title?: string;
   description?: string;
   reason?: string;
-  trigger?: ReactNode;
-}
+  trigger?: ReactElement;
+};
 
 /**
  * Inline paywall card. Drop this in place of any feature you want to gate.

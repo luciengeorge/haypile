@@ -2,11 +2,10 @@ import { capitalCase } from "change-case";
 import z from "zod";
 
 export const EmailSchema = z
-  .preprocess(
-    (value) => (typeof value === "string" ? value.trim().toLowerCase() : value),
-    z.email({ error: "Please enter a valid email address" }),
-  )
-  .transform((value) => value);
+  .string({ error: "Please enter a valid email address" })
+  .trim()
+  .toLowerCase()
+  .pipe(z.email({ error: "Please enter a valid email address" }));
 
 export const NameSchema = z
   .string({ error: "Name is required" })

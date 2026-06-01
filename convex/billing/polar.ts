@@ -1,5 +1,3 @@
-import type { GenericQueryCtx } from "convex/server";
-
 import { Polar } from "@convex-dev/polar";
 
 import type { BillingAdapter } from "./types";

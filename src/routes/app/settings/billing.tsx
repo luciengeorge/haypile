@@ -55,14 +55,9 @@ function BillingPage() {
         <CardContent className="flex flex-wrap gap-2">
           {isPaid ? (
             <>
-              <Button asChild variant="outline">
-                <Link
-                  to="/app/settings/billing"
-                  // TODO: replace with real Polar customer portal URL once
-                  // polar.createCustomerPortal() helper lands in the component.
-                >
-                  Manage billing
-                </Link>
+              {/* TODO: point to real Polar customer portal URL once polar.createCustomerPortal() lands. */}
+              <Button variant="outline" render={<Link to="/app/settings/billing" />}>
+                Manage billing
               </Button>
               <UpgradeModal
                 trigger={<Button variant="outline">Change plan</Button>}

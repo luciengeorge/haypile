@@ -58,7 +58,7 @@ function DangerZonePage() {
     try {
       const result = await authClient.deleteUser({ callbackURL: "/" });
       if (result.error) {
-        setDeleteError(result.error.message);
+        setDeleteError(result.error.message ?? null);
         return;
       }
       toast.success("Confirmation sent", {

@@ -25,8 +25,8 @@ function VerifyEmailPage() {
           <CardDescription>You're all set. Sign in to continue.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild className="w-full">
-            <Link to="/login">Continue to sign in</Link>
+          <Button className="w-full" render={<Link to="/login" />}>
+            Continue to sign in
           </Button>
         </CardContent>
       </Card>
@@ -44,11 +44,9 @@ function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
-          <Button asChild>
-            <Link to="/signup">Sign up</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/login">Sign in</Link>
+          <Button render={<Link to="/signup" />}>Sign up</Button>
+          <Button variant="outline" render={<Link to="/login" />}>
+            Sign in
           </Button>
         </CardContent>
       </Card>
@@ -64,8 +62,8 @@ function VerifyEmailPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button asChild variant="outline" className="w-full">
-          <Link to="/login">Back to sign in</Link>
+        <Button variant="outline" className="w-full" render={<Link to="/login" />}>
+          Back to sign in
         </Button>
       </CardContent>
     </Card>

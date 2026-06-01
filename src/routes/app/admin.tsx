@@ -36,7 +36,7 @@ function AdminPage() {
         const result = await authClient.admin.listUsers({ query: { limit: 100 } });
         if (cancelled) return;
         if (result.error) {
-          setError(result.error.message);
+          setError(result.error.message ?? null);
           return;
         }
         setUsers((result.data?.users ?? []) as AdminUser[]);

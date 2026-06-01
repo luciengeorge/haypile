@@ -72,13 +72,11 @@ function AppLayout() {
             {APP_NAME}
           </Link>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="size-9">
-                  <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? session.user.email} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-              </Button>
+            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full" />}>
+              <Avatar className="size-9">
+                <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? session.user.email} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="flex flex-col gap-1">
@@ -86,15 +84,9 @@ function AppLayout() {
                 <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/app/settings/profile">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/app/settings/billing">Billing</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/app/admin">Admin</Link>
-              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/app/settings/profile" />}>Settings</DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/app/admin" />}>Admin</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
             </DropdownMenuContent>

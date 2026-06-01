@@ -31,11 +31,11 @@ const PLAN_DETAILS: Record<Plan, { name: string; price: string; features: string
   },
 };
 
-interface UpgradeModalProps {
-  trigger?: React.ReactNode;
+type UpgradeModalProps = {
+  trigger?: React.ReactElement;
   defaultPlan?: Plan;
   reason?: string;
-}
+};
 
 export function UpgradeModal({ trigger, defaultPlan = "pro", reason }: UpgradeModalProps) {
   const createCheckout = useMutation(api.billing.queries.createCheckout);
@@ -61,7 +61,7 @@ export function UpgradeModal({ trigger, defaultPlan = "pro", reason }: UpgradeMo
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger ?? <Button>Upgrade</Button>}</DialogTrigger>
+      <DialogTrigger render={trigger ?? <Button>Upgrade</Button>} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Upgrade your plan</DialogTitle>

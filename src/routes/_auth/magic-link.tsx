@@ -55,8 +55,8 @@ function MagicLinkPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild variant="outline" className="w-full">
-            <Link to="/login">Back to sign in</Link>
+          <Button variant="outline" className="w-full" render={<Link to="/login" />}>
+            Back to sign in
           </Button>
         </CardContent>
       </Card>

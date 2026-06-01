@@ -64,8 +64,8 @@ function ResetPasswordPage() {
           <CardDescription>This link is no longer valid. Request a new one to continue.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild className="w-full">
-            <Link to="/forgot-password">Request a new link</Link>
+          <Button className="w-full" render={<Link to="/forgot-password" />}>
+            Request a new link
           </Button>
         </CardContent>
       </Card>
