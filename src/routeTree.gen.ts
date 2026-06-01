@@ -21,7 +21,6 @@ import { Route as AuthResetPasswordRouteImport } from "./routes/_auth/reset-pass
 import { Route as AuthSignupRouteImport } from "./routes/_auth/signup";
 import { Route as AuthVerifyEmailRouteImport } from "./routes/_auth/verify-email";
 import { Route as ApiImgStorageIdRouteImport } from "./routes/api/img.$storageId";
-import { Route as ApiOgRouteImport } from "./routes/api/og";
 import { Route as AppRouteImport } from "./routes/app";
 import { Route as AppAdminRouteImport } from "./routes/app/admin";
 import { Route as AppIndexRouteImport } from "./routes/app/index";
@@ -61,11 +60,6 @@ const AppAdminRoute = AppAdminRouteImport.update({
   id: "/admin",
   path: "/admin",
   getParentRoute: () => AppRoute,
-} as any);
-const ApiOgRoute = ApiOgRouteImport.update({
-  id: "/api/og",
-  path: "/api/og",
-  getParentRoute: () => rootRouteImport,
 } as any);
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
   id: "/verify-email",
@@ -159,7 +153,6 @@ export interface FileRoutesByFullPath {
   "/reset-password": typeof AuthResetPasswordRoute;
   "/signup": typeof AuthSignupRoute;
   "/verify-email": typeof AuthVerifyEmailRoute;
-  "/api/og": typeof ApiOgRoute;
   "/app/admin": typeof AppAdminRoute;
   "/app/settings": typeof AppSettingsRouteWithChildren;
   "/app/": typeof AppIndexRoute;
@@ -181,7 +174,6 @@ export interface FileRoutesByTo {
   "/reset-password": typeof AuthResetPasswordRoute;
   "/signup": typeof AuthSignupRoute;
   "/verify-email": typeof AuthVerifyEmailRoute;
-  "/api/og": typeof ApiOgRoute;
   "/app/admin": typeof AppAdminRoute;
   "/app": typeof AppIndexRoute;
   "/api/img/$storageId": typeof ApiImgStorageIdRoute;
@@ -206,7 +198,6 @@ export interface FileRoutesById {
   "/_auth/reset-password": typeof AuthResetPasswordRoute;
   "/_auth/signup": typeof AuthSignupRoute;
   "/_auth/verify-email": typeof AuthVerifyEmailRoute;
-  "/api/og": typeof ApiOgRoute;
   "/app/admin": typeof AppAdminRoute;
   "/app/settings": typeof AppSettingsRouteWithChildren;
   "/app/": typeof AppIndexRoute;
@@ -231,7 +222,6 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/signup"
     | "/verify-email"
-    | "/api/og"
     | "/app/admin"
     | "/app/settings"
     | "/app/"
@@ -253,7 +243,6 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/signup"
     | "/verify-email"
-    | "/api/og"
     | "/app/admin"
     | "/app"
     | "/api/img/$storageId"
@@ -277,7 +266,6 @@ export interface FileRouteTypes {
     | "/_auth/reset-password"
     | "/_auth/signup"
     | "/_auth/verify-email"
-    | "/api/og"
     | "/app/admin"
     | "/app/settings"
     | "/app/"
@@ -297,7 +285,6 @@ export interface RootRouteChildren {
   legalCookiesRoute: typeof legalCookiesRoute;
   legalPrivacyRoute: typeof legalPrivacyRoute;
   legalTermsRoute: typeof legalTermsRoute;
-  ApiOgRoute: typeof ApiOgRoute;
   ApiImgStorageIdRoute: typeof ApiImgStorageIdRoute;
 }
 
@@ -344,13 +331,6 @@ declare module "@tanstack/react-router" {
       fullPath: "/app/admin";
       preLoaderRoute: typeof AppAdminRouteImport;
       parentRoute: typeof AppRoute;
-    };
-    "/api/og": {
-      id: "/api/og";
-      path: "/api/og";
-      fullPath: "/api/og";
-      preLoaderRoute: typeof ApiOgRouteImport;
-      parentRoute: typeof rootRouteImport;
     };
     "/_auth/verify-email": {
       id: "/_auth/verify-email";
@@ -527,7 +507,6 @@ const rootRouteChildren: RootRouteChildren = {
   legalCookiesRoute: legalCookiesRoute,
   legalPrivacyRoute: legalPrivacyRoute,
   legalTermsRoute: legalTermsRoute,
-  ApiOgRoute: ApiOgRoute,
   ApiImgStorageIdRoute: ApiImgStorageIdRoute,
 };
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
