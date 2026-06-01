@@ -32,25 +32,39 @@ let client: GoogleGenAI | undefined;
 export function getGeminiClient(): GoogleGenAI {
   if (client) return client;
 
+  // gemini-embedding-2 is served on the global/us/eu endpoints only — NOT regional
+  // (e.g. us-central1 returns 404). Default to global.
+  const location = process.env.GOOGLE_CLOUD_LOCATION ?? "global";
+
+  // 1) Inline service-account JSON (the Convex prod path — env var string, no file).
+  //    gemini-embedding-2 is Vertex-only and rejects plain API keys, so a service
+  //    account is the credential that works on Convex's servers.
+  const saJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  if (saJson) {
+    const credentials = JSON.parse(saJson) as { project_id?: string };
+    const project = process.env.GOOGLE_CLOUD_PROJECT ?? credentials.project_id;
+    if (!project) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON has no project_id and GOOGLE_CLOUD_PROJECT is unset");
+    client = new GoogleGenAI({ vertexai: true, project, location, googleAuthOptions: { credentials } });
+    return client;
+  }
+
+  // 2) Express-mode API key (only if the org allows keys AND they work for the model).
   const apiKey = process.env.VERTEX_API_KEY;
   if (apiKey) {
-    // Express mode: plain API key, no service-account JSON.
     client = new GoogleGenAI({ vertexai: true, apiKey });
     return client;
   }
 
+  // 3) Application Default Credentials (local dev: `gcloud auth application-default login`,
+  //    or a GOOGLE_APPLICATION_CREDENTIALS file path).
   const project = process.env.GOOGLE_CLOUD_PROJECT;
-  // gemini-embedding-2 is served on the global/us/eu endpoints only — NOT regional
-  // (e.g. us-central1 returns 404). Default to global.
-  const location = process.env.GOOGLE_CLOUD_LOCATION ?? "global";
   if (project) {
-    // ADC / service account fallback (GOOGLE_APPLICATION_CREDENTIALS).
     client = new GoogleGenAI({ vertexai: true, project, location });
     return client;
   }
 
   throw new Error(
-    "No Vertex credentials. Set VERTEX_API_KEY (express mode) or GOOGLE_CLOUD_PROJECT (+ ADC) in the environment.",
+    "No Vertex credentials. Set GOOGLE_SERVICE_ACCOUNT_JSON (Convex), or GOOGLE_CLOUD_PROJECT (+ local ADC).",
   );
 }
 
