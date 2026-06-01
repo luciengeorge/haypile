@@ -11,18 +11,32 @@ pipeline, Convex vector search, and the search UI.
 ## External setup (do this first)
 
 The search engine is Google's `gemini-embedding-2` (text + image + video → one shared
-vector space). You need a Vertex AI credential:
+vector space). You need a Vertex AI credential.
 
-**Express mode (simplest — a plain API key):**
+> ⚠️ Use a **personal** Google account + **personal** GCP project — not an employer's.
+> Many orgs disallow API keys via security policy (then ADC is your only option), and
+> you don't want side-project billing or IP on company infrastructure.
 
-1. Create a Google Cloud project + enable billing.
-2. Enable the Vertex AI API.
-3. Create an API key (Vertex AI → "express mode" / API keys).
-4. Put it in `.env.local` as `VERTEX_API_KEY=...`.
+**Recommended: Application Default Credentials (ADC)** — works even when API keys are
+org-disallowed:
 
-**Service-account fallback** (if express mode isn't available in your region): set
-`GOOGLE_CLOUD_PROJECT` + `GOOGLE_APPLICATION_CREDENTIALS` (path to a service-account
-JSON with the Vertex AI User role).
+1. Create a personal Google Cloud project + enable billing.
+2. Enable the **Vertex AI API**: `gcloud services enable aiplatform.googleapis.com`
+3. Authenticate ADC locally:
+   ```bash
+   gcloud auth application-default login          # use your PERSONAL account
+   gcloud auth application-default set-quota-project YOUR_PROJECT_ID
+   ```
+4. In `.env.local`: `GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID` (+ `GOOGLE_CLOUD_LOCATION=global`)
+   — `gemini-embedding-2` is served on the **global/us/eu** endpoints only; regional
+   locations like `us-central1` return 404.
+
+**Express-mode API key** (only if your org allows it): set `VERTEX_API_KEY=...` — takes
+precedence over ADC if present.
+
+**Convex production** runs on Convex's servers (no interactive gcloud), so it needs a
+service-account JSON via `GOOGLE_APPLICATION_CREDENTIALS` — _if_ your org allows SA keys.
+We'll resolve the prod credential path at deploy time (M6/M7).
 
 ### Prove it works (the spike)
 

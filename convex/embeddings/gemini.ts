@@ -8,9 +8,9 @@
  * This module is intentionally Convex-free so it can be imported by both Convex
  * Node actions and the standalone spike script (scripts/spike-redcar.ts).
  *
- * Auth: Vertex AI "express mode" API key (VERTEX_API_KEY) is the simplest path.
- * Falls back to ADC / service account (GOOGLE_CLOUD_PROJECT + GOOGLE_CLOUD_LOCATION)
- * when no key is present.
+ * Auth: Application Default Credentials (GOOGLE_CLOUD_PROJECT + ADC) is the primary
+ * path — many GCP orgs disallow API keys via security policy. If VERTEX_API_KEY is
+ * set (org permitting), it takes precedence. Local ADC: `gcloud auth application-default login`.
  *
  * Docs: https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings
  */
@@ -40,7 +40,9 @@ export function getGeminiClient(): GoogleGenAI {
   }
 
   const project = process.env.GOOGLE_CLOUD_PROJECT;
-  const location = process.env.GOOGLE_CLOUD_LOCATION ?? "us-central1";
+  // gemini-embedding-2 is served on the global/us/eu endpoints only — NOT regional
+  // (e.g. us-central1 returns 404). Default to global.
+  const location = process.env.GOOGLE_CLOUD_LOCATION ?? "global";
   if (project) {
     // ADC / service account fallback (GOOGLE_APPLICATION_CREDENTIALS).
     client = new GoogleGenAI({ vertexai: true, project, location });
