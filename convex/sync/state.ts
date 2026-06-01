@@ -127,12 +127,12 @@ export const persistPage = internalMutation({
     jobId: v.id("syncJobs"),
     source: v.string(),
     userId: v.string(),
-    items: v.any(),
+    items: v.array(v.any()),
     nextCursor: v.optional(v.string()),
   },
   handler: async (ctx, { jobId, source, userId, items, nextCursor }) => {
     const adapter = getAdapter(source);
-    await adapter.persist(ctx, { userId, items: items as unknown[] });
+    await adapter.persist(ctx, { userId, items });
     await ctx.db.patch(jobId, { cursor: nextCursor });
   },
 });

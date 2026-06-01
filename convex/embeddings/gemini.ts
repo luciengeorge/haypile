@@ -15,7 +15,19 @@
  * Docs: https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings
  */
 
-import { GoogleGenAI } from "@google/genai";
+import { type Content, GoogleGenAI, type Part } from "@google/genai";
+import { z } from "zod";
+
+/** Standard service-account JSON fields google-auth needs (validated, not asserted). */
+const ServiceAccountSchema = z.object({
+  type: z.string(),
+  project_id: z.string(),
+  private_key: z.string(),
+  client_email: z.string(),
+  private_key_id: z.string().optional(),
+  client_id: z.string().optional(),
+  token_uri: z.string().optional(),
+});
 
 export const EMBED_MODEL = "gemini-embedding-2";
 
@@ -41,9 +53,8 @@ export function getGeminiClient(): GoogleGenAI {
   //    account is the credential that works on Convex's servers.
   const saJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (saJson) {
-    const credentials = JSON.parse(saJson) as { project_id?: string };
+    const credentials = ServiceAccountSchema.parse(JSON.parse(saJson));
     const project = process.env.GOOGLE_CLOUD_PROJECT ?? credentials.project_id;
-    if (!project) throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON has no project_id and GOOGLE_CLOUD_PROJECT is unset");
     client = new GoogleGenAI({ vertexai: true, project, location, googleAuthOptions: { credentials } });
     return client;
   }
@@ -68,12 +79,11 @@ export function getGeminiClient(): GoogleGenAI {
   );
 }
 
-async function embedOne(contents: unknown): Promise<number[]> {
+async function embedOne(content: Content): Promise<number[]> {
   const ai = getGeminiClient();
   const res = await ai.models.embedContent({
     model: EMBED_MODEL,
-    // The SDK's ContentListUnion is permissive; we pass a single content object.
-    contents: contents as never,
+    contents: content,
     config: { outputDimensionality: EMBED_DIMS },
   });
   const values = res.embeddings?.[0]?.values;
@@ -117,7 +127,7 @@ interface ImageInput {
 
 /** Embed a single image into the shared space. */
 export async function embedImage({ data, uri, mimeType, contextText }: ImageInput): Promise<number[]> {
-  const parts: Record<string, unknown>[] = [];
+  const parts: Part[] = [];
   if (contextText) parts.push({ text: contextText });
   if (uri) {
     parts.push({ fileData: { fileUri: uri, mimeType } });
@@ -160,14 +170,16 @@ export async function embedVideoSegment({
   endSec,
   fps = 0.5,
 }: VideoSegmentInput): Promise<number[]> {
+  if (!uri && !data) throw new Error("embedVideoSegment requires either `data` or `uri`");
   const videoMetadata = {
     startOffset: `${Math.max(0, Math.floor(startSec))}s`,
     endOffset: `${Math.ceil(endSec)}s`,
     fps,
   };
-  const media = uri ? { fileData: { fileUri: uri, mimeType } } : { inlineData: { data, mimeType } };
-  if (!uri && !data) throw new Error("embedVideoSegment requires either `data` or `uri`");
-  return embedOne({ role: "user", parts: [{ ...media, videoMetadata }] });
+  const part: Part = uri
+    ? { fileData: { fileUri: uri, mimeType }, videoMetadata }
+    : { inlineData: { data, mimeType }, videoMetadata };
+  return embedOne({ role: "user", parts: [part] });
 }
 
 /** Cosine similarity for two equal-length vectors (vectors are L2-normalized → dot product). */

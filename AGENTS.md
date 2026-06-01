@@ -30,6 +30,24 @@ inherited). Bookmark-specific layer:
 
 Schema: `items` (one per saved thing) + `itemVectors` (embeddings) + `syncJobs`.
 
+## Code style (Lucien's preferences — follow strictly)
+
+- **No type casting.** Never use `as` (or `as unknown as`, `as never`). Type things
+  correctly instead: narrow with `in`/`typeof` guards, type variables/Maps precisely,
+  or **validate with zod** at any untyped boundary (API responses, external/untrusted
+  data, env, JSON). Parse, don't assert.
+- **Comments: minimal.** Only where the *why* isn't obvious. No doc-comments on
+  self-explanatory functions.
+- **Commits: concise, conventional, 1-line** (e.g. `feat(sync): x bookmarks adapter`).
+  Body only when truly necessary. Sacrifice grammar for brevity.
+- **Return types: infer by default.** Annotate only when inference fails (e.g. Convex
+  circular inference) or it materially aids a public API.
+- **Use `type` aliases**, not `interface` (interface only for declaration merging).
+- **Errors: throw, catch at boundaries** (route/action + Sentry). No Result objects in
+  app logic.
+- **React: small files, split aggressively, colocate** near the route.
+- **Narration: brief** — what changed + why, then move on.
+
 ## Stack snapshot
 
 ```

@@ -3,6 +3,15 @@ import { v } from "convex/values";
 import { internalAction, query } from "./_generated/server";
 import { authComponent } from "./betterAuth/auth";
 
+/** Current user's {userId, email} or null. Used by the Polar component's getUserInfo. */
+export const currentUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await authComponent.getAuthUser(ctx);
+    return user ? { userId: user._id, email: user.email } : null;
+  },
+});
+
 /**
  * GDPR-compliant data export. Returns a JSON object containing every record the
  * user owns across all app tables. Add new tables here as your schema grows —

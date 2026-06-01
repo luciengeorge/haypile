@@ -24,7 +24,7 @@ export const mySubscription = query({
     });
 
     return {
-      plan: deriveplan((subscription as { productId?: string } | null)?.productId),
+      plan: deriveplan(subscription?.productId),
       customerId: customer.id,
       subscription,
     };

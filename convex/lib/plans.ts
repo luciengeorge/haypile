@@ -8,17 +8,26 @@
  * Add `limits` per plan to drive feature gates (e.g. max bookmarks, max searches/day,
  * max sources connected). Use `getPlanLimit(plan, "feature")` to read at runtime.
  */
-export const PLANS = {
+export type PlanId = "free" | "starter" | "pro";
+
+type Plan = {
+  name: string;
+  description: string;
+  priceId: { polar: string | null; stripe: string | null };
+  monthlyPrice: number;
+  yearlyPrice: number;
+  // Per-plan caps for requirePlan() / usage meters, e.g. { maxItems: 10000, maxVideos: 300 }.
+  limits: Record<string, number>;
+};
+
+export const PLANS: Record<PlanId, Plan> = {
   free: {
     name: "Free",
     description: "Try the product, no credit card required.",
     priceId: { polar: null, stripe: null },
     monthlyPrice: 0,
     yearlyPrice: 0,
-    limits: {
-      // Add per-plan caps here, used by requirePlan() / usage meters.
-      // Example: maxItems: 100, maxSearchesPerDay: 30,
-    } as Record<string, number>,
+    limits: {},
   },
   starter: {
     name: "Starter",
@@ -29,7 +38,7 @@ export const PLANS = {
     },
     monthlyPrice: 4,
     yearlyPrice: 36,
-    limits: {} as Record<string, number>,
+    limits: {},
   },
   pro: {
     name: "Pro",
@@ -40,11 +49,9 @@ export const PLANS = {
     },
     monthlyPrice: 9,
     yearlyPrice: 72,
-    limits: {} as Record<string, number>,
+    limits: {},
   },
-} as const;
-
-export type PlanId = keyof typeof PLANS;
+};
 
 export const PLAN_HIERARCHY: PlanId[] = ["free", "starter", "pro"];
 
