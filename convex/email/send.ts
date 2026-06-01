@@ -7,11 +7,11 @@ import { v } from "convex/values";
 import { Resend } from "resend";
 
 import { internalAction } from "../_generated/server";
-import AccountDeletedEmail from "./templates/account-deleted";
-import ChangeEmail from "./templates/change-email";
-import DeleteAccount from "./templates/delete-account";
-import MagicLinkEmail from "./templates/magic-link";
-import ResetPasswordEmail from "./templates/reset-password";
+import AccountDeletedEmail from "./templates/accountDeleted";
+import ChangeEmail from "./templates/changeEmail";
+import DeleteAccount from "./templates/deleteAccount";
+import MagicLinkEmail from "./templates/magicLink";
+import ResetPasswordEmail from "./templates/resetPassword";
 import VerifyEmail from "./templates/verify";
 import WelcomeEmail from "./templates/welcome";
 

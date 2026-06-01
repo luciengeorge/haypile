@@ -1,5 +1,7 @@
 import * as Sentry from "@sentry/tanstackstart-react";
 
+import type { Doc } from "../_generated/dataModel";
+
 import { internal } from "../_generated/api";
 import { internalAction } from "../_generated/server";
 
@@ -16,9 +18,9 @@ const BATCH_SIZE = 100;
  */
 export const tick = internalAction({
   args: {},
-  handler: async (ctx) => {
-    return await Sentry.startSpan({ name: "sync.dispatcher" }, async () => {
-      const due = await ctx.runQuery(internal.sync.state.findDueJobs, {
+  handler: async (ctx): Promise<{ dispatched: number }> => {
+    return await Sentry.startSpan({ name: "sync.dispatcher" }, async (): Promise<{ dispatched: number }> => {
+      const due: Doc<"syncJobs">[] = await ctx.runQuery(internal.sync.state.findDueJobs, {
         now: Date.now(),
         limit: BATCH_SIZE,
       });

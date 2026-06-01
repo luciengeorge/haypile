@@ -20,11 +20,11 @@ export const mySubscription = query({
     if (!customer) return { plan: "free" as const, customerId: null, subscription: null };
 
     const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, {
-      customerId: customer.id,
+      userId: user._id,
     });
 
     return {
-      plan: deriveplan(subscription?.productId),
+      plan: deriveplan((subscription as { productId?: string } | null)?.productId),
       customerId: customer.id,
       subscription,
     };

@@ -1,5 +1,6 @@
 import type { GenericCtx } from "@convex-dev/better-auth/utils";
 import type { BetterAuthOptions } from "better-auth";
+import type { GenericMutationCtx } from "convex/server";
 
 import { createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
@@ -33,6 +34,10 @@ export const authComponent = createClient<DataModel, typeof schema>(components.b
  * `ctx.scheduler.runAfter()`.
  */
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
+  // better-auth's GenericCtx is a query|mutation|action union; query ctx has no
+  // scheduler. These email callbacks only run during auth mutations/actions, which
+  // do have it — narrow the type so .scheduler is accessible.
+  const { scheduler } = ctx as GenericMutationCtx<DataModel>;
   return {
     ...sharedAuthConfig,
     database: authComponent.adapter(ctx),
@@ -60,7 +65,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       convex({ authConfig }),
       magicLink({
         async sendMagicLink({ email, url }) {
-          await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+          await scheduler.runAfter(0, internal.email.send.sendEmail, {
             to: email,
             subject: `Your sign-in link for ${APP_NAME}`,
             template: "magicLink",
@@ -76,7 +81,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     emailAndPassword: {
       ...sharedAuthConfig.emailAndPassword,
       sendResetPassword: async ({ user, url }) => {
-        await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+        await scheduler.runAfter(0, internal.email.send.sendEmail, {
           to: user.email,
           subject: `Reset your ${APP_NAME} password`,
           template: "resetPassword",
@@ -86,7 +91,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     },
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
-        await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+        await scheduler.runAfter(0, internal.email.send.sendEmail, {
           to: user.email,
           subject: `Verify your email for ${APP_NAME}`,
           template: "verify",
@@ -98,7 +103,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       changeEmail: {
         enabled: true,
         sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-          await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+          await scheduler.runAfter(0, internal.email.send.sendEmail, {
             to: user.email,
             subject: `Confirm your ${APP_NAME} email change`,
             template: "changeEmail",
@@ -109,7 +114,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       deleteUser: {
         enabled: true,
         sendDeleteAccountVerification: async ({ user, url }) => {
-          await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+          await scheduler.runAfter(0, internal.email.send.sendEmail, {
             to: user.email,
             subject: `Confirm deletion of your ${APP_NAME} account`,
             template: "deleteAccount",
@@ -117,7 +122,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           });
         },
         afterDelete: async (user) => {
-          await ctx.scheduler.runAfter(0, internal.email.send.sendEmail, {
+          await scheduler.runAfter(0, internal.email.send.sendEmail, {
             to: user.email,
             subject: `Your ${APP_NAME} account has been deleted`,
             template: "accountDeleted",

@@ -26,11 +26,11 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
   const customer = await polar.getCustomerByUserId(ctx, user._id);
   const subscription = customer
     ? await (ctx as GenericQueryCtx<DataModel>).runQuery(polar.component.lib.getCurrentSubscription, {
-        customerId: customer.id,
+        userId: user._id,
       })
     : null;
 
-  const plan = derivePlan(subscription?.productId);
+  const plan = derivePlan((subscription as { productId?: string } | null)?.productId);
   if (!planMeetsRequirement(plan, required)) {
     throw new Error(`Requires ${required} plan. Current plan: ${plan}.`);
   }

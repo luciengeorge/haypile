@@ -1,5 +1,8 @@
+import type { GenericQueryCtx } from "convex/server";
+
 import { Polar } from "@convex-dev/polar";
 
+import type { DataModel } from "../_generated/dataModel";
 import type { BillingAdapter } from "./types";
 
 import { components } from "../_generated/api";
@@ -17,7 +20,8 @@ import { authComponent } from "../betterAuth/auth";
  */
 export const polar = new Polar(components.polar, {
   getUserInfo: async (ctx) => {
-    const user = await authComponent.getAuthUser(ctx);
+    // polar passes its own RunQueryCtx; getAuthUser wants the app's query ctx (structurally compatible).
+    const user = await authComponent.getAuthUser(ctx as unknown as GenericQueryCtx<DataModel>);
     if (!user) throw new Error("Not authenticated");
     return { userId: user._id, email: user.email };
   },
