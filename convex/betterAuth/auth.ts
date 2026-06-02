@@ -121,7 +121,9 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     ],
     account: {
       // Lets an authenticated user attach data-source OAuth accounts (X, etc.).
-      accountLinking: { enabled: true, trustedProviders: ["x"] },
+      // allowDifferentEmails: X is a data source, not an identity — its (synthetic)
+      // email won't match the user's, so linking must not require an email match.
+      accountLinking: { enabled: true, trustedProviders: ["x"], allowDifferentEmails: true },
     },
     emailAndPassword: {
       ...sharedAuthConfig.emailAndPassword,
