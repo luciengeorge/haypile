@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import z from "zod";
 
-import { internalMutation, internalQuery } from "./_generated/server";
+import { internalMutation, internalQuery, query } from "./_generated/server";
 import { authComponent, createAuthOptions } from "./betterAuth/auth";
 
 // better-auth stores OAuth tokens plaintext (encryptOAuthTokens is off) in its
@@ -21,6 +21,26 @@ function toMs(value: number | string | Date | null | undefined): number | null {
   const ms = new Date(value).getTime();
   return Number.isNaN(ms) ? null : ms;
 }
+
+// Provider IDs of OAuth data-source accounts linked to the current user (e.g. ["x"]).
+// Used by the UI to show "Connected" before any sync job exists. Returns [] when
+// unauthenticated rather than throwing, so it never crashes the page.
+export const connectedSources = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await authComponent.getAuthUser(ctx).catch(() => null);
+    if (!user) return [];
+    const adapter = authComponent.adapter(ctx)(createAuthOptions(ctx));
+    const accounts = await adapter.findMany({
+      model: "account",
+      where: [{ field: "userId", value: user._id }],
+    });
+    return z
+      .array(z.object({ providerId: z.string() }))
+      .parse(accounts)
+      .map((account) => account.providerId);
+  },
+});
 
 export const getProviderToken = internalQuery({
   args: { userId: v.string(), providerId: v.string() },

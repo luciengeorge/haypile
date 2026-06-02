@@ -17,10 +17,12 @@ function ago(ms: number): string {
 
 export function ConnectSources() {
   const status = useQuery(api.sync.state.mySyncStatus);
+  const connectedSources = useQuery(api.x.connectedSources);
   const runSourceNow = useMutation(api.sync.state.runSourceNow);
   const [busy, setBusy] = useState(false);
 
   const x = status?.find((s) => s.source === "x");
+  const isConnected = connectedSources?.includes("x") ?? false;
 
   const connect = async () => {
     setBusy(true);
@@ -55,21 +57,29 @@ export function ConnectSources() {
           <div className="flex flex-col gap-0.5">
             <span className="font-medium">X bookmarks</span>
             <span className="text-xs text-muted-foreground">
-              {x
-                ? `${x.status}${x.lastSuccessAt ? ` · synced ${ago(x.lastSuccessAt)}` : " · never synced"}`
-                : "Not connected"}
+              {!isConnected
+                ? "Not connected"
+                : x
+                  ? `${x.status}${x.lastSuccessAt ? ` · synced ${ago(x.lastSuccessAt)}` : " · not synced yet"}`
+                  : "Connected · not synced yet"}
               {x?.error ? ` · ${x.error}` : ""}
             </span>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={connect} disabled={busy}>
-              {x ? "Reconnect" : "Connect X"}
-            </Button>
-            {x ? (
-              <Button size="sm" onClick={syncNow} disabled={busy}>
-                Sync now
+          <div className="flex items-center gap-3">
+            {isConnected ? (
+              <>
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+                  <span aria-hidden>✓</span> Connected
+                </span>
+                <Button size="sm" onClick={syncNow} disabled={busy}>
+                  Sync now
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" size="sm" onClick={connect} disabled={busy}>
+                Connect X
               </Button>
-            ) : null}
+            )}
           </div>
         </div>
       </CardContent>
