@@ -165,8 +165,8 @@ To make this hard to forget:
 - **`pnpm auth:check`** — CI guard: regenerates and fails if the committed schema is stale.
 
 The CLI reads the `options` export in `auth.ts` to introspect plugins, so keep that export.
-It runs via isolated `npx` (the published CLI version lags better-auth, so a local devDep
-conflicts — `npx` sidesteps it).
+It runs via isolated `pnpm dlx` (the published CLI version lags better-auth, so a
+local devDep conflicts — an isolated runner sidesteps it).
 
 ### Forms
 

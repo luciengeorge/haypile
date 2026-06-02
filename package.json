@@ -10,7 +10,7 @@
     "predev": "test -d convex/_generated && pnpm auth:generate || true",
     "convex": "convex dev",
     "preconvex": "test -d convex/_generated && pnpm auth:generate || true",
-    "auth:generate": "npx --yes @better-auth/cli@latest generate --config convex/betterAuth/auth.ts --output ./convex/betterAuth/schema.ts -y",
+    "auth:generate": "pnpm dlx @better-auth/cli@latest generate --config convex/betterAuth/auth.ts --output ./convex/betterAuth/schema.ts -y",
     "auth:check": "pnpm auth:generate && git diff --exit-code -- convex/betterAuth/schema.ts",
     "build": "vite build && if [ -d .output/server ]; then cp instrument.server.mjs .output/server; fi",
     "preview": "vite preview",
