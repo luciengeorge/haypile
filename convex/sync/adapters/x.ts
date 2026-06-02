@@ -5,12 +5,41 @@ import type { SyncAdapter } from "../types";
 
 const X_API = "https://api.x.com/2";
 
-const bookmarksResponseSchema = z.object({
-  data: z
-    .array(z.object({ id: z.string(), text: z.string(), created_at: z.string().optional(), author_id: z.string().optional() }))
+const mediaSchema = z.object({
+  media_key: z.string(),
+  type: z.string(), // photo | video | animated_gif
+  url: z.string().optional(), // photos
+  preview_image_url: z.string().optional(),
+  duration_ms: z.number().optional(),
+  variants: z
+    .array(z.object({ bit_rate: z.number().optional(), content_type: z.string(), url: z.string() }))
     .optional(),
+});
+
+const urlEntitySchema = z.object({
+  expanded_url: z.string().optional(),
+  unwound_url: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  images: z.array(z.object({ url: z.string() })).optional(),
+});
+
+const tweetSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  created_at: z.string().optional(),
+  author_id: z.string().optional(),
+  attachments: z.object({ media_keys: z.array(z.string()).optional() }).optional(),
+  entities: z.object({ urls: z.array(urlEntitySchema).optional() }).optional(),
+});
+
+const bookmarksResponseSchema = z.object({
+  data: z.array(tweetSchema).optional(),
   includes: z
-    .object({ users: z.array(z.object({ id: z.string(), username: z.string() })).optional() })
+    .object({
+      users: z.array(z.object({ id: z.string(), username: z.string() })).optional(),
+      media: z.array(mediaSchema).optional(),
+    })
     .optional(),
   meta: z.object({ next_token: z.string().optional() }).optional(),
 });
@@ -21,12 +50,25 @@ const refreshResponseSchema = z.object({
   expires_in: z.number(),
 });
 
+const mediaItemSchema = z.object({
+  type: z.enum(["image", "video", "gif"]),
+  url: z.string(),
+  durationSec: z.number().optional(),
+});
+const linkItemSchema = z.object({
+  url: z.string(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+});
 const persistItemSchema = z.object({
   externalId: z.string(),
   url: z.string(),
   text: z.string(),
   author: z.string().optional(),
   savedAt: z.number(),
+  media: z.array(mediaItemSchema).optional(),
+  links: z.array(linkItemSchema).optional(),
 });
 
 // X rotates refresh tokens on use (offline.access), so the new refresh_token must
@@ -58,6 +100,16 @@ function clean(value: string): string {
   return value.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "");
 }
 
+type XMedia = z.infer<typeof mediaSchema>;
+function bestVideoUrl(m: XMedia): string | undefined {
+  const mp4s = (m.variants ?? []).filter((v) => v.content_type === "video/mp4");
+  if (mp4s.length === 0) return undefined;
+  return mp4s.sort((a, b) => (b.bit_rate ?? 0) - (a.bit_rate ?? 0))[0]?.url;
+}
+
+// Skip X's own t.co media/quote-tweet links — only keep real external links.
+const X_INTERNAL = /^https?:\/\/(www\.)?(x\.com|twitter\.com|pic\.x\.com|pic\.twitter\.com)/i;
+
 export const xAdapter: SyncAdapter = {
   name: "x",
   intervalMs: 30 * 60 * 1000,
@@ -75,8 +127,9 @@ export const xAdapter: SyncAdapter = {
 
     const url = new URL(`${X_API}/users/${tok.accountId}/bookmarks`);
     url.searchParams.set("max_results", "100");
-    url.searchParams.set("tweet.fields", "created_at,author_id");
-    url.searchParams.set("expansions", "author_id");
+    url.searchParams.set("tweet.fields", "created_at,author_id,entities");
+    url.searchParams.set("expansions", "author_id,attachments.media_keys");
+    url.searchParams.set("media.fields", "url,preview_image_url,type,variants,duration_ms");
     url.searchParams.set("user.fields", "username");
     if (cursor) url.searchParams.set("pagination_token", cursor);
 
@@ -94,13 +147,42 @@ export const xAdapter: SyncAdapter = {
 
     const body = bookmarksResponseSchema.parse(await res.json());
     const usernameById = new Map((body.includes?.users ?? []).map((u) => [u.id, u.username]));
-    const items = (body.data ?? []).map((t) => ({
-      externalId: t.id,
-      url: `https://x.com/i/web/status/${t.id}`,
-      text: t.text,
-      author: t.author_id ? usernameById.get(t.author_id) : undefined,
-      savedAt: t.created_at ? Date.parse(t.created_at) : Date.now(),
-    }));
+    const mediaByKey = new Map((body.includes?.media ?? []).map((m) => [m.media_key, m]));
+
+    const items = (body.data ?? []).map((t) => {
+      const media: z.infer<typeof mediaItemSchema>[] = [];
+      for (const key of t.attachments?.media_keys ?? []) {
+        const m = mediaByKey.get(key);
+        if (!m) continue;
+        if (m.type === "photo" && m.url) {
+          media.push({ type: "image", url: m.url });
+        } else if (m.type === "video" || m.type === "animated_gif") {
+          const videoUrl = bestVideoUrl(m);
+          if (videoUrl) {
+            media.push({ type: m.type === "video" ? "video" : "gif", url: videoUrl, durationSec: m.duration_ms ? m.duration_ms / 1000 : undefined });
+          }
+        }
+      }
+
+      const links: z.infer<typeof linkItemSchema>[] = [];
+      const seen = new Set<string>();
+      for (const u of t.entities?.urls ?? []) {
+        const real = u.unwound_url ?? u.expanded_url;
+        if (!real || X_INTERNAL.test(real) || seen.has(real)) continue;
+        seen.add(real);
+        links.push({ url: real, title: u.title, description: u.description, imageUrl: u.images?.[0]?.url });
+      }
+
+      return {
+        externalId: t.id,
+        url: `https://x.com/i/web/status/${t.id}`,
+        text: t.text,
+        author: t.author_id ? usernameById.get(t.author_id) : undefined,
+        savedAt: t.created_at ? Date.parse(t.created_at) : Date.now(),
+        media,
+        links,
+      };
+    });
 
     return { items, nextCursor: body.meta?.next_token, hasMore: Boolean(body.meta?.next_token) };
   },
@@ -112,6 +194,16 @@ export const xAdapter: SyncAdapter = {
       const text = clean(item.text);
       const title = [...text].slice(0, 80).join(""); // code-point slice — never splits an emoji pair
       const author = item.author ? clean(item.author) : undefined;
+      const media = item.media?.length ? item.media : undefined;
+      const links = item.links?.length
+        ? item.links.map((l) => ({
+            url: l.url,
+            title: l.title ? clean(l.title) : undefined,
+            description: l.description ? clean(l.description) : undefined,
+            imageUrl: l.imageUrl,
+          }))
+        : undefined;
+
       const existing = await ctx.db
         .query("items")
         .withIndex("by_user_source_ext", (q) =>
@@ -119,7 +211,7 @@ export const xAdapter: SyncAdapter = {
         )
         .first();
       if (existing) {
-        await ctx.db.patch(existing._id, { text, title, author, syncedAt: now });
+        await ctx.db.patch(existing._id, { text, title, author, media, links, syncedAt: now });
         continue;
       }
       const itemId = await ctx.db.insert("items", {
@@ -131,6 +223,8 @@ export const xAdapter: SyncAdapter = {
         text,
         title,
         author,
+        media,
+        links,
         savedAt: item.savedAt,
         syncedAt: now,
         embedStatus: "pending",

@@ -36,6 +36,27 @@ export default defineSchema({
     mediaStorageId: v.optional(v.id("_storage")),
     thumbnailStorageId: v.optional(v.id("_storage")),
     durationSec: v.optional(v.number()), // for videos
+    // Multimodal attachments captured from the source (e.g. X photos/videos + links).
+    // The embed pipeline fans these out into one itemVectors row each.
+    media: v.optional(
+      v.array(
+        v.object({
+          type: v.union(v.literal("image"), v.literal("video"), v.literal("gif")),
+          url: v.string(),
+          durationSec: v.optional(v.number()),
+        }),
+      ),
+    ),
+    links: v.optional(
+      v.array(
+        v.object({
+          url: v.string(),
+          title: v.optional(v.string()),
+          description: v.optional(v.string()),
+          imageUrl: v.optional(v.string()),
+        }),
+      ),
+    ),
     savedAt: v.number(), // when the user saved it on the source platform
     syncedAt: v.number(),
     embedStatus: v.union(v.literal("pending"), v.literal("done"), v.literal("failed")),
