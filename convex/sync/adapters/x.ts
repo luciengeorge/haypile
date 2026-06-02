@@ -75,9 +75,16 @@ export const xAdapter: SyncAdapter = {
     if (cursor) url.searchParams.set("pagination_token", cursor);
 
     const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
-    if (res.status === 401) throw new Error("X token revoked — reconnect");
-    if (res.status === 429) throw new Error("X rate limited");
-    if (!res.ok) throw new Error(`X bookmarks failed: ${res.status}`);
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      if (res.status === 401) throw new Error("X token revoked — reconnect");
+      // 402/403: the bookmarks endpoint isn't included on the app's X API access tier.
+      if (res.status === 402 || res.status === 403) {
+        throw new Error(`X bookmarks require a paid X API tier (Basic+) — your app's plan doesn't allow it. ${detail.slice(0, 200)}`);
+      }
+      if (res.status === 429) throw new Error("X rate limited — try again later");
+      throw new Error(`X bookmarks failed: ${res.status} ${detail.slice(0, 200)}`);
+    }
 
     const body = bookmarksResponseSchema.parse(await res.json());
     const usernameById = new Map((body.includes?.users ?? []).map((u) => [u.id, u.username]));
