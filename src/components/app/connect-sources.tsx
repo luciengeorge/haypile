@@ -17,7 +17,7 @@ function ago(ms: number): string {
 
 export function ConnectSources() {
   const status = useQuery(api.sync.state.mySyncStatus);
-  const scheduleSource = useMutation(api.sync.state.scheduleSource);
+  const runSourceNow = useMutation(api.sync.state.runSourceNow);
   const [busy, setBusy] = useState(false);
 
   const x = status?.find((s) => s.source === "x");
@@ -35,8 +35,8 @@ export function ConnectSources() {
   const syncNow = async () => {
     setBusy(true);
     try {
-      await scheduleSource({ source: "x" });
-      toast.success("X sync queued — bookmarks will appear shortly");
+      await runSourceNow({ source: "x" });
+      toast.success("Syncing X bookmarks…");
     } catch (e) {
       toast.error("Couldn't queue sync", { description: e instanceof Error ? e.message : "Unknown error" });
     } finally {

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 
+import { internal } from "../_generated/api";
 import { internalMutation, internalQuery, mutation, query } from "../_generated/server";
 import { authComponent } from "../betterAuth/auth";
 import { getAdapter } from "./registry";
@@ -42,6 +43,42 @@ export const scheduleSource = mutation({
       nextRunAt: Date.now(),
       attempts: 0,
     });
+  },
+});
+
+/**
+ * Trigger a source immediately for the authenticated user (claims + runs the
+ * runner now instead of waiting for the 5-min dispatcher tick). Used by manual
+ * "Sync now" buttons. No-ops if the job is already running.
+ */
+export const runSourceNow = mutation({
+  args: { source: v.string() },
+  handler: async (ctx, { source }) => {
+    const user = await authComponent.getAuthUser(ctx);
+    if (!user) throw new Error("Not authenticated");
+
+    const existing = await ctx.db
+      .query("syncJobs")
+      .withIndex("by_user_source", (q) => q.eq("userId", user._id).eq("source", source))
+      .first();
+    if (existing?.status === "running") return existing._id;
+
+    let jobId;
+    if (existing) {
+      await ctx.db.patch(existing._id, { status: "running", lastRunAt: Date.now(), attempts: 0, error: undefined });
+      jobId = existing._id;
+    } else {
+      jobId = await ctx.db.insert("syncJobs", {
+        userId: user._id,
+        source,
+        status: "running",
+        nextRunAt: Date.now(),
+        lastRunAt: Date.now(),
+        attempts: 0,
+      });
+    }
+    await ctx.scheduler.runAfter(0, internal.sync.run.runJob, { jobId });
+    return jobId;
   },
 });
 

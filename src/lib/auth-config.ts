@@ -18,6 +18,11 @@ export const sharedAuthConfig = {
   get secret() {
     return process.env.BETTER_AUTH_SECRET;
   },
+  // The app runs on a different origin than the Convex-hosted auth handler, so the
+  // app origin must be trusted for CORS + OAuth redirect validation.
+  get trustedOrigins() {
+    return [process.env.SITE_URL || "http://localhost:3000"];
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

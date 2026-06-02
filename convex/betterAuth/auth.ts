@@ -1,7 +1,7 @@
 import type { GenericCtx } from "@convex-dev/better-auth/utils";
 import type { BetterAuthOptions } from "better-auth";
 import { createClient } from "@convex-dev/better-auth";
-import { convex } from "@convex-dev/better-auth/plugins";
+import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { admin, genericOAuth, magicLink } from "better-auth/plugins";
 import z from "zod";
@@ -103,6 +103,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     },
     plugins: [
       convex({ authConfig }),
+      crossDomain({ siteUrl: process.env.SITE_URL || "http://localhost:3000" }),
       magicLink({
         async sendMagicLink({ email, url }) {
           await getScheduler(ctx).runAfter(0, internal.email.send.sendEmail, {
