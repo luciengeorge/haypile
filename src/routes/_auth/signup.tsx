@@ -94,9 +94,7 @@ function SignupPage() {
                     onBlur={field.handleBlur}
                     required
                   />
-                  {field.state.meta.errors.length > 0 ? (
-                    <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                  ) : null}
+                  {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )}
             </form.Field>
@@ -113,9 +111,7 @@ function SignupPage() {
                     onBlur={field.handleBlur}
                     required
                   />
-                  {field.state.meta.errors.length > 0 ? (
-                    <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                  ) : null}
+                  {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )}
             </form.Field>
@@ -133,9 +129,7 @@ function SignupPage() {
                     required
                   />
                   <FieldDescription>Must be at least 8 characters long.</FieldDescription>
-                  {field.state.meta.errors.length > 0 ? (
-                    <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                  ) : null}
+                  {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )}
             </form.Field>
@@ -160,9 +154,7 @@ function SignupPage() {
                     onBlur={field.handleBlur}
                     required
                   />
-                  {field.state.meta.errors.length > 0 ? (
-                    <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                  ) : null}
+                  {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )}
             </form.Field>

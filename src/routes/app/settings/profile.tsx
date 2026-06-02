@@ -78,9 +78,7 @@ function ProfilePage() {
                       onBlur={field.handleBlur}
                       required
                     />
-                    {field.state.meta.errors.length > 0 ? (
-                      <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                    ) : null}
+                    {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                   </Field>
                 )}
               </nameForm.Field>
@@ -146,9 +144,7 @@ function ProfilePage() {
                         required
                       />
                       <FieldDescription>You'll need to confirm via your current email.</FieldDescription>
-                      {field.state.meta.errors.length > 0 ? (
-                        <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-                      ) : null}
+                      {field.state.meta.isValid ? null : <FieldError errors={field.state.meta.errors} />}
                     </Field>
                   )}
                 </emailForm.Field>
