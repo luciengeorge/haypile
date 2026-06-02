@@ -52,6 +52,12 @@ async function refreshXToken(refreshToken: string) {
   };
 }
 
+// Convex (and JSON) reject strings with lone UTF-16 surrogates; tweets sometimes
+// contain them (or a naive slice splits an emoji pair). Strip lone surrogates.
+function clean(value: string): string {
+  return value.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "");
+}
+
 export const xAdapter: SyncAdapter = {
   name: "x",
   intervalMs: 30 * 60 * 1000,
@@ -103,7 +109,9 @@ export const xAdapter: SyncAdapter = {
     const now = Date.now();
     for (const raw of items) {
       const item = persistItemSchema.parse(raw);
-      const title = item.text.slice(0, 80);
+      const text = clean(item.text);
+      const title = [...text].slice(0, 80).join(""); // code-point slice — never splits an emoji pair
+      const author = item.author ? clean(item.author) : undefined;
       const existing = await ctx.db
         .query("items")
         .withIndex("by_user_source_ext", (q) =>
@@ -111,7 +119,7 @@ export const xAdapter: SyncAdapter = {
         )
         .first();
       if (existing) {
-        await ctx.db.patch(existing._id, { text: item.text, title, author: item.author, syncedAt: now });
+        await ctx.db.patch(existing._id, { text, title, author, syncedAt: now });
         continue;
       }
       const itemId = await ctx.db.insert("items", {
@@ -120,9 +128,9 @@ export const xAdapter: SyncAdapter = {
         externalId: item.externalId,
         kind: "post",
         url: item.url,
-        text: item.text,
+        text,
         title,
-        author: item.author,
+        author,
         savedAt: item.savedAt,
         syncedAt: now,
         embedStatus: "pending",
