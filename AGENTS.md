@@ -150,8 +150,23 @@ export default defineSchema({
 });
 ```
 
-Auth tables live in `convex/betterAuth/schema.ts` — that file is auto-generated, don't
-edit by hand. Re-generate with `npx @better-auth/cli generate`.
+Auth tables live in `convex/betterAuth/schema.ts` — that file is auto-generated from
+the better-auth **plugin set** (admin → `role`/`banned`, etc.), don't edit by hand.
+
+> **Whenever you add/remove/change a better-auth plugin in `convex/betterAuth/auth.ts`,
+> the component schema MUST be regenerated, or `adapter:create` will reject inserts
+> ("Failed to create user"). `convex dev` does NOT do this — only the better-auth CLI does.**
+
+To make this hard to forget:
+
+- **`pnpm auth:generate`** — regenerates `convex/betterAuth/schema.ts` from your plugins.
+- **`pnpm dev` and `pnpm convex`** auto-run it (via `predev`/`preconvex` hooks), so the
+  schema is always fresh when Convex pushes it.
+- **`pnpm auth:check`** — CI guard: regenerates and fails if the committed schema is stale.
+
+The CLI reads the `options` export in `auth.ts` to introspect plugins, so keep that export.
+It runs via isolated `npx` (the published CLI version lags better-auth, so a local devDep
+conflicts — `npx` sidesteps it).
 
 ### Forms
 
@@ -310,12 +325,14 @@ All transactional emails use `@react-email/components`. Templates live in
 ## Scripts to know
 
 ```bash
-pnpm dev              # dev server (loads .env.local + Sentry instrument)
-pnpm typecheck        # tsgo --noEmit (fails until `npx convex dev` runs once)
+pnpm dev              # web dev server (auto-regens better-auth schema via predev)
+pnpm convex           # convex dev sync (auto-regens better-auth schema via preconvex)
+pnpm auth:generate    # regenerate convex/betterAuth/schema.ts from the plugin set
+pnpm auth:check       # CI: fail if the committed better-auth schema is stale
+pnpm typecheck        # tsgo --noEmit (fails until `pnpm convex` runs once)
 pnpm lint             # oxfmt + oxlint (autofix)
 pnpm lint:check       # CI: no writes
 pnpm test             # vitest
-npx convex dev        # generate _generated/ + start convex dev sync
 npx convex deploy     # push to convex prod
 pnpm dlx shadcn@latest add <component>   # add a shadcn component
 ```
