@@ -9,7 +9,9 @@ const logger = createLogger("convex.provider");
 if (!CONVEX_URL) {
   logger.error("missing env var", { env: "VITE_CONVEX_URL" });
 }
-const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
+// expectAuth defers queries until ConvexBetterAuthProvider has set the auth token,
+// so authed queries don't fire unauthenticated on first render (which would throw).
+const convexQueryClient = new ConvexQueryClient(CONVEX_URL, { expectAuth: true });
 
 // ConvexBetterAuthProvider keeps the Convex client's auth token in sync with the
 // better-auth session, so authenticated queries/mutations/actions work client-side.
