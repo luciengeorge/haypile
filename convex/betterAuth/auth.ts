@@ -1,7 +1,7 @@
 import type { GenericCtx } from "@convex-dev/better-auth/utils";
 import type { BetterAuthOptions } from "better-auth";
 import { createClient } from "@convex-dev/better-auth";
-import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
+import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { admin, genericOAuth, magicLink } from "better-auth/plugins";
 import z from "zod";
@@ -103,7 +103,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     },
     plugins: [
       convex({ authConfig }),
-      crossDomain({ siteUrl: process.env.SITE_URL || "http://localhost:3000" }),
       magicLink({
         async sendMagicLink({ email, url }) {
           await getScheduler(ctx).runAfter(0, internal.email.send.sendEmail, {
@@ -184,5 +183,9 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
   return betterAuth(createAuthOptions(ctx));
 };
 
-// To regenerate the better-auth schema, temporarily add an `options` export the
-// CLI can read, then run: npx @better-auth/cli generate --output ./convex/betterAuth/schema.ts
+// For the `@better-auth/cli` schema generator: it only introspects static options
+// (adapter + plugins), never executes a request, so there's no real ctx to pass.
+// This is the one framework-prescribed cast. Regenerate after changing plugins:
+//   npx @better-auth/cli generate --output ./convex/betterAuth/schema.ts -y
+// oxlint-disable-next-line typescript/consistent-type-assertions
+export const options = createAuthOptions({} as GenericCtx<DataModel>);

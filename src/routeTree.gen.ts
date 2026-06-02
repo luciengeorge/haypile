@@ -20,6 +20,7 @@ import { Route as AuthMagicLinkRouteImport } from "./routes/_auth/magic-link";
 import { Route as AuthResetPasswordRouteImport } from "./routes/_auth/reset-password";
 import { Route as AuthSignupRouteImport } from "./routes/_auth/signup";
 import { Route as AuthVerifyEmailRouteImport } from "./routes/_auth/verify-email";
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth.$";
 import { Route as ApiImgStorageIdRouteImport } from "./routes/api/img.$storageId";
 import { Route as AppRouteImport } from "./routes/app";
 import { Route as AppAdminRouteImport } from "./routes/app/admin";
@@ -140,6 +141,11 @@ const ApiImgStorageIdRoute = ApiImgStorageIdRouteImport.update({
   path: "/api/img/$storageId",
   getParentRoute: () => rootRouteImport,
 } as any);
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: "/api/auth/$",
+  path: "/api/auth/$",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   "/app/admin": typeof AppAdminRoute;
   "/app/settings": typeof AppSettingsRouteWithChildren;
   "/app/": typeof AppIndexRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
   "/api/img/$storageId": typeof ApiImgStorageIdRoute;
   "/app/settings/billing": typeof AppSettingsBillingRoute;
   "/app/settings/danger": typeof AppSettingsDangerRoute;
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   "/verify-email": typeof AuthVerifyEmailRoute;
   "/app/admin": typeof AppAdminRoute;
   "/app": typeof AppIndexRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
   "/api/img/$storageId": typeof ApiImgStorageIdRoute;
   "/app/settings/billing": typeof AppSettingsBillingRoute;
   "/app/settings/danger": typeof AppSettingsDangerRoute;
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   "/app/admin": typeof AppAdminRoute;
   "/app/settings": typeof AppSettingsRouteWithChildren;
   "/app/": typeof AppIndexRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
   "/api/img/$storageId": typeof ApiImgStorageIdRoute;
   "/app/settings/billing": typeof AppSettingsBillingRoute;
   "/app/settings/danger": typeof AppSettingsDangerRoute;
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | "/app/admin"
     | "/app/settings"
     | "/app/"
+    | "/api/auth/$"
     | "/api/img/$storageId"
     | "/app/settings/billing"
     | "/app/settings/danger"
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | "/verify-email"
     | "/app/admin"
     | "/app"
+    | "/api/auth/$"
     | "/api/img/$storageId"
     | "/app/settings/billing"
     | "/app/settings/danger"
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | "/app/admin"
     | "/app/settings"
     | "/app/"
+    | "/api/auth/$"
     | "/api/img/$storageId"
     | "/app/settings/billing"
     | "/app/settings/danger"
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   legalCookiesRoute: typeof legalCookiesRoute;
   legalPrivacyRoute: typeof legalPrivacyRoute;
   legalTermsRoute: typeof legalTermsRoute;
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
   ApiImgStorageIdRoute: typeof ApiImgStorageIdRoute;
 }
 
@@ -444,6 +457,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ApiImgStorageIdRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/api/auth/$": {
+      id: "/api/auth/$";
+      path: "/api/auth/$";
+      fullPath: "/api/auth/$";
+      preLoaderRoute: typeof ApiAuthSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -507,6 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   legalCookiesRoute: legalCookiesRoute,
   legalPrivacyRoute: legalPrivacyRoute,
   legalTermsRoute: legalTermsRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImgStorageIdRoute: ApiImgStorageIdRoute,
 };
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
