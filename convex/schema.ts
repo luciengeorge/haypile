@@ -107,4 +107,14 @@ export default defineSchema({
     newFromSources: v.boolean(),
     productUpdates: v.boolean(),
   }).index("by_user", ["userId"]),
+
+  /**
+   * Denormalized per-user item count for the usage meter / cap. Kept in sync on
+   * item insert (and any future delete) — avoids collect()-ing every item, which
+   * would hit Convex's 16MB read cap past a few thousand saves.
+   */
+  itemCounts: defineTable({
+    userId: v.string(),
+    count: v.number(),
+  }).index("by_user", ["userId"]),
 });

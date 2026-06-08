@@ -1,8 +1,26 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
-import { internalMutation, internalQuery, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalMutation, internalQuery, type MutationCtx, query } from "./_generated/server";
 import { authComponent } from "./betterAuth/auth";
+
+/**
+ * Adjust a user's denormalized item count. Call with +1 on item insert (and -1 on
+ * delete, once a delete path exists). Runs in the same transaction as the write,
+ * so the counter can never drift from the actual rows.
+ */
+export async function bumpItemCount(ctx: MutationCtx, userId: string, delta: number): Promise<void> {
+  const row = await ctx.db
+    .query("itemCounts")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .unique();
+  if (row) {
+    await ctx.db.patch(row._id, { count: Math.max(0, row.count + delta) });
+  } else {
+    await ctx.db.insert("itemCounts", { userId, count: Math.max(0, delta) });
+  }
+}
 
 /** Load an item for the embedding pipeline. */
 export const getForEmbed = internalQuery({
@@ -60,21 +78,45 @@ export const markEmbedFailed = internalMutation({
   },
 });
 
-/**
- * Item count for the usage meter.
- * TODO: denormalize a per-user counter before scale — collect() reads every item doc
- * and will hit Convex's 16MB read cap past a few thousand items.
- */
+/** Item count for the usage meter — reads the denormalized counter (O(1)). */
 export const usage = query({
   args: {},
   handler: async (ctx) => {
     const user = await authComponent.getAuthUser(ctx);
     if (!user) throw new Error("Not authenticated");
-    const items = await ctx.db
-      .query("items")
-      .withIndex("by_user_saved", (q) => q.eq("userId", user._id))
-      .collect();
-    return { itemCount: items.length };
+    const row = await ctx.db
+      .query("itemCounts")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .unique();
+    return { itemCount: row?.count ?? 0 };
+  },
+});
+
+/**
+ * One-time backfill: recompute every user's itemCounts from the items table.
+ * Safe to re-run (idempotent). Paginates so it never trips the 16MB read cap.
+ */
+export const backfillItemCounts = internalMutation({
+  args: { cursor: v.optional(v.string()), counts: v.optional(v.record(v.string(), v.number())) },
+  handler: async (ctx, { cursor, counts = {} }) => {
+    const page = await ctx.db.query("items").paginate({ cursor: cursor ?? null, numItems: 500 });
+    const tally: Record<string, number> = { ...counts };
+    for (const item of page.page) tally[item.userId] = (tally[item.userId] ?? 0) + 1;
+
+    if (!page.isDone) {
+      await ctx.scheduler.runAfter(0, internal.items.backfillItemCounts, { cursor: page.continueCursor, counts: tally });
+      return { done: false };
+    }
+
+    for (const [userId, count] of Object.entries(tally)) {
+      const row = await ctx.db
+        .query("itemCounts")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .unique();
+      if (row) await ctx.db.patch(row._id, { count });
+      else await ctx.db.insert("itemCounts", { userId, count });
+    }
+    return { done: true, users: Object.keys(tally).length };
   },
 });
 

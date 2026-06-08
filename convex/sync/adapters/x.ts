@@ -1,6 +1,7 @@
 import z from "zod";
 
 import { internal } from "../../_generated/api";
+import { bumpItemCount } from "../../items";
 import type { SyncAdapter } from "../types";
 
 const X_API = "https://api.x.com/2";
@@ -229,6 +230,7 @@ export const xAdapter: SyncAdapter = {
         syncedAt: now,
         embedStatus: "pending",
       });
+      await bumpItemCount(ctx, userId, 1);
       await ctx.scheduler.runAfter(0, internal.embeddings.pipeline.embedItem, { itemId });
     }
   },
