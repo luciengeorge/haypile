@@ -4,7 +4,7 @@ export const Route = createFileRoute("/(legal)/_layout")({
   component: LegalLayout,
 });
 
-const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Starter Template";
+const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 
 function LegalLayout() {
   return (

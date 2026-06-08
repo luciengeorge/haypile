@@ -1,6 +1,6 @@
 import type { BetterAuthOptions } from "better-auth";
 
-export const APP_NAME = process.env.APP_NAME ?? "Starter Template";
+export const APP_NAME = process.env.APP_NAME ?? "Haypile";
 
 /**
  * Base auth options — runtime-agnostic config that applies to both server-side
@@ -23,13 +23,9 @@ export const sharedAuthConfig = {
   get trustedOrigins() {
     return [process.env.SITE_URL || "http://localhost:3000"];
   },
+  // Passwordless: sign-in is magic link + "Continue with X". No password flows.
   emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-    sendResetPassword: async () => {
-      // Overridden in convex/betterAuth/auth.ts where ctx is available.
-      throw new Error("sendResetPassword must be overridden with a ctx-aware impl");
-    },
+    enabled: false,
   },
   emailVerification: {
     sendVerificationEmail: async () => {

@@ -8,536 +8,528 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as legalLayoutRouteImport } from "./routes/(legal)/_layout";
-import { Route as legalCookiesRouteImport } from "./routes/(legal)/cookies";
-import { Route as legalPrivacyRouteImport } from "./routes/(legal)/privacy";
-import { Route as legalTermsRouteImport } from "./routes/(legal)/terms";
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as AuthRouteImport } from "./routes/_auth";
-import { Route as AuthForgotPasswordRouteImport } from "./routes/_auth/forgot-password";
-import { Route as AuthLoginRouteImport } from "./routes/_auth/login";
-import { Route as AuthMagicLinkRouteImport } from "./routes/_auth/magic-link";
-import { Route as AuthResetPasswordRouteImport } from "./routes/_auth/reset-password";
-import { Route as AuthSignupRouteImport } from "./routes/_auth/signup";
-import { Route as AuthVerifyEmailRouteImport } from "./routes/_auth/verify-email";
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth.$";
-import { Route as ApiImgStorageIdRouteImport } from "./routes/api/img.$storageId";
-import { Route as AppRouteImport } from "./routes/app";
-import { Route as AppAdminRouteImport } from "./routes/app/admin";
-import { Route as AppIndexRouteImport } from "./routes/app/index";
-import { Route as AppSettingsRouteImport } from "./routes/app/settings";
-import { Route as AppSettingsBillingRouteImport } from "./routes/app/settings/billing";
-import { Route as AppSettingsDangerRouteImport } from "./routes/app/settings/danger";
-import { Route as AppSettingsIndexRouteImport } from "./routes/app/settings/index";
-import { Route as AppSettingsProfileRouteImport } from "./routes/app/settings/profile";
-import { Route as AppSettingsSecurityRouteImport } from "./routes/app/settings/security";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppSourcesRouteImport } from './routes/app/sources'
+import { Route as AppSettingsRouteImport } from './routes/app/settings'
+import { Route as AppLibraryRouteImport } from './routes/app/library'
+import { Route as AppAdminRouteImport } from './routes/app/admin'
+import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
+import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthCheckEmailRouteImport } from './routes/_auth/check-email'
+import { Route as legalLayoutRouteImport } from './routes/(legal)/_layout'
+import { Route as AppSettingsIndexRouteImport } from './routes/app/settings/index'
+import { Route as AppSettingsProfileRouteImport } from './routes/app/settings/profile'
+import { Route as AppSettingsBillingRouteImport } from './routes/app/settings/billing'
+import { Route as ApiImgStorageIdRouteImport } from './routes/api/img.$storageId'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as legalLayoutTermsRouteImport } from './routes/(legal)/_layout/terms'
+import { Route as legalLayoutPrivacyRouteImport } from './routes/(legal)/_layout/privacy'
+import { Route as legalLayoutCookiesRouteImport } from './routes/(legal)/_layout/cookies'
 
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
-  id: "/app",
-  path: "/app",
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthRoute = AuthRouteImport.update({
-  id: "/_auth",
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => AppRoute,
-} as any);
+} as any)
+const AppSourcesRoute = AppSourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
-} as any);
+} as any)
+const AppLibraryRoute = AppLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
-  id: "/admin",
-  path: "/admin",
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AppRoute,
-} as any);
+} as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
-  id: "/verify-email",
-  path: "/verify-email",
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: "/signup",
-  path: "/signup",
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => AuthRoute,
-} as any);
-const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  id: "/reset-password",
-  path: "/reset-password",
-  getParentRoute: () => AuthRoute,
-} as any);
-const AuthMagicLinkRoute = AuthMagicLinkRouteImport.update({
-  id: "/magic-link",
-  path: "/magic-link",
-  getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AuthRoute,
-} as any);
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: "/forgot-password",
-  path: "/forgot-password",
+} as any)
+const AuthCheckEmailRoute = AuthCheckEmailRouteImport.update({
+  id: '/check-email',
+  path: '/check-email',
   getParentRoute: () => AuthRoute,
-} as any);
-const legalTermsRoute = legalTermsRouteImport.update({
-  id: "/(legal)/terms",
-  path: "/terms",
-  getParentRoute: () => rootRouteImport,
-} as any);
-const legalPrivacyRoute = legalPrivacyRouteImport.update({
-  id: "/(legal)/privacy",
-  path: "/privacy",
-  getParentRoute: () => rootRouteImport,
-} as any);
-const legalCookiesRoute = legalCookiesRouteImport.update({
-  id: "/(legal)/cookies",
-  path: "/cookies",
-  getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const legalLayoutRoute = legalLayoutRouteImport.update({
-  id: "/(legal)/_layout",
+  id: '/(legal)/_layout',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => AppSettingsRoute,
-} as any);
-const AppSettingsSecurityRoute = AppSettingsSecurityRouteImport.update({
-  id: "/security",
-  path: "/security",
-  getParentRoute: () => AppSettingsRoute,
-} as any);
+} as any)
 const AppSettingsProfileRoute = AppSettingsProfileRouteImport.update({
-  id: "/profile",
-  path: "/profile",
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppSettingsRoute,
-} as any);
-const AppSettingsDangerRoute = AppSettingsDangerRouteImport.update({
-  id: "/danger",
-  path: "/danger",
-  getParentRoute: () => AppSettingsRoute,
-} as any);
+} as any)
 const AppSettingsBillingRoute = AppSettingsBillingRouteImport.update({
-  id: "/billing",
-  path: "/billing",
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => AppSettingsRoute,
-} as any);
+} as any)
 const ApiImgStorageIdRoute = ApiImgStorageIdRouteImport.update({
-  id: "/api/img/$storageId",
-  path: "/api/img/$storageId",
+  id: '/api/img/$storageId',
+  path: '/api/img/$storageId',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const legalLayoutTermsRoute = legalLayoutTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => legalLayoutRoute,
+} as any)
+const legalLayoutPrivacyRoute = legalLayoutPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => legalLayoutRoute,
+} as any)
+const legalLayoutCookiesRoute = legalLayoutCookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => legalLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/app": typeof AppRouteWithChildren;
-  "/cookies": typeof legalCookiesRoute;
-  "/privacy": typeof legalPrivacyRoute;
-  "/terms": typeof legalTermsRoute;
-  "/forgot-password": typeof AuthForgotPasswordRoute;
-  "/login": typeof AuthLoginRoute;
-  "/magic-link": typeof AuthMagicLinkRoute;
-  "/reset-password": typeof AuthResetPasswordRoute;
-  "/signup": typeof AuthSignupRoute;
-  "/verify-email": typeof AuthVerifyEmailRoute;
-  "/app/admin": typeof AppAdminRoute;
-  "/app/settings": typeof AppSettingsRouteWithChildren;
-  "/app/": typeof AppIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/img/$storageId": typeof ApiImgStorageIdRoute;
-  "/app/settings/billing": typeof AppSettingsBillingRoute;
-  "/app/settings/danger": typeof AppSettingsDangerRoute;
-  "/app/settings/profile": typeof AppSettingsProfileRoute;
-  "/app/settings/security": typeof AppSettingsSecurityRoute;
-  "/app/settings/": typeof AppSettingsIndexRoute;
+  '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/check-email': typeof AuthCheckEmailRoute
+  '/login': typeof AuthLoginRoute
+  '/signup': typeof AuthSignupRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/library': typeof AppLibraryRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
+  '/app/sources': typeof AppSourcesRoute
+  '/app/': typeof AppIndexRoute
+  '/cookies': typeof legalLayoutCookiesRoute
+  '/privacy': typeof legalLayoutPrivacyRoute
+  '/terms': typeof legalLayoutTermsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/img/$storageId': typeof ApiImgStorageIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/cookies": typeof legalCookiesRoute;
-  "/privacy": typeof legalPrivacyRoute;
-  "/terms": typeof legalTermsRoute;
-  "/forgot-password": typeof AuthForgotPasswordRoute;
-  "/login": typeof AuthLoginRoute;
-  "/magic-link": typeof AuthMagicLinkRoute;
-  "/reset-password": typeof AuthResetPasswordRoute;
-  "/signup": typeof AuthSignupRoute;
-  "/verify-email": typeof AuthVerifyEmailRoute;
-  "/app/admin": typeof AppAdminRoute;
-  "/app": typeof AppIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/img/$storageId": typeof ApiImgStorageIdRoute;
-  "/app/settings/billing": typeof AppSettingsBillingRoute;
-  "/app/settings/danger": typeof AppSettingsDangerRoute;
-  "/app/settings/profile": typeof AppSettingsProfileRoute;
-  "/app/settings/security": typeof AppSettingsSecurityRoute;
-  "/app/settings": typeof AppSettingsIndexRoute;
+  '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
+  '/check-email': typeof AuthCheckEmailRoute
+  '/login': typeof AuthLoginRoute
+  '/signup': typeof AuthSignupRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/library': typeof AppLibraryRoute
+  '/app/sources': typeof AppSourcesRoute
+  '/app': typeof AppIndexRoute
+  '/cookies': typeof legalLayoutCookiesRoute
+  '/privacy': typeof legalLayoutPrivacyRoute
+  '/terms': typeof legalLayoutTermsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/img/$storageId': typeof ApiImgStorageIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/_auth": typeof AuthRouteWithChildren;
-  "/app": typeof AppRouteWithChildren;
-  "/(legal)/_layout": typeof legalLayoutRoute;
-  "/(legal)/cookies": typeof legalCookiesRoute;
-  "/(legal)/privacy": typeof legalPrivacyRoute;
-  "/(legal)/terms": typeof legalTermsRoute;
-  "/_auth/forgot-password": typeof AuthForgotPasswordRoute;
-  "/_auth/login": typeof AuthLoginRoute;
-  "/_auth/magic-link": typeof AuthMagicLinkRoute;
-  "/_auth/reset-password": typeof AuthResetPasswordRoute;
-  "/_auth/signup": typeof AuthSignupRoute;
-  "/_auth/verify-email": typeof AuthVerifyEmailRoute;
-  "/app/admin": typeof AppAdminRoute;
-  "/app/settings": typeof AppSettingsRouteWithChildren;
-  "/app/": typeof AppIndexRoute;
-  "/api/auth/$": typeof ApiAuthSplatRoute;
-  "/api/img/$storageId": typeof ApiImgStorageIdRoute;
-  "/app/settings/billing": typeof AppSettingsBillingRoute;
-  "/app/settings/danger": typeof AppSettingsDangerRoute;
-  "/app/settings/profile": typeof AppSettingsProfileRoute;
-  "/app/settings/security": typeof AppSettingsSecurityRoute;
-  "/app/settings/": typeof AppSettingsIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/app': typeof AppRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/(legal)/_layout': typeof legalLayoutRouteWithChildren
+  '/_auth/check-email': typeof AuthCheckEmailRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/signup': typeof AuthSignupRoute
+  '/_auth/verify-email': typeof AuthVerifyEmailRoute
+  '/app/admin': typeof AppAdminRoute
+  '/app/library': typeof AppLibraryRoute
+  '/app/settings': typeof AppSettingsRouteWithChildren
+  '/app/sources': typeof AppSourcesRoute
+  '/app/': typeof AppIndexRoute
+  '/(legal)/_layout/cookies': typeof legalLayoutCookiesRoute
+  '/(legal)/_layout/privacy': typeof legalLayoutPrivacyRoute
+  '/(legal)/_layout/terms': typeof legalLayoutTermsRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/img/$storageId': typeof ApiImgStorageIdRoute
+  '/app/settings/billing': typeof AppSettingsBillingRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
+  '/app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/app"
-    | "/cookies"
-    | "/privacy"
-    | "/terms"
-    | "/forgot-password"
-    | "/login"
-    | "/magic-link"
-    | "/reset-password"
-    | "/signup"
-    | "/verify-email"
-    | "/app/admin"
-    | "/app/settings"
-    | "/app/"
-    | "/api/auth/$"
-    | "/api/img/$storageId"
-    | "/app/settings/billing"
-    | "/app/settings/danger"
-    | "/app/settings/profile"
-    | "/app/settings/security"
-    | "/app/settings/";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/app'
+    | '/pricing'
+    | '/check-email'
+    | '/login'
+    | '/signup'
+    | '/verify-email'
+    | '/app/admin'
+    | '/app/library'
+    | '/app/settings'
+    | '/app/sources'
+    | '/app/'
+    | '/cookies'
+    | '/privacy'
+    | '/terms'
+    | '/api/auth/$'
+    | '/api/img/$storageId'
+    | '/app/settings/billing'
+    | '/app/settings/profile'
+    | '/app/settings/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/cookies"
-    | "/privacy"
-    | "/terms"
-    | "/forgot-password"
-    | "/login"
-    | "/magic-link"
-    | "/reset-password"
-    | "/signup"
-    | "/verify-email"
-    | "/app/admin"
-    | "/app"
-    | "/api/auth/$"
-    | "/api/img/$storageId"
-    | "/app/settings/billing"
-    | "/app/settings/danger"
-    | "/app/settings/profile"
-    | "/app/settings/security"
-    | "/app/settings";
+    | '/'
+    | '/pricing'
+    | '/check-email'
+    | '/login'
+    | '/signup'
+    | '/verify-email'
+    | '/app/admin'
+    | '/app/library'
+    | '/app/sources'
+    | '/app'
+    | '/cookies'
+    | '/privacy'
+    | '/terms'
+    | '/api/auth/$'
+    | '/api/img/$storageId'
+    | '/app/settings/billing'
+    | '/app/settings/profile'
+    | '/app/settings'
   id:
-    | "__root__"
-    | "/"
-    | "/_auth"
-    | "/app"
-    | "/(legal)/_layout"
-    | "/(legal)/cookies"
-    | "/(legal)/privacy"
-    | "/(legal)/terms"
-    | "/_auth/forgot-password"
-    | "/_auth/login"
-    | "/_auth/magic-link"
-    | "/_auth/reset-password"
-    | "/_auth/signup"
-    | "/_auth/verify-email"
-    | "/app/admin"
-    | "/app/settings"
-    | "/app/"
-    | "/api/auth/$"
-    | "/api/img/$storageId"
-    | "/app/settings/billing"
-    | "/app/settings/danger"
-    | "/app/settings/profile"
-    | "/app/settings/security"
-    | "/app/settings/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/app'
+    | '/pricing'
+    | '/(legal)/_layout'
+    | '/_auth/check-email'
+    | '/_auth/login'
+    | '/_auth/signup'
+    | '/_auth/verify-email'
+    | '/app/admin'
+    | '/app/library'
+    | '/app/settings'
+    | '/app/sources'
+    | '/app/'
+    | '/(legal)/_layout/cookies'
+    | '/(legal)/_layout/privacy'
+    | '/(legal)/_layout/terms'
+    | '/api/auth/$'
+    | '/api/img/$storageId'
+    | '/app/settings/billing'
+    | '/app/settings/profile'
+    | '/app/settings/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AuthRoute: typeof AuthRouteWithChildren;
-  AppRoute: typeof AppRouteWithChildren;
-  legalLayoutRoute: typeof legalLayoutRoute;
-  legalCookiesRoute: typeof legalCookiesRoute;
-  legalPrivacyRoute: typeof legalPrivacyRoute;
-  legalTermsRoute: typeof legalTermsRoute;
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
-  ApiImgStorageIdRoute: typeof ApiImgStorageIdRoute;
+  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  AppRoute: typeof AppRouteWithChildren
+  PricingRoute: typeof PricingRoute
+  legalLayoutRoute: typeof legalLayoutRouteWithChildren
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiImgStorageIdRoute: typeof ApiImgStorageIdRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/app": {
-      id: "/app";
-      path: "/app";
-      fullPath: "/app";
-      preLoaderRoute: typeof AppRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/_auth": {
-      id: "/_auth";
-      path: "";
-      fullPath: "/";
-      preLoaderRoute: typeof AuthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/app/": {
-      id: "/app/";
-      path: "/";
-      fullPath: "/app/";
-      preLoaderRoute: typeof AppIndexRouteImport;
-      parentRoute: typeof AppRoute;
-    };
-    "/app/settings": {
-      id: "/app/settings";
-      path: "/settings";
-      fullPath: "/app/settings";
-      preLoaderRoute: typeof AppSettingsRouteImport;
-      parentRoute: typeof AppRoute;
-    };
-    "/app/admin": {
-      id: "/app/admin";
-      path: "/admin";
-      fullPath: "/app/admin";
-      preLoaderRoute: typeof AppAdminRouteImport;
-      parentRoute: typeof AppRoute;
-    };
-    "/_auth/verify-email": {
-      id: "/_auth/verify-email";
-      path: "/verify-email";
-      fullPath: "/verify-email";
-      preLoaderRoute: typeof AuthVerifyEmailRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/signup": {
-      id: "/_auth/signup";
-      path: "/signup";
-      fullPath: "/signup";
-      preLoaderRoute: typeof AuthSignupRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/reset-password": {
-      id: "/_auth/reset-password";
-      path: "/reset-password";
-      fullPath: "/reset-password";
-      preLoaderRoute: typeof AuthResetPasswordRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/magic-link": {
-      id: "/_auth/magic-link";
-      path: "/magic-link";
-      fullPath: "/magic-link";
-      preLoaderRoute: typeof AuthMagicLinkRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/login": {
-      id: "/_auth/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof AuthLoginRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/_auth/forgot-password": {
-      id: "/_auth/forgot-password";
-      path: "/forgot-password";
-      fullPath: "/forgot-password";
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/(legal)/terms": {
-      id: "/(legal)/terms";
-      path: "/terms";
-      fullPath: "/terms";
-      preLoaderRoute: typeof legalTermsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(legal)/privacy": {
-      id: "/(legal)/privacy";
-      path: "/privacy";
-      fullPath: "/privacy";
-      preLoaderRoute: typeof legalPrivacyRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(legal)/cookies": {
-      id: "/(legal)/cookies";
-      path: "/cookies";
-      fullPath: "/cookies";
-      preLoaderRoute: typeof legalCookiesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(legal)/_layout": {
-      id: "/(legal)/_layout";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof legalLayoutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/app/settings/": {
-      id: "/app/settings/";
-      path: "/";
-      fullPath: "/app/settings/";
-      preLoaderRoute: typeof AppSettingsIndexRouteImport;
-      parentRoute: typeof AppSettingsRoute;
-    };
-    "/app/settings/security": {
-      id: "/app/settings/security";
-      path: "/security";
-      fullPath: "/app/settings/security";
-      preLoaderRoute: typeof AppSettingsSecurityRouteImport;
-      parentRoute: typeof AppSettingsRoute;
-    };
-    "/app/settings/profile": {
-      id: "/app/settings/profile";
-      path: "/profile";
-      fullPath: "/app/settings/profile";
-      preLoaderRoute: typeof AppSettingsProfileRouteImport;
-      parentRoute: typeof AppSettingsRoute;
-    };
-    "/app/settings/danger": {
-      id: "/app/settings/danger";
-      path: "/danger";
-      fullPath: "/app/settings/danger";
-      preLoaderRoute: typeof AppSettingsDangerRouteImport;
-      parentRoute: typeof AppSettingsRoute;
-    };
-    "/app/settings/billing": {
-      id: "/app/settings/billing";
-      path: "/billing";
-      fullPath: "/app/settings/billing";
-      preLoaderRoute: typeof AppSettingsBillingRouteImport;
-      parentRoute: typeof AppSettingsRoute;
-    };
-    "/api/img/$storageId": {
-      id: "/api/img/$storageId";
-      path: "/api/img/$storageId";
-      fullPath: "/api/img/$storageId";
-      preLoaderRoute: typeof ApiImgStorageIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/api/auth/$": {
-      id: "/api/auth/$";
-      path: "/api/auth/$";
-      fullPath: "/api/auth/$";
-      preLoaderRoute: typeof ApiAuthSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/sources': {
+      id: '/app/sources'
+      path: '/sources'
+      fullPath: '/app/sources'
+      preLoaderRoute: typeof AppSourcesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/library': {
+      id: '/app/library'
+      path: '/library'
+      fullPath: '/app/library'
+      preLoaderRoute: typeof AppLibraryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/signup': {
+      id: '/_auth/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/check-email': {
+      id: '/_auth/check-email'
+      path: '/check-email'
+      fullPath: '/check-email'
+      preLoaderRoute: typeof AuthCheckEmailRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/(legal)/_layout': {
+      id: '/(legal)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof legalLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/settings/': {
+      id: '/app/settings/'
+      path: '/'
+      fullPath: '/app/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/profile': {
+      id: '/app/settings/profile'
+      path: '/profile'
+      fullPath: '/app/settings/profile'
+      preLoaderRoute: typeof AppSettingsProfileRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/app/settings/billing': {
+      id: '/app/settings/billing'
+      path: '/billing'
+      fullPath: '/app/settings/billing'
+      preLoaderRoute: typeof AppSettingsBillingRouteImport
+      parentRoute: typeof AppSettingsRoute
+    }
+    '/api/img/$storageId': {
+      id: '/api/img/$storageId'
+      path: '/api/img/$storageId'
+      fullPath: '/api/img/$storageId'
+      preLoaderRoute: typeof ApiImgStorageIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legal)/_layout/terms': {
+      id: '/(legal)/_layout/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof legalLayoutTermsRouteImport
+      parentRoute: typeof legalLayoutRoute
+    }
+    '/(legal)/_layout/privacy': {
+      id: '/(legal)/_layout/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof legalLayoutPrivacyRouteImport
+      parentRoute: typeof legalLayoutRoute
+    }
+    '/(legal)/_layout/cookies': {
+      id: '/(legal)/_layout/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof legalLayoutCookiesRouteImport
+      parentRoute: typeof legalLayoutRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute;
-  AuthLoginRoute: typeof AuthLoginRoute;
-  AuthMagicLinkRoute: typeof AuthMagicLinkRoute;
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute;
-  AuthSignupRoute: typeof AuthSignupRoute;
-  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute;
+  AuthCheckEmailRoute: typeof AuthCheckEmailRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthSignupRoute: typeof AuthSignupRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthCheckEmailRoute: AuthCheckEmailRoute,
   AuthLoginRoute: AuthLoginRoute,
-  AuthMagicLinkRoute: AuthMagicLinkRoute,
-  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AppSettingsRouteChildren {
-  AppSettingsBillingRoute: typeof AppSettingsBillingRoute;
-  AppSettingsDangerRoute: typeof AppSettingsDangerRoute;
-  AppSettingsProfileRoute: typeof AppSettingsProfileRoute;
-  AppSettingsSecurityRoute: typeof AppSettingsSecurityRoute;
-  AppSettingsIndexRoute: typeof AppSettingsIndexRoute;
+  AppSettingsBillingRoute: typeof AppSettingsBillingRoute
+  AppSettingsProfileRoute: typeof AppSettingsProfileRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
 }
 
 const AppSettingsRouteChildren: AppSettingsRouteChildren = {
   AppSettingsBillingRoute: AppSettingsBillingRoute,
-  AppSettingsDangerRoute: AppSettingsDangerRoute,
   AppSettingsProfileRoute: AppSettingsProfileRoute,
-  AppSettingsSecurityRoute: AppSettingsSecurityRoute,
   AppSettingsIndexRoute: AppSettingsIndexRoute,
-};
+}
 
-const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(AppSettingsRouteChildren);
+const AppSettingsRouteWithChildren = AppSettingsRoute._addFileChildren(
+  AppSettingsRouteChildren,
+)
 
 interface AppRouteChildren {
-  AppAdminRoute: typeof AppAdminRoute;
-  AppSettingsRoute: typeof AppSettingsRouteWithChildren;
-  AppIndexRoute: typeof AppIndexRoute;
+  AppAdminRoute: typeof AppAdminRoute
+  AppLibraryRoute: typeof AppLibraryRoute
+  AppSettingsRoute: typeof AppSettingsRouteWithChildren
+  AppSourcesRoute: typeof AppSourcesRoute
+  AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppLibraryRoute: AppLibraryRoute,
   AppSettingsRoute: AppSettingsRouteWithChildren,
+  AppSourcesRoute: AppSourcesRoute,
   AppIndexRoute: AppIndexRoute,
-};
+}
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren);
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface legalLayoutRouteChildren {
+  legalLayoutCookiesRoute: typeof legalLayoutCookiesRoute
+  legalLayoutPrivacyRoute: typeof legalLayoutPrivacyRoute
+  legalLayoutTermsRoute: typeof legalLayoutTermsRoute
+}
+
+const legalLayoutRouteChildren: legalLayoutRouteChildren = {
+  legalLayoutCookiesRoute: legalLayoutCookiesRoute,
+  legalLayoutPrivacyRoute: legalLayoutPrivacyRoute,
+  legalLayoutTermsRoute: legalLayoutTermsRoute,
+}
+
+const legalLayoutRouteWithChildren = legalLayoutRoute._addFileChildren(
+  legalLayoutRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   AppRoute: AppRouteWithChildren,
-  legalLayoutRoute: legalLayoutRoute,
-  legalCookiesRoute: legalCookiesRoute,
-  legalPrivacyRoute: legalPrivacyRoute,
-  legalTermsRoute: legalTermsRoute,
+  PricingRoute: PricingRoute,
+  legalLayoutRoute: legalLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImgStorageIdRoute: ApiImgStorageIdRoute,
-};
-export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
-import type { createStart } from "@tanstack/react-start";
-
-import type { getRouter } from "./router.tsx";
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }

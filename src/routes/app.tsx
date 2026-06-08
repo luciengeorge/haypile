@@ -1,9 +1,11 @@
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { ImpersonationBanner } from "@/components/admin/impersonation-banner";
+import { HaypileLockup } from "@/components/brand/haypile-lockup";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +14,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
 import { authClient } from "@/lib/auth-client";
 import { getSession } from "@/lib/functions/get-session";
 import { redirectWithToast } from "@/lib/functions/redirect-with-toast";
-
-const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Starter Template";
+import { getInitials } from "@/lib/initials";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -33,21 +46,73 @@ export const Route = createFileRoute("/app")({
   component: AppLayout,
 });
 
+type NavItem = {
+  to: "/app" | "/app/library" | "/app/sources" | "/app/settings";
+  label: string;
+  icon: ReactNode;
+  exact?: boolean;
+};
+
+const NAV: NavItem[] = [
+  { to: "/app", label: "Search", icon: <SearchIcon />, exact: true },
+  { to: "/app/library", label: "Library", icon: <LibraryIcon /> },
+  { to: "/app/sources", label: "Sources", icon: <SourcesIcon /> },
+  { to: "/app/settings", label: "Settings", icon: <SettingsIcon /> },
+];
+
 function AppLayout() {
   const { session } = Route.useRouteContext();
-  const navigate = useNavigate();
-  const { capture } = useAnalytics();
-
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   if (!session) return null;
 
-  const initials = session.user.name
-    ? session.user.name
-        .split(" ")
-        .map((part) => part[0])
-        .filter(Boolean)
-        .slice(0, 2)
-        .join("")
-    : session.user.email[0]?.toUpperCase();
+  return (
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader className="p-3">
+          <Link to="/app" className="px-1 py-0.5">
+            <HaypileLockup size={26} />
+          </Link>
+        </SidebarHeader>
+        <SidebarContent className="px-2">
+          <SidebarMenu>
+            {NAV.map((item) => (
+              <SidebarMenuItem key={item.to}>
+                <SidebarMenuButton
+                  isActive={item.exact ? pathname === item.to : pathname.startsWith(item.to)}
+                  render={<Link to={item.to} />}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
+          <AccountMenu name={session.user.name} email={session.user.email} image={session.user.image} />
+        </SidebarFooter>
+      </Sidebar>
+
+      <SidebarInset>
+        <ImpersonationBanner />
+        <header className="flex h-14 items-center gap-2 border-b px-4 lg:hidden">
+          <SidebarTrigger aria-label="Open navigation" />
+          <Link to="/app">
+            <HaypileLockup size={22} />
+          </Link>
+        </header>
+        <main className="flex-1 px-4 py-8 lg:px-10 lg:py-10">
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+
+function AccountMenu({ name, email, image }: { name?: string | null; email: string; image?: string | null }) {
+  const navigate = useNavigate();
+  const { capture } = useAnalytics();
+  const initials = getInitials(name, email);
 
   const handleSignOut = async () => {
     capture(AnalyticsEvent.userLogoutStarted);
@@ -64,39 +129,73 @@ function AppLayout() {
   };
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <ImpersonationBanner />
-      <header className="border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/app" className="text-lg font-semibold">
-            {APP_NAME}
-          </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full" />}>
-              <Avatar className="size-9">
-                <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? session.user.email} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex flex-col gap-1">
-                <span className="text-sm font-medium">{session.user.name ?? "Account"}</span>
-                <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link to="/app/settings/profile" />}>Settings</DropdownMenuItem>
-              <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
-              <DropdownMenuItem render={<Link to="/app/admin" />}>Admin</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
+            <Avatar className="size-8 rounded-lg">
+              <AvatarImage src={image ?? undefined} alt={name ?? email} />
+              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            </Avatar>
+            <span className="flex min-w-0 flex-col text-left leading-tight">
+              <span className="truncate text-sm font-medium">{name ?? "Account"}</span>
+              <span className="truncate text-xs text-muted-foreground">{email}</span>
+            </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="min-w-56">
+            <DropdownMenuLabel className="flex flex-col gap-1">
+              <span className="text-sm font-medium">{name ?? "Account"}</span>
+              <span className="truncate text-xs text-muted-foreground">{email}</span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem render={<Link to="/app/settings" />}>Settings</DropdownMenuItem>
+            <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
+            <DropdownMenuItem render={<Link to="/app/admin" />}>Admin</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
 
-      <main className="container mx-auto flex flex-1 flex-col px-4 py-8">
-        <Outlet />
-      </main>
-    </div>
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.2-3.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LibraryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="4" y="5" width="16" height="4.5" rx="1.5" />
+      <rect x="4" y="11.5" width="16" height="4.5" rx="1.5" />
+      <path d="M7 19h10" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SourcesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path d="M9 12a3 3 0 0 1 3-3h3a3 3 0 0 1 0 6h-1.5" strokeLinecap="round" />
+      <path d="M15 12a3 3 0 0 1-3 3H9a3 3 0 0 1 0-6h1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <path
+        d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }

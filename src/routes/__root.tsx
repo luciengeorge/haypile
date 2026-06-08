@@ -7,6 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
+import { NotFound } from "@/components/marketing/not-found";
 import { Toaster } from "@/components/ui/sonner";
 import { useToast } from "@/hooks/use-toast";
 import { getToast } from "@/lib/functions/get-toast";
@@ -22,10 +23,10 @@ interface RouterContext {
   queryClient: QueryClient;
 }
 
-const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Starter Template";
+const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 const SITE_URL = import.meta.env.VITE_SITE_URL ?? "http://localhost:3000";
 const TITLE = APP_NAME;
-const DESCRIPTION = `${APP_NAME} — built on the tanstack-starter-template.`;
+const DESCRIPTION = "Find anything you ever saved — across every corner of the internet.";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -39,6 +40,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
+      { name: "theme-color", content: "#2e7d6e" },
       { name: "robots", content: "index, follow" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
@@ -52,16 +54,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "canonical", href: SITE_URL },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
-      { rel: "apple-touch-icon", href: "/favicon.png" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "manifest", href: "/manifest.json" },
     ],
   }),
-  notFoundComponent: () => (
-    <main className="container mx-auto p-4 pt-16">
-      <h1 className="text-4xl font-bold">404</h1>
-      <p className="mt-2 text-muted-foreground">The requested page could not be found.</p>
-    </main>
-  ),
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 

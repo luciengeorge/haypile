@@ -24,6 +24,7 @@ import type * as email_templates_deleteAccount from "../email/templates/deleteAc
 import type * as email_templates_magicLink from "../email/templates/magicLink.js";
 import type * as email_templates_resetPassword from "../email/templates/resetPassword.js";
 import type * as email_templates_verify from "../email/templates/verify.js";
+import type * as email_templates_weeklyDigest from "../email/templates/weeklyDigest.js";
 import type * as email_templates_welcome from "../email/templates/welcome.js";
 import type * as embeddings_gemini from "../embeddings/gemini.js";
 import type * as embeddings_pipeline from "../embeddings/pipeline.js";
@@ -42,6 +43,7 @@ import type * as sync_registry from "../sync/registry.js";
 import type * as sync_run from "../sync/run.js";
 import type * as sync_state from "../sync/state.js";
 import type * as sync_types from "../sync/types.js";
+import type * as userPrefs from "../userPrefs.js";
 import type * as users from "../users.js";
 import type * as x from "../x.js";
 
@@ -68,6 +70,7 @@ declare const fullApi: ApiFromModules<{
   "email/templates/magicLink": typeof email_templates_magicLink;
   "email/templates/resetPassword": typeof email_templates_resetPassword;
   "email/templates/verify": typeof email_templates_verify;
+  "email/templates/weeklyDigest": typeof email_templates_weeklyDigest;
   "email/templates/welcome": typeof email_templates_welcome;
   "embeddings/gemini": typeof embeddings_gemini;
   "embeddings/pipeline": typeof embeddings_pipeline;
@@ -86,6 +89,7 @@ declare const fullApi: ApiFromModules<{
   "sync/run": typeof sync_run;
   "sync/state": typeof sync_state;
   "sync/types": typeof sync_types;
+  userPrefs: typeof userPrefs;
   users: typeof users;
   x: typeof x;
 }>;

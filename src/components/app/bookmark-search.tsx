@@ -1,9 +1,13 @@
 import { useAction } from "convex/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
+import type { SearchResult } from "@/components/app/search-result";
+
 import { api } from "@/../convex/_generated/api";
+import { SearchResults } from "@/components/app/search-results";
+import { HaypileMark } from "@/components/brand/haypile-mark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -17,66 +21,145 @@ const resultSchema = z.object({
   text: z.string().optional(),
   author: z.string().optional(),
   matchModality: z.string().optional(),
+  kind: z.string().optional(),
+  durationSec: z.number().optional(),
+  media: z.array(z.object({ type: z.string(), url: z.string(), durationSec: z.number().optional() })).optional(),
+  links: z
+    .array(
+      z.object({
+        url: z.string(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        imageUrl: z.string().optional(),
+      }),
+    )
+    .optional(),
+  thumbnailStorageId: z.string().optional(),
 });
-type Result = z.infer<typeof resultSchema>;
+
+const EXAMPLES = ["income tax", "that red car", "where I work", "css grid tricks"];
 
 export function BookmarkSearch() {
   const search = useAction(api.search.search);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Result[] | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [results, setResults] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [source, setSource] = useState("all");
 
-  const run = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  const run = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = String(new FormData(event.currentTarget).get("query") ?? "").trim();
+    if (!query) return;
     setLoading(true);
+    setSource("all");
     try {
       const raw = await search({ query });
       setResults(z.array(resultSchema).parse(raw));
-    } catch (err) {
-      toast.error("Search failed", { description: err instanceof Error ? err.message : "Unknown error" });
+    } catch (error) {
+      toast.error("Search failed", { description: error instanceof Error ? error.message : "Unknown error" });
     } finally {
       setLoading(false);
     }
   };
 
+  const runExample = (query: string) => {
+    const form = formRef.current;
+    if (!form) return;
+    const input = form.elements.namedItem("query");
+    if (input instanceof HTMLInputElement) {
+      input.value = query;
+      form.requestSubmit();
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-4">
-      <form onSubmit={run} className="flex gap-2">
+    <div className="flex flex-col gap-6">
+      <form ref={formRef} onSubmit={run} className="relative">
+        <SearchGlyph />
         <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search everything you've saved — e.g. “red car”, “where I work”"
-          aria-label="Search bookmarks"
+          name="query"
+          type="search"
+          autoComplete="off"
+          spellCheck={false}
+          enterKeyHint="search"
+          aria-label="Search everything you've saved"
+          placeholder="Search everything you've saved — try “income tax”…"
+          className="h-12 rounded-xl pr-28 pl-11 text-base"
         />
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="absolute inset-y-0 right-1.5 my-auto h-9">
           {loading ? <Spinner /> : "Search"}
         </Button>
       </form>
 
-      {results && results.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No matches. Try a different phrasing, or sync more sources.</p>
-      ) : null}
+      <div aria-live="polite" className="flex flex-col gap-6">
+        {loading ? <LoadingState /> : null}
+        {!loading && results && results.length === 0 ? <EmptyState /> : null}
+        {!loading && results && results.length > 0 ? (
+          <SearchResults results={results} selectedSource={source} onSelectSource={setSource} />
+        ) : null}
+      </div>
 
-      <ul className="flex flex-col gap-2">
-        {results?.map((r) => (
-          <li key={r._id}>
-            <a
-              href={r.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex flex-col gap-1 rounded-lg border p-3 transition-colors hover:bg-muted"
+      {!loading && !results ? (
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <span>Try</span>
+          {EXAMPLES.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => runExample(example)}
+              className="rounded-full border bg-card px-3 py-1 font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-accent"
             >
-              <span className="line-clamp-2 text-sm">{r.title || r.text || r.url}</span>
-              <span className="text-xs text-muted-foreground">
-                {r.source}
-                {r.author ? ` · @${r.author}` : ""}
-                {r.matchModality && r.matchModality !== "text" ? ` · ${r.matchModality} match` : ""}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+              {example}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SearchGlyph() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.2-3.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LoadingState() {
+  return (
+    <ul className="flex flex-col gap-2.5" aria-hidden="true">
+      {[0, 1, 2].map((row) => (
+        <li key={row} className="flex items-center gap-4 rounded-xl border bg-card p-3">
+          <span className="size-12 shrink-0 animate-pulse rounded-lg bg-muted motion-reduce:animate-none" />
+          <span className="flex flex-1 flex-col gap-2">
+            <span className="h-3.5 w-2/3 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+            <span className="h-3 w-1/3 animate-pulse rounded bg-muted motion-reduce:animate-none" />
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed bg-card/40 px-6 py-14 text-center">
+      <HaypileMark size={40} />
+      <div className="flex flex-col gap-1.5">
+        <p className="font-display text-lg font-semibold tracking-tight">No matches yet</p>
+        <p className="max-w-sm text-sm text-pretty text-muted-foreground">
+          Try different phrasing, or connect more sources so there's more to dig through.
+        </p>
+      </div>
     </div>
   );
 }

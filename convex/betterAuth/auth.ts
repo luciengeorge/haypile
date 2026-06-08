@@ -35,11 +35,17 @@ function getScheduler(ctx: GenericCtx<DataModel>) {
   return ctx.scheduler;
 }
 
-// X (Twitter) has no standard userinfo; /2/users/me returns { data: { id, name, username } }
-// with no email. We're *linking* X to an already-authenticated user, so email isn't used
-// to match/create a user — we synthesize a stable placeholder to satisfy the user shape.
+// X (Twitter) /2/users/me. With the users.email scope we request confirmed_email
+// (X-verified) + profile_image_url via user.fields. Powers both "Continue with X"
+// sign-in (real email + avatar) and linking X as a data source to an existing account.
 const xUserInfoSchema = z.object({
-  data: z.object({ id: z.string(), name: z.string(), username: z.string() }),
+  data: z.object({
+    id: z.string(),
+    name: z.string(),
+    username: z.string(),
+    confirmed_email: z.string().optional(),
+    profile_image_url: z.string().optional(),
+  }),
 });
 
 // Data-source OAuth connections (X bookmarks, etc.) via better-auth genericOAuth.
@@ -54,24 +60,29 @@ function buildGenericOAuthConfig() {
       authorizationUrl: "https://x.com/i/oauth2/authorize",
       tokenUrl: "https://api.x.com/2/oauth2/token",
       userInfoUrl: "https://api.x.com/2/users/me",
-      scopes: ["tweet.read", "users.read", "bookmark.read", "offline.access"],
+        scopes: ["tweet.read", "users.read", "users.email", "bookmark.read", "offline.access"],
       pkce: true,
       authentication: "basic" as const,
-      getUserInfo: async (tokens: { accessToken?: string }) => {
-        const res = await fetch("https://api.x.com/2/users/me", {
-          headers: { Authorization: `Bearer ${tokens.accessToken}` },
-        });
-        if (!res.ok) throw new Error(`X userinfo failed: ${res.status}`);
-        const { data } = xUserInfoSchema.parse(await res.json());
-        return {
-          id: data.id,
-          name: data.name,
-          email: `${data.username}@users.x.invalid`,
-          emailVerified: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-      },
+        getUserInfo: async (tokens: { accessToken?: string }) => {
+          const res = await fetch(
+            "https://api.x.com/2/users/me?user.fields=confirmed_email,profile_image_url",
+            { headers: { Authorization: `Bearer ${tokens.accessToken}` } },
+          );
+          if (!res.ok) throw new Error(`X userinfo failed: ${res.status}`);
+          const { data } = xUserInfoSchema.parse(await res.json());
+          // confirmed_email is X-verified. Synthetic fallback only for the rare account
+          // without one — magic-link can attach a real address later.
+          const email = data.confirmed_email ?? `${data.username}@users.x.invalid`;
+          return {
+            id: data.id,
+            name: data.name,
+            email,
+            emailVerified: Boolean(data.confirmed_email),
+            image: data.profile_image_url?.replace("_normal", "_400x400"),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+        },
     });
   }
   return config;
@@ -124,17 +135,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       // allowDifferentEmails: X is a data source, not an identity — its (synthetic)
       // email won't match the user's, so linking must not require an email match.
       accountLinking: { enabled: true, trustedProviders: ["x"], allowDifferentEmails: true },
-    },
-    emailAndPassword: {
-      ...sharedAuthConfig.emailAndPassword,
-      sendResetPassword: async ({ user, url }) => {
-        await getScheduler(ctx).runAfter(0, internal.email.send.sendEmail, {
-          to: user.email,
-          subject: `Reset your ${APP_NAME} password`,
-          template: "resetPassword",
-          props: { url, appName: APP_NAME },
-        });
-      },
     },
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {

@@ -13,6 +13,7 @@ import DeleteAccount from "./templates/deleteAccount";
 import MagicLinkEmail from "./templates/magicLink";
 import ResetPasswordEmail from "./templates/resetPassword";
 import VerifyEmail from "./templates/verify";
+import WeeklyDigestEmail from "./templates/weeklyDigest";
 import WelcomeEmail from "./templates/welcome";
 
 const TEMPLATES = {
@@ -23,6 +24,7 @@ const TEMPLATES = {
   changeEmail: ChangeEmail,
   deleteAccount: DeleteAccount,
   accountDeleted: AccountDeletedEmail,
+  weeklyDigest: WeeklyDigestEmail,
 } as const;
 
 type TemplateName = keyof typeof TEMPLATES;
@@ -50,6 +52,7 @@ export const sendEmail = internalAction({
       v.literal("changeEmail"),
       v.literal("deleteAccount"),
       v.literal("accountDeleted"),
+      v.literal("weeklyDigest"),
     ),
     props: v.any(),
   },

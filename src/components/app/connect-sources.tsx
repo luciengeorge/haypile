@@ -4,16 +4,19 @@ import { toast } from "sonner";
 
 import { api } from "@/../convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
+import { formatRelativeTime } from "@/lib/format";
+import { SOURCES, type SourceId } from "@/lib/sources";
+import { cn } from "@/lib/utils";
 
-function ago(ms: number): string {
-  const s = Math.round((Date.now() - ms) / 1000);
-  if (s < 60) return `${s}s ago`;
-  if (s < 3600) return `${Math.round(s / 60)}m ago`;
-  if (s < 86400) return `${Math.round(s / 3600)}h ago`;
-  return `${Math.round(s / 86400)}d ago`;
-}
+const SOURCE_HINT: Record<SourceId, string> = {
+  x: "your bookmarks",
+  github: "your starred repos are waiting",
+  youtube: "liked videos & playlists",
+  pinterest: "your pins & boards",
+  reddit: "your saved posts",
+  chrome: "import your browser bookmarks",
+};
 
 export function ConnectSources() {
   const status = useQuery(api.sync.state.mySyncStatus);
@@ -21,15 +24,19 @@ export function ConnectSources() {
   const runSourceNow = useMutation(api.sync.state.runSourceNow);
   const [busy, setBusy] = useState(false);
 
-  const x = status?.find((s) => s.source === "x");
+  const x = status?.find((source) => source.source === "x");
   const isConnected = connectedSources?.includes("x") ?? false;
+  // Count only our known sources (connectedSources can include non-source OAuth providers).
+  const connectedCount = SOURCES.filter((source) => connectedSources?.includes(source.id)).length;
 
   const connect = async () => {
     setBusy(true);
     try {
-      await authClient.oauth2.link({ providerId: "x", callbackURL: "/app" });
-    } catch (e) {
-      toast.error("Couldn't start X connection", { description: e instanceof Error ? e.message : "Unknown error" });
+      await authClient.oauth2.link({ providerId: "x", callbackURL: "/app/sources" });
+    } catch (error) {
+      toast.error("Couldn't start X connection", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
       setBusy(false);
     }
   };
@@ -39,37 +46,55 @@ export function ConnectSources() {
     try {
       await runSourceNow({ source: "x" });
       toast.success("Syncing X bookmarks…");
-    } catch (e) {
-      toast.error("Couldn't queue sync", { description: e instanceof Error ? e.message : "Unknown error" });
+    } catch (error) {
+      toast.error("Couldn't queue sync", { description: error instanceof Error ? error.message : "Unknown error" });
     } finally {
       setBusy(false);
     }
   };
 
+  const xMeta = !isConnected
+    ? `Not connected · ${SOURCE_HINT.x}`
+    : x?.status === "running"
+      ? "Syncing…"
+      : x?.lastSuccessAt
+        ? `Synced ${formatRelativeTime(x.lastSuccessAt)}`
+        : "Connected · not synced yet";
+
+  const comingSoon = SOURCES.filter((source) => source.id !== "x");
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sources</CardTitle>
-        <CardDescription>Connect an account to sync and search what you've saved.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
-          <div className="flex flex-col gap-0.5">
-            <span className="font-medium">X bookmarks</span>
-            <span className="text-xs text-muted-foreground">
-              {!isConnected
-                ? "Not connected"
-                : x
-                  ? `${x.status}${x.lastSuccessAt ? ` · synced ${ago(x.lastSuccessAt)}` : " · not synced yet"}`
-                  : "Connected · not synced yet"}
-              {x?.error ? ` · ${x.error}` : ""}
+    <div className="flex flex-col gap-8">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="font-display text-3xl font-semibold tracking-tight">Sources</h1>
+          <p className="text-pretty text-muted-foreground">
+            Connect where you save. The more you link, the more Haypile can find.
+          </p>
+        </div>
+        <CoverageMeter connected={connectedCount} total={SOURCES.length} />
+      </header>
+
+      <ul className="flex flex-col gap-3">
+        <li className="flex items-center justify-between gap-4 rounded-xl border bg-card p-4">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-foreground text-background">
+              <XIcon />
             </span>
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="font-medium">X</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {xMeta}
+                {x?.error ? ` · ${x.error}` : ""}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             {isConnected ? (
               <>
-                <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-                  <span aria-hidden>✓</span> Connected
+                <span className="hidden items-center gap-1.5 text-sm font-medium text-primary sm:inline-flex">
+                  <CheckGlyph />
+                  Connected
                 </span>
                 <Button size="sm" onClick={syncNow} disabled={busy}>
                   Sync now
@@ -77,12 +102,65 @@ export function ConnectSources() {
               </>
             ) : (
               <Button variant="outline" size="sm" onClick={connect} disabled={busy}>
-                Connect X
+                Connect
               </Button>
             )}
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </li>
+
+        {comingSoon.map((source) => (
+          <li
+            key={source.id}
+            className="flex items-center justify-between gap-4 rounded-xl border border-dashed bg-card/40 p-4"
+          >
+            <div className="flex min-w-0 items-center gap-3.5">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-semibold text-muted-foreground">
+                {source.label.charAt(0)}
+              </span>
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <span className="font-medium text-muted-foreground">{source.label}</span>
+                <span className="truncate text-xs text-muted-foreground/80">
+                  Not connected · {SOURCE_HINT[source.id]}
+                </span>
+              </div>
+            </div>
+            <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              Coming soon
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function CoverageMeter({ connected, total }: { connected: number; total: number }) {
+  return (
+    <div className="flex flex-col items-start gap-1.5 sm:items-end">
+      <span className="text-sm font-medium">
+        {connected} of {total} connected
+      </span>
+      <div className="flex gap-1" aria-hidden="true">
+        {Array.from({ length: total }, (_, index) => (
+          <span key={index} className={cn("size-2 rounded-full", index < connected ? "bg-primary" : "bg-border")} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function CheckGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="size-4" aria-hidden="true">
+      <path d="m5 13 4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }

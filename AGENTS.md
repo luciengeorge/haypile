@@ -45,7 +45,15 @@ Schema: `items` (one per saved thing) + `itemVectors` (embeddings) + `syncJobs`.
 - **Use `type` aliases**, not `interface` (interface only for declaration merging).
 - **Errors: throw, catch at boundaries** (route/action + Sentry). No Result objects in
   app logic.
-- **React: small files, split aggressively, colocate** near the route.
+- **React: one component per file.** Each standalone component gets its own kebab-case
+  file named after it (`AuthForm` → `auth-form.tsx`); don't pile unrelated standalone
+  components together. **Exception — composition / compound components:** a parent and the
+  sub-parts it's composed of (shadcn-style, e.g. `Card` + `CardHeader` + `CardContent`, or
+  anything in `components/ui/*`) may live in one file. A component reused across features is
+  standalone → give it its own file. Route files hold only the route + its page component;
+  extract standalone components and colocate near the route. Pure helpers/types/constants
+  aren't components — put them in a sibling `*.ts`. Single-use SVGs: inline as JSX, not named
+  components; reused icons get their own file.
 - **Narration: brief** — what changed + why, then move on.
 
 ## Stack snapshot

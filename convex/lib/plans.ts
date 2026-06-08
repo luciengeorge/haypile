@@ -20,36 +20,39 @@ type Plan = {
   limits: Record<string, number>;
 };
 
+// Prices in GBP. Caps are item caps (one-time embed per item). Video + deep-link
+// embedding is Pro-only (gated in requirePlan/pipeline, not a numeric limit).
+// See docs/pricing-caps.md for the full locked model.
 export const PLANS: Record<PlanId, Plan> = {
   free: {
-    name: "Free",
-    description: "Try the product, no credit card required.",
+    name: "Trial",
+    description: "14 days to dig through everything you've saved.",
     priceId: { polar: null, stripe: null },
     monthlyPrice: 0,
     yearlyPrice: 0,
-    limits: {},
+    limits: { maxItems: 1000 },
   },
   starter: {
     name: "Starter",
-    description: "For individuals shipping side projects.",
+    description: "Text & image search across all your sources.",
     priceId: {
       polar: process.env.POLAR_PRODUCT_STARTER ?? null,
       stripe: process.env.STRIPE_PRICE_STARTER ?? null,
     },
-    monthlyPrice: 4,
-    yearlyPrice: 36,
-    limits: {},
+    monthlyPrice: 6,
+    yearlyPrice: 60,
+    limits: { maxItems: 2000 },
   },
   pro: {
     name: "Pro",
-    description: "For power users.",
+    description: "Everything — including video & link search.",
     priceId: {
       polar: process.env.POLAR_PRODUCT_PRO ?? null,
       stripe: process.env.STRIPE_PRICE_PRO ?? null,
     },
-    monthlyPrice: 9,
-    yearlyPrice: 72,
-    limits: {},
+    monthlyPrice: 12,
+    yearlyPrice: 120,
+    limits: { maxItems: 20000, maxVideos: 2000 },
   },
 };
 
@@ -65,4 +68,10 @@ export function planMeetsRequirement(userPlan: PlanId, required: PlanId): boolea
 
 export function getPlanLimit(plan: PlanId, key: string): number | undefined {
   return PLANS[plan].limits[key];
+}
+
+// Video + deep-link embedding are the COGS driver, so they're Pro-only.
+// Trial + Starter get text + image. See docs/pricing-caps.md.
+export function allowsRichMedia(plan: PlanId): boolean {
+  return plan === "pro";
 }

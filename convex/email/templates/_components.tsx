@@ -1,25 +1,35 @@
 import type { ReactNode } from "react";
 
-import { Button, Section, Text } from "@react-email/components";
+import { Button, Heading, Section, Text } from "@react-email/components";
 
 /**
- * Shared email building blocks. Keep brand-specific values in env vars so the
- * template stays generic across products:
- *
- * - BRAND_COLOR   — hex for buttons + accents (default near-black)
+ * Shared email building blocks — Haypile "Mineral" brand.
+ * - BRAND_COLOR   — CTA/accent hex (defaults to verdigris)
  * - SUPPORT_EMAIL — reply-to / help address (falls back to RESEND_FROM_EMAIL)
- * - EMAIL_SIGNOFF — signature line, e.g. "— Lucien, founder of MyApp"
+ * - EMAIL_SIGNOFF — signature line, e.g. "— The Haypile team"
  */
 
 export function brandColor(): string {
-  return process.env.BRAND_COLOR ?? "#0a0a0a";
+  return process.env.BRAND_COLOR ?? "#2e7d6e";
 }
 
 export function supportEmail(): string | undefined {
   return process.env.SUPPORT_EMAIL ?? process.env.RESEND_FROM_EMAIL;
 }
 
-/** Primary CTA button, themed by BRAND_COLOR. Pass `destructive` for red. */
+/** Display heading in the brand serif. */
+export function EmailHeading({ children }: { children: ReactNode }) {
+  return (
+    <Heading
+      style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "#1b1a18" }}
+      className="mt-0 mb-4 text-2xl font-bold tracking-tight"
+    >
+      {children}
+    </Heading>
+  );
+}
+
+/** Primary CTA button (verdigris). Pass `destructive` for the brand red. */
 export function BrandButton({
   href,
   children,
@@ -33,8 +43,8 @@ export function BrandButton({
     <Section className="my-7 text-center">
       <Button
         href={href}
-        style={{ backgroundColor: destructive ? "#dc2626" : brandColor() }}
-        className="inline-block rounded-lg px-6 py-3 text-sm font-semibold text-white no-underline"
+        style={{ backgroundColor: destructive ? "#b23a2e" : brandColor(), color: "#f7f4ec" }}
+        className="inline-block rounded-lg px-6 py-3 text-sm font-semibold no-underline"
       >
         {children}
       </Button>
@@ -45,37 +55,37 @@ export function BrandButton({
 /** Fallback URL block shown under CTAs for clients that strip buttons. */
 export function FallbackUrl({ url }: { url: string }) {
   return (
-    <Text className="text-sm leading-5 text-gray-500">
+    <Text style={{ color: "#8a8d86" }} className="text-sm leading-5">
       Or paste this link into your browser:
       <br />
-      <a href={url} className="break-all text-gray-700">
+      <a href={url} style={{ color: "#2e7d6e", wordBreak: "break-all" }}>
         {url}
       </a>
     </Text>
   );
 }
 
-/**
- * Security panel for sensitive emails (password reset, account deletion,
- * email change). Gives the user clear steps if the request wasn't theirs.
- */
+/** Security panel for sensitive emails (account deletion, email change). */
 export function SecurityNotice({ action }: { action: string }) {
   const support = supportEmail();
   return (
-    <Section className="my-6 rounded-lg border border-solid border-gray-200 bg-gray-50 px-4 py-3">
-      <Text className="m-0 text-sm font-semibold text-gray-900">Didn't request this?</Text>
-      <Text className="mt-1 mb-0 text-sm leading-5 text-gray-600">
-        If you didn't {action}, you can safely ignore this email. For your security, consider changing your password
+    <Section style={{ backgroundColor: "#f2eee5", border: "1px solid #e2dccf" }} className="my-6 rounded-lg px-4 py-3">
+      <Text style={{ color: "#1b1a18" }} className="m-0 text-sm font-semibold">
+        Didn't request this?
+      </Text>
+      <Text style={{ color: "#62655e" }} className="mt-1 mb-0 text-sm leading-5">
+        If you didn't {action}, you can safely ignore this email
         {support ? (
           <>
             {" "}
-            and emailing{" "}
-            <a href={`mailto:${support}`} className="text-gray-700">
+            — or email{" "}
+            <a href={`mailto:${support}`} style={{ color: "#2e7d6e" }}>
               {support}
-            </a>
+            </a>{" "}
+            if you're concerned
           </>
-        ) : null}{" "}
-        if you think someone has access to your account.
+        ) : null}
+        .
       </Text>
     </Section>
   );
@@ -85,5 +95,9 @@ export function SecurityNotice({ action }: { action: string }) {
 export function Signoff() {
   const signoff = process.env.EMAIL_SIGNOFF;
   if (!signoff) return null;
-  return <Text className="mt-6 text-base leading-6 text-gray-700">{signoff}</Text>;
+  return (
+    <Text style={{ color: "#62655e" }} className="mt-6 text-base leading-6">
+      {signoff}
+    </Text>
+  );
 }

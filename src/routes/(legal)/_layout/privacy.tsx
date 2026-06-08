@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Starter Template";
+const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 
-export const Route = createFileRoute("/(legal)/privacy")({
+export const Route = createFileRoute("/(legal)/_layout/privacy")({
   component: PrivacyPage,
 });
 

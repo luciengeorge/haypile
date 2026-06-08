@@ -4,9 +4,11 @@ import { v } from "convex/values";
 
 import { internal } from "../_generated/api";
 import { internalAction } from "../_generated/server";
+import { planForUserId } from "../billing/gating";
+import { allowsRichMedia } from "../lib/plans";
 import { embedImage, embedText, embedVideoSegment } from "./gemini";
 
-// Cost levers (tunable; per-plan gating via requirePlan() lands later).
+// Cost levers. Video + deep-link fetch are gated to Pro via allowsRichMedia (see gating.ts).
 const MAX_IMAGES = 4; // X allows ≤4 photos per tweet
 const MAX_LINKS = 3; // fetch + embed at most this many links per item
 const MAX_VIDEO_SEC = 60; // cap how much of a video we embed
@@ -74,6 +76,9 @@ export const embedItem = internalAction({
     const item = await ctx.runQuery(internal.items.getForEmbed, { itemId });
     if (!item) return;
 
+    // Video + deep-link embedding (the COGS driver) are Pro-only; everyone gets text + image.
+    const richMedia = allowsRichMedia(await planForUserId(ctx, item.userId));
+
     try {
       const vectors: VectorRow[] = [];
 
@@ -92,7 +97,7 @@ export const embedItem = internalAction({
           if (m.type === "image") {
             const img = await fetchAsBase64(m.url, MAX_MEDIA_BYTES);
             if (img) vectors.push({ modality: "image", embedding: await embedImage({ ...img, contextText: item.title }) });
-          } else {
+          } else if (richMedia) {
             const vid = await fetchAsBase64(m.url, MAX_MEDIA_BYTES);
             if (vid) {
               const end = Math.min(m.durationSec ?? MAX_VIDEO_SEC, MAX_VIDEO_SEC);
@@ -105,8 +110,8 @@ export const embedItem = internalAction({
         }
       }
 
-      // 3. Links: the link's preview image + its fetched page content.
-      for (const l of (item.links ?? []).slice(0, MAX_LINKS)) {
+      // 3. Links (Pro only): the link's preview image + its fetched page content.
+      for (const l of richMedia ? (item.links ?? []).slice(0, MAX_LINKS) : []) {
         try {
           if (l.imageUrl) {
             const img = await fetchAsBase64(l.imageUrl, MAX_MEDIA_BYTES);

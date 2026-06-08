@@ -34,6 +34,17 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
   }
 }
 
+/**
+ * Resolve a user's plan by id, without an auth session — for background jobs like the
+ * embed pipeline. If billing isn't configured (no POLAR_ACCESS_TOKEN), returns "pro"
+ * so dev / self-host keeps full features instead of being silently downgraded.
+ */
+export async function planForUserId(ctx: GenericActionCtx<DataModel>, userId: string): Promise<PlanId> {
+  if (!process.env.POLAR_ACCESS_TOKEN) return "pro";
+  const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId });
+  return derivePlan(subscription?.productId);
+}
+
 function derivePlan(productId: string | undefined): PlanId {
   if (!productId) return "free";
   if (productId === process.env.POLAR_PRODUCT_PRO) return "pro";

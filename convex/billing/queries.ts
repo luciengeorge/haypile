@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "../_generated/server";
+import { action, query } from "../_generated/server";
 import { authComponent } from "../betterAuth/auth";
 import { polar } from "./polar";
 
@@ -31,6 +31,10 @@ export const mySubscription = query({
   },
 });
 
+// Re-export Polar's hosted customer portal action. Payment method, invoices, and
+// cancellation all live in the portal, so "Manage billing" just opens it.
+export const { generateCustomerPortalUrl } = polar.api();
+
 function deriveplan(productId: string | undefined): "free" | "starter" | "pro" {
   if (!productId) return "free";
   if (productId === process.env.POLAR_PRODUCT_PRO) return "pro";
@@ -39,10 +43,11 @@ function deriveplan(productId: string | undefined): "free" | "starter" | "pro" {
 }
 
 /**
- * Mutation that creates a Polar checkout session for the authenticated user.
+ * Action that creates a Polar checkout session for the authenticated user.
+ * Must be an action — the Polar SDK uses fetch(), which queries/mutations can't.
  * Returns the checkout URL — the client redirects to it.
  */
-export const createCheckout = mutation({
+export const createCheckout = action({
   args: {
     plan: v.union(v.literal("starter"), v.literal("pro")),
     successUrl: v.string(),

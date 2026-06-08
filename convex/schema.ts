@@ -99,4 +99,12 @@ export default defineSchema({
   })
     .index("by_user_source", ["userId", "source"])
     .index("by_status_next_run", ["status", "nextRunAt"]),
+
+  /** Per-user notification preferences. One row per user, created on first write. */
+  userPrefs: defineTable({
+    userId: v.string(),
+    weeklyDigest: v.boolean(),
+    newFromSources: v.boolean(),
+    productUpdates: v.boolean(),
+  }).index("by_user", ["userId"]),
 });

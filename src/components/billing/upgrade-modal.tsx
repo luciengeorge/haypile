@@ -1,8 +1,9 @@
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { api } from "@/../convex/_generated/api";
+import { PLANS } from "@/../convex/lib/plans";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,14 +21,14 @@ type Plan = "starter" | "pro";
 
 const PLAN_DETAILS: Record<Plan, { name: string; price: string; features: string[] }> = {
   starter: {
-    name: "Starter",
-    price: "£4 / month",
-    features: ["Core features", "Email support", "Sweet spot for individuals"],
+    name: PLANS.starter.name,
+    price: `£${PLANS.starter.monthlyPrice} / month`,
+    features: ["2,000 saves", "Text & image search", "All your sources"],
   },
   pro: {
-    name: "Pro",
-    price: "£9 / month",
-    features: ["Everything in Starter", "Higher limits", "Priority support"],
+    name: PLANS.pro.name,
+    price: `£${PLANS.pro.monthlyPrice} / month`,
+    features: ["20,000 saves", "Adds video & link search", "Priority support"],
   },
 };
 
@@ -38,7 +39,7 @@ type UpgradeModalProps = {
 };
 
 export function UpgradeModal({ trigger, defaultPlan = "pro", reason }: UpgradeModalProps) {
-  const createCheckout = useMutation(api.billing.queries.createCheckout);
+  const createCheckout = useAction(api.billing.queries.createCheckout);
   const [selected, setSelected] = useState<Plan>(defaultPlan);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
