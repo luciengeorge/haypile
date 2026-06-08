@@ -39,7 +39,7 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
  * embed pipeline. If billing isn't configured (no POLAR_ACCESS_TOKEN), returns "pro"
  * so dev / self-host keeps full features instead of being silently downgraded.
  */
-export async function planForUserId(ctx: GenericActionCtx<DataModel>, userId: string): Promise<PlanId> {
+export async function planForUserId(ctx: AnyCtx, userId: string): Promise<PlanId> {
   if (!process.env.POLAR_ACCESS_TOKEN) return "pro";
   const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId });
   return planForProductId(subscription?.productId);

@@ -22,6 +22,15 @@ export async function bumpItemCount(ctx: MutationCtx, userId: string, delta: num
   }
 }
 
+/** Current saved-item count for a user (O(1), from the denormalized counter). */
+export async function getItemCount(ctx: MutationCtx, userId: string): Promise<number> {
+  const row = await ctx.db
+    .query("itemCounts")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .unique();
+  return row?.count ?? 0;
+}
+
 /** Load an item for the embedding pipeline. */
 export const getForEmbed = internalQuery({
   args: { itemId: v.id("items") },

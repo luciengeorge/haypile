@@ -1,7 +1,9 @@
 import z from "zod";
 
 import { internal } from "../../_generated/api";
-import { bumpItemCount } from "../../items";
+import { planForUserId } from "../../billing/gating";
+import { bumpItemCount, getItemCount } from "../../items";
+import { getPlanLimit } from "../../lib/plans";
 import type { SyncAdapter } from "../types";
 
 const X_API = "https://api.x.com/2";
@@ -190,6 +192,11 @@ export const xAdapter: SyncAdapter = {
 
   async persist(ctx, { userId, items }) {
     const now = Date.now();
+    // Plan item cap: once at the cap we still update existing saves, but stop
+    // indexing *new* ones (the pricing promise: "pause indexing new items,
+    // nothing is ever deleted"). Resumes automatically when the user upgrades.
+    const cap = getPlanLimit(await planForUserId(ctx, userId), "maxItems");
+    let count = await getItemCount(ctx, userId);
     for (const raw of items) {
       const item = persistItemSchema.parse(raw);
       const text = clean(item.text);
@@ -215,6 +222,7 @@ export const xAdapter: SyncAdapter = {
         await ctx.db.patch(existing._id, { text, title, author, media, links, syncedAt: now });
         continue;
       }
+      if (cap !== undefined && count >= cap) continue;
       const itemId = await ctx.db.insert("items", {
         userId,
         source: "x",
@@ -231,6 +239,7 @@ export const xAdapter: SyncAdapter = {
         embedStatus: "pending",
       });
       await bumpItemCount(ctx, userId, 1);
+      count++;
       await ctx.scheduler.runAfter(0, internal.embeddings.pipeline.embedItem, { itemId });
     }
   },

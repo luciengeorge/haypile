@@ -53,11 +53,18 @@ Video is the COGS driver: ~40–100× a text/image item.
 2. **Video frame cap**: 0.25 fps, ≤60s ⇒ ≤15 frames/video. Keep low fps.
 3. **Per-account video safety cap** (~2,000 videos) even within Pro's 20,000 items.
 
-## Implementation notes (deferred)
+## Implementation status
 
-- `convex/lib/plans.ts`: replace placeholder prices (4/9) with 6/60 and 12/120; fill `limits` (`maxItems` 2000/20000, `maxVideos` ~2000).
-- `requirePlan`: gate `video_segment` + link deep-fetch to Pro rank.
-- `convex/embeddings/pipeline.ts`: move global frame/img/link consts to per-plan; enforce 0.25 fps.
+DONE:
+- `convex/lib/plans.ts`: prices 6/60 + 12/120; `limits.maxItems` 1000/2000/20000, Pro `maxVideos` 2000; `allowsRichMedia`.
+- Modality gating: `video_segment` + link deep-fetch are Pro-only (`allowsRichMedia` in `embeddings/pipeline.ts`, plan via `planForUserId`).
+- **Item cap enforced**: `sync/adapters/*.persist` stops indexing *new* items once `itemCounts >= maxItems` (existing saves still update; resumes on upgrade). Backed by the denormalized `itemCounts` counter.
+
+Deferred:
+- Per-account video safety cap (~2,000 videos) within Pro — needs a video-segment counter.
+- Trial 14-day expiry (search locks; retain 30 days then purge).
+- On Pro upgrade: one-time backfill of existing video + deep-link items.
+- `convex/embeddings/pipeline.ts`: per-plan frame/img/link consts (0.25 fps already enforced via MAX_VIDEO_SEC/VIDEO_FPS).
 - Rename `free` plan id → `trial` in plans.ts; `limits.maxItems` 1000, `trialDays` 14, no video/link.
 - Trial: skip `video_segment` + link fan-out until upgrade; enforce 14-day expiry (search locks, data retained 30 days then purge).
 - On Pro upgrade: one-time backfill of existing video + deep-link items (monetized COGS spike, acceptable).
