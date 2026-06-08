@@ -23,10 +23,12 @@ export const polar = new Polar(components.polar, {
   products: {
     starter: process.env.POLAR_PRODUCT_STARTER ?? "",
     pro: process.env.POLAR_PRODUCT_PRO ?? "",
+    starterAnnual: process.env.POLAR_PRODUCT_STARTER_ANNUAL ?? "",
+    proAnnual: process.env.POLAR_PRODUCT_PRO_ANNUAL ?? "",
   },
   organizationToken: process.env.POLAR_ACCESS_TOKEN,
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET,
-  server: (process.env.POLAR_SERVER as "sandbox" | "production" | undefined) ?? "production",
+  server: process.env.POLAR_SERVER === "sandbox" ? "sandbox" : "production",
 });
 
 /**

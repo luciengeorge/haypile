@@ -75,3 +75,21 @@ export function getPlanLimit(plan: PlanId, key: string): number | undefined {
 export function allowsRichMedia(plan: PlanId): boolean {
   return plan === "pro";
 }
+
+export type BillingCycle = "monthly" | "annual";
+
+export function planPrice(plan: PlanId, cycle: BillingCycle): number {
+  return cycle === "annual" ? PLANS[plan].yearlyPrice : PLANS[plan].monthlyPrice;
+}
+
+// Map a Polar product ID back to a plan. Each plan has monthly + annual products,
+// so callers pass both IDs per plan (from env). Unknown / missing ⇒ "free".
+export function planFromProductId(
+  productId: string | undefined,
+  ids: { starter: (string | undefined)[]; pro: (string | undefined)[] },
+): PlanId {
+  if (!productId) return "free";
+  if (ids.pro.includes(productId)) return "pro";
+  if (ids.starter.includes(productId)) return "starter";
+  return "free";
+}

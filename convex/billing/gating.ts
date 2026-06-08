@@ -3,7 +3,7 @@ import type { GenericQueryCtx, GenericMutationCtx, GenericActionCtx } from "conv
 import type { DataModel } from "../_generated/dataModel";
 
 import { authComponent } from "../betterAuth/auth";
-import { type PlanId, planMeetsRequirement } from "../lib/plans";
+import { type PlanId, planFromProductId, planMeetsRequirement } from "../lib/plans";
 import { polar } from "./polar";
 
 type AnyCtx = GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel> | GenericActionCtx<DataModel>;
@@ -28,7 +28,7 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
     ? await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId: user._id })
     : null;
 
-  const plan = derivePlan(subscription?.productId);
+  const plan = planForProductId(subscription?.productId);
   if (!planMeetsRequirement(plan, required)) {
     throw new Error(`Requires ${required} plan. Current plan: ${plan}.`);
   }
@@ -42,12 +42,13 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
 export async function planForUserId(ctx: GenericActionCtx<DataModel>, userId: string): Promise<PlanId> {
   if (!process.env.POLAR_ACCESS_TOKEN) return "pro";
   const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId });
-  return derivePlan(subscription?.productId);
+  return planForProductId(subscription?.productId);
 }
 
-function derivePlan(productId: string | undefined): PlanId {
-  if (!productId) return "free";
-  if (productId === process.env.POLAR_PRODUCT_PRO) return "pro";
-  if (productId === process.env.POLAR_PRODUCT_STARTER) return "starter";
-  return "free";
+// Resolve a plan from a Polar product ID, matching both the monthly and annual products.
+export function planForProductId(productId: string | undefined): PlanId {
+  return planFromProductId(productId, {
+    starter: [process.env.POLAR_PRODUCT_STARTER, process.env.POLAR_PRODUCT_STARTER_ANNUAL],
+    pro: [process.env.POLAR_PRODUCT_PRO, process.env.POLAR_PRODUCT_PRO_ANNUAL],
+  });
 }

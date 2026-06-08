@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { action, query } from "../_generated/server";
 import { authComponent } from "../betterAuth/auth";
+import { planForProductId } from "./gating";
 import { polar } from "./polar";
 
 /**
@@ -24,7 +25,7 @@ export const mySubscription = query({
     });
 
     return {
-      plan: deriveplan(subscription?.productId),
+      plan: planForProductId(subscription?.productId),
       customerId: customer.id,
       subscription,
     };
@@ -35,11 +36,11 @@ export const mySubscription = query({
 // cancellation all live in the portal, so "Manage billing" just opens it.
 export const { generateCustomerPortalUrl } = polar.api();
 
-function deriveplan(productId: string | undefined): "free" | "starter" | "pro" {
-  if (!productId) return "free";
-  if (productId === process.env.POLAR_PRODUCT_PRO) return "pro";
-  if (productId === process.env.POLAR_PRODUCT_STARTER) return "starter";
-  return "free";
+function checkoutProductId(plan: "starter" | "pro", cycle: "monthly" | "annual"): string | undefined {
+  if (cycle === "annual") {
+    return plan === "pro" ? process.env.POLAR_PRODUCT_PRO_ANNUAL : process.env.POLAR_PRODUCT_STARTER_ANNUAL;
+  }
+  return plan === "pro" ? process.env.POLAR_PRODUCT_PRO : process.env.POLAR_PRODUCT_STARTER;
 }
 
 /**
@@ -50,14 +51,15 @@ function deriveplan(productId: string | undefined): "free" | "starter" | "pro" {
 export const createCheckout = action({
   args: {
     plan: v.union(v.literal("starter"), v.literal("pro")),
+    cycle: v.optional(v.union(v.literal("monthly"), v.literal("annual"))),
     successUrl: v.string(),
   },
-  handler: async (ctx, { plan, successUrl }) => {
+  handler: async (ctx, { plan, cycle = "monthly", successUrl }) => {
     const user = await authComponent.getAuthUser(ctx);
     if (!user) throw new Error("Not authenticated");
 
-    const productId = plan === "pro" ? process.env.POLAR_PRODUCT_PRO : process.env.POLAR_PRODUCT_STARTER;
-    if (!productId) throw new Error(`Polar product ID not configured for plan '${plan}'.`);
+    const productId = checkoutProductId(plan, cycle);
+    if (!productId) throw new Error(`Polar product ID not configured for plan '${plan}' (${cycle}).`);
 
     const checkout = await polar.createCheckoutSession(ctx, {
       productIds: [productId],
