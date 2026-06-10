@@ -7,6 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
+import { GlobalLoading } from "@/components/global-loading";
 import { NotFound } from "@/components/marketing/not-found";
 import { Toaster } from "@/components/ui/sonner";
 import { useToast } from "@/hooks/use-toast";
@@ -79,6 +80,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         <GoogleAnalyticsScripts />
       </head>
       <body className="font-sans antialiased">
+        <GlobalLoading />
         <Analytics />
         <SpeedInsights />
         <GoogleAnalyticsPageViews />
