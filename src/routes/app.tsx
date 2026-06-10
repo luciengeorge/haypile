@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
-import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 
 import { ImpersonationBanner } from "@/components/admin/impersonation-banner";
 import { HaypileLockup } from "@/components/brand/haypile-lockup";
@@ -9,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -26,8 +26,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
-import { authClient } from "@/lib/auth-client";
+import { useSignOut } from "@/hooks/use-sign-out";
 import { getSession } from "@/lib/functions/get-session";
 import { redirectWithToast } from "@/lib/functions/redirect-with-toast";
 import { getInitials } from "@/lib/initials";
@@ -110,23 +109,8 @@ function AppLayout() {
 }
 
 function AccountMenu({ name, email, image }: { name?: string | null; email: string; image?: string | null }) {
-  const navigate = useNavigate();
-  const { capture } = useAnalytics();
+  const handleSignOut = useSignOut();
   const initials = getInitials(name, email);
-
-  const handleSignOut = async () => {
-    capture(AnalyticsEvent.userLogoutStarted);
-    try {
-      await authClient.signOut();
-      capture(AnalyticsEvent.userLoggedOut);
-      toast.success("Signed out");
-      navigate({ to: "/" });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      capture(AnalyticsEvent.userLogoutFailed, { error_message: message });
-      toast.error("Sign out failed", { description: message });
-    }
-  };
 
   return (
     <SidebarMenu>
@@ -143,10 +127,12 @@ function AccountMenu({ name, email, image }: { name?: string | null; email: stri
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="min-w-56">
-            <DropdownMenuLabel className="flex flex-col gap-1">
-              <span className="text-sm font-medium">{name ?? "Account"}</span>
-              <span className="truncate text-xs text-muted-foreground">{email}</span>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="flex flex-col gap-1">
+                <span className="text-sm font-medium">{name ?? "Account"}</span>
+                <span className="truncate text-xs text-muted-foreground">{email}</span>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link to="/app/settings" />}>Settings</DropdownMenuItem>
             <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
