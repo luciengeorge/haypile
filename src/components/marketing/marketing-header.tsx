@@ -30,7 +30,7 @@ export function MarketingHeader() {
           ))}
           {user ? null : (
             <Link to="/login" className="transition-colors hover:text-foreground">
-              Log in
+              Sign in
             </Link>
           )}
         </nav>
@@ -47,7 +47,7 @@ export function MarketingHeader() {
                 nativeButton={false}
                 render={<Link to="/login" />}
               >
-                Log in
+                Sign in
               </Button>
               <Button size="sm" nativeButton={false} render={<Link to="/signup" />}>
                 Start free trial

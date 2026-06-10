@@ -43,7 +43,7 @@ export function MarketingAccountMenu({ user }: { user: AccountUser }) {
         <DropdownMenuItem render={<Link to="/app/settings" />}>Settings</DropdownMenuItem>
         <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={signOut}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={signOut}>Sign out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -138,7 +138,7 @@ function AccountMenu({ name, email, image }: { name?: string | null; email: stri
             <DropdownMenuItem render={<Link to="/app/settings/billing" />}>Billing</DropdownMenuItem>
             <DropdownMenuItem render={<Link to="/app/admin" />}>Admin</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
