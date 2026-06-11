@@ -48,14 +48,15 @@ function LandingPage() {
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium tracking-[0.1em] text-primary uppercase">
               <span className="size-1.5 rounded-full bg-gold" />
-              Everything you've saved, in one place
+              Search inside your images &amp; videos
             </span>
             <h1 className="mt-6 font-display text-5xl leading-[1.02] font-semibold tracking-tight text-balance sm:text-6xl">
               Find anything <span className="italic">you ever saved.</span>
             </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
-              Haypile pulls together everything you've bookmarked across X, YouTube, Reddit, Pinterest, GitHub and your
-              browser — then lets you search it all in plain language. Even what's inside your images and videos.
+              Text search only reads captions and tags. Haypile reads <span className="text-foreground">inside</span>{" "}
+              your saves — the pixels in a screenshot, the moment in a video, the page behind a link — so you can find
+              anything across X, YouTube, Reddit, Pinterest, GitHub and your browser just by describing it.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Button size="lg" nativeButton={false} render={<Link to="/signup" />}>
