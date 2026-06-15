@@ -61,6 +61,7 @@ export default defineSchema({
     syncedAt: v.number(),
     embedStatus: v.union(v.literal("pending"), v.literal("done"), v.literal("failed")),
     embedError: v.optional(v.string()),
+    videosEmbedded: v.optional(v.number()), // # video media embedded for this item (drives the per-user video cap)
   })
     .index("by_user_source_ext", ["userId", "source", "externalId"])
     .index("by_user_saved", ["userId", "savedAt"])
@@ -116,5 +117,6 @@ export default defineSchema({
   itemCounts: defineTable({
     userId: v.string(),
     count: v.number(),
+    videoCount: v.optional(v.number()), // # videos embedded (the COGS-critical per-user cap)
   }).index("by_user", ["userId"]),
 });

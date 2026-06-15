@@ -59,9 +59,9 @@ DONE:
 - `convex/lib/plans.ts`: prices 6/60 + 12/120; `limits.maxItems` 1000/2000/20000, Pro `maxVideos` 2000; `allowsRichMedia`.
 - Modality gating: `video_segment` + link deep-fetch are Pro-only (`allowsRichMedia` in `embeddings/pipeline.ts`, plan via `planForUserId`).
 - **Item cap enforced**: `sync/adapters/*.persist` stops indexing *new* items once `itemCounts >= maxItems` (existing saves still update; resumes on upgrade). Backed by the denormalized `itemCounts` counter.
+- **Per-account video cap enforced** (COGS guardrail): `pipeline.ts embedItem` stops embedding videos once the user's `itemCounts.videoCount >= maxVideos` (Pro 2000). Counter updated as a delta in `saveVectors` (idempotent on re-embed); `items.videosEmbedded` tracks per-item. Slight overshoot possible under concurrent embeds — fine for a safety cap.
 
 Deferred:
-- Per-account video safety cap (~2,000 videos) within Pro — needs a video-segment counter.
 - Trial 14-day expiry (search locks; retain 30 days then purge).
 - On Pro upgrade: one-time backfill of existing video + deep-link items.
 - `convex/embeddings/pipeline.ts`: per-plan frame/img/link consts (0.25 fps already enforced via MAX_VIDEO_SEC/VIDEO_FPS).

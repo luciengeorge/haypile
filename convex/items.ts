@@ -31,11 +31,40 @@ export async function getItemCount(ctx: MutationCtx, userId: string): Promise<nu
   return row?.count ?? 0;
 }
 
+/**
+ * Adjust a user's denormalized video count — the COGS-critical Pro cap. Applied as a
+ * delta from the embed pipeline (idempotent: re-embedding the same item nets 0).
+ */
+export async function bumpVideoCount(ctx: MutationCtx, userId: string, delta: number): Promise<void> {
+  if (delta === 0) return;
+  const row = await ctx.db
+    .query("itemCounts")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .unique();
+  if (row) {
+    await ctx.db.patch(row._id, { videoCount: Math.max(0, (row.videoCount ?? 0) + delta) });
+  } else {
+    await ctx.db.insert("itemCounts", { userId, count: 0, videoCount: Math.max(0, delta) });
+  }
+}
+
 /** Load an item for the embedding pipeline. */
 export const getForEmbed = internalQuery({
   args: { itemId: v.id("items") },
   handler: async (ctx, { itemId }) => {
     return await ctx.db.get(itemId);
+  },
+});
+
+/** Current video count for a user — the embed pipeline reads this to enforce the Pro video cap. */
+export const videoUsage = internalQuery({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }) => {
+    const row = await ctx.db
+      .query("itemCounts")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
+    return row?.videoCount ?? 0;
   },
 });
 
@@ -56,8 +85,9 @@ export const saveVectors = internalMutation({
     userId: v.string(),
     source: v.string(),
     vectors: v.array(vectorInput),
+    videosEmbedded: v.optional(v.number()),
   },
-  handler: async (ctx, { itemId, userId, source, vectors }) => {
+  handler: async (ctx, { itemId, userId, source, vectors, videosEmbedded = 0 }) => {
     const existing = await ctx.db
       .query("itemVectors")
       .withIndex("by_item", (q) => q.eq("itemId", itemId))
@@ -76,7 +106,10 @@ export const saveVectors = internalMutation({
       });
     }
 
-    await ctx.db.patch(itemId, { embedStatus: "done", embedError: undefined });
+    // Update the per-user video counter by the delta vs the last embed (idempotent on retry).
+    const item = await ctx.db.get(itemId);
+    await ctx.db.patch(itemId, { embedStatus: "done", embedError: undefined, videosEmbedded });
+    await bumpVideoCount(ctx, userId, videosEmbedded - (item?.videosEmbedded ?? 0));
   },
 });
 

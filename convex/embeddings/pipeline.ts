@@ -5,7 +5,7 @@ import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { internalAction } from "../_generated/server";
 import { planForUserId } from "../billing/gating";
-import { allowsRichMedia } from "../lib/plans";
+import { allowsRichMedia, getPlanLimit } from "../lib/plans";
 import { embedImage, embedText, embedVideoSegment } from "./gemini";
 
 // Cost levers. Video + deep-link fetch are gated to Pro via allowsRichMedia (see gating.ts).
@@ -77,7 +77,12 @@ export const embedItem = internalAction({
     if (!item) return;
 
     // Video + deep-link embedding (the COGS driver) are Pro-only; everyone gets text + image.
-    const richMedia = allowsRichMedia(await planForUserId(ctx, item.userId));
+    const plan = await planForUserId(ctx, item.userId);
+    const richMedia = allowsRichMedia(plan);
+    // Per-user video safety cap (COGS guardrail) — stop embedding videos past the plan limit.
+    const maxVideos = getPlanLimit(plan, "maxVideos") ?? Number.POSITIVE_INFINITY;
+    const userVideoCount = await ctx.runQuery(internal.items.videoUsage, { userId: item.userId });
+    let itemVideos = 0; // videos embedded for THIS item this run
 
     try {
       const vectors: VectorRow[] = [];
@@ -97,12 +102,13 @@ export const embedItem = internalAction({
           if (m.type === "image") {
             const img = await fetchAsBase64(m.url, MAX_MEDIA_BYTES);
             if (img) vectors.push({ modality: "image", embedding: await embedImage({ ...img, contextText: item.title }) });
-          } else if (richMedia) {
+          } else if (richMedia && userVideoCount + itemVideos < maxVideos) {
             const vid = await fetchAsBase64(m.url, MAX_MEDIA_BYTES);
             if (vid) {
               const end = Math.min(m.durationSec ?? MAX_VIDEO_SEC, MAX_VIDEO_SEC);
               const embedding = await embedVideoSegment({ data: vid.data, mimeType: vid.mimeType, startSec: 0, endSec: end, fps: VIDEO_FPS });
               vectors.push({ modality: "video_segment", startSec: 0, endSec: end, embedding });
+              itemVideos++;
             }
           }
         } catch {
@@ -144,6 +150,7 @@ export const embedItem = internalAction({
         userId: item.userId,
         source: item.source,
         vectors,
+        videosEmbedded: itemVideos,
       });
     } catch (error) {
       await ctx.runMutation(internal.items.markEmbedFailed, {
