@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
 import { HeroSearchPreview } from "@/components/marketing/hero-search-preview";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
@@ -6,8 +6,14 @@ import { MarketingHeader } from "@/components/marketing/marketing-header";
 import { MultimodalPreview } from "@/components/marketing/multimodal-preview";
 import { PricingCards } from "@/components/marketing/pricing-cards";
 import { Button } from "@/components/ui/button";
+import { getSession } from "@/lib/functions/get-session";
 
 export const Route = createFileRoute("/")({
+  // Logged-in users skip the marketing homepage and land in the app.
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (session) throw redirect({ to: "/app" });
+  },
   component: LandingPage,
 });
 

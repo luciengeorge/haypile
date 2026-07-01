@@ -1,4 +1,5 @@
-import { useAction } from "convex/react";
+import { Link } from "@tanstack/react-router";
+import { useAction, useQuery } from "convex/react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
@@ -9,6 +10,7 @@ import { api } from "@/../convex/_generated/api";
 import { SearchResults } from "@/components/app/search-results";
 import { HaypileMark } from "@/components/brand/haypile-mark";
 import { Button } from "@/components/ui/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -41,6 +43,7 @@ const EXAMPLES = ["income tax", "that red car", "where I work", "css grid tricks
 
 export function BookmarkSearch() {
   const search = useAction(api.search.search);
+  const usage = useQuery(api.items.usage);
   const formRef = useRef<HTMLFormElement>(null);
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -99,7 +102,9 @@ export function BookmarkSearch() {
         ) : null}
       </div>
 
-      {!loading && !results ? (
+      {!loading && !results && usage?.itemCount === 0 ? <NoSavesEmpty /> : null}
+
+      {!loading && !results && usage && usage.itemCount > 0 ? (
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <span>Try</span>
           {EXAMPLES.map((example) => (
@@ -152,14 +157,37 @@ function LoadingState() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed bg-card/40 px-6 py-14 text-center">
-      <HaypileMark size={40} />
-      <div className="flex flex-col gap-1.5">
-        <p className="font-display text-lg font-semibold tracking-tight">No matches yet</p>
-        <p className="max-w-sm text-sm text-pretty text-muted-foreground">
+    <Empty className="rounded-2xl border border-dashed bg-card/40">
+      <EmptyHeader>
+        <EmptyMedia>
+          <HaypileMark size={40} />
+        </EmptyMedia>
+        <EmptyTitle className="font-display font-semibold">No matches yet</EmptyTitle>
+        <EmptyDescription>
           Try different phrasing, or connect more sources so there's more to dig through.
-        </p>
-      </div>
-    </div>
+        </EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  );
+}
+
+function NoSavesEmpty() {
+  return (
+    <Empty className="rounded-2xl border border-dashed bg-card/40">
+      <EmptyHeader>
+        <EmptyMedia>
+          <HaypileMark size={40} />
+        </EmptyMedia>
+        <EmptyTitle className="font-display font-semibold">Nothing to search yet</EmptyTitle>
+        <EmptyDescription>
+          Connect a source and Haypile indexes everything you've saved — then you can search it in plain language.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button nativeButton={false} render={<Link to="/app/sources" />}>
+          Connect a source
+        </Button>
+      </EmptyContent>
+    </Empty>
   );
 }
