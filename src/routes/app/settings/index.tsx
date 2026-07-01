@@ -155,6 +155,10 @@ function PlanSection() {
 function DangerSection() {
   const convex = useConvex();
   const navigate = useNavigate();
+  const sub = useQuery(api.billing.queries.mySubscription);
+  // Deleting an account can't stop an active Merchant-of-Record subscription, so
+  // require cancellation (in the billing portal) first — avoids orphaned charges.
+  const hasActiveSub = Boolean(sub && sub.plan !== "free");
   const [confirmInput, setConfirmInput] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -233,10 +237,24 @@ function DangerSection() {
             />
           </Field>
           <Field>
-            <Button onClick={handleDelete} disabled={!canDelete || isDeleting} variant="destructive" className="w-fit">
+            <Button
+              onClick={handleDelete}
+              disabled={!canDelete || isDeleting || hasActiveSub}
+              variant="destructive"
+              className="w-fit"
+            >
               {isDeleting ? <Spinner /> : null}
               {isDeleting ? "Sending" : "Delete account"}
             </Button>
+            {hasActiveSub ? (
+              <FieldDescription>
+                Cancel your subscription in{" "}
+                <Link to="/app/settings/billing" className="underline">
+                  Billing
+                </Link>{" "}
+                before deleting your account.
+              </FieldDescription>
+            ) : null}
             {deleteError ? <FieldError>{deleteError}</FieldError> : null}
           </Field>
         </FieldGroup>

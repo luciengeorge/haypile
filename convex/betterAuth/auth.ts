@@ -169,12 +169,15 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           });
         },
         afterDelete: async (user) => {
-          await getScheduler(ctx).runAfter(0, internal.email.send.sendEmail, {
+          const scheduler = getScheduler(ctx);
+          await scheduler.runAfter(0, internal.email.send.sendEmail, {
             to: user.email,
             subject: `Your ${APP_NAME} account has been deleted`,
             template: "accountDeleted",
             props: { appName: APP_NAME },
           });
+          // Auth tables are removed by better-auth; purge app-owned data separately.
+          await scheduler.runAfter(0, internal.users.purgeUserData, { userId: user.id });
         },
       },
     },
