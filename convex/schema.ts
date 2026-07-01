@@ -119,4 +119,24 @@ export default defineSchema({
     count: v.number(),
     videoCount: v.optional(v.number()), // # videos embedded (the COGS-critical per-user cap)
   }).index("by_user", ["userId"]),
+
+  /**
+   * App-side snapshot of the user's Polar subscription + lifecycle email guards.
+   * The @convex-dev/polar component is the source of truth for live subscription
+   * data (synced via webhook); this denormalizes what we look up frequently and
+   * tracks one-shot emails + when to purge a lapsed user's data (30-day grace).
+   */
+  subscriptions: defineTable({
+    userId: v.string(),
+    customerId: v.optional(v.string()),
+    subscriptionId: v.optional(v.string()),
+    status: v.optional(v.string()), // trialing | active | canceled | past_due | unpaid | comped
+    accessEndedAt: v.optional(v.number()), // set when access lapses; starts the 30-day grace
+    purgeAt: v.optional(v.number()), // accessEndedAt + 30d; scheduled purge target
+    limit80SentAt: v.optional(v.number()),
+    limit100SentAt: v.optional(v.number()),
+    graceEndingSentAt: v.optional(v.number()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_customer", ["customerId"]),
 });

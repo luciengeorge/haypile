@@ -67,6 +67,9 @@ export const createCheckout = action({
       email: user.email,
       origin: process.env.SITE_URL ?? "http://localhost:3000",
       successUrl,
+      // 7-day free trial on every plan/cycle; Polar auto-bills unless cancelled.
+      trialInterval: "day",
+      trialIntervalCount: 7,
     });
 
     return { url: checkout.url };

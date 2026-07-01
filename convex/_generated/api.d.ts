@@ -13,6 +13,7 @@ import type * as billing_index from "../billing/index.js";
 import type * as billing_polar from "../billing/polar.js";
 import type * as billing_queries from "../billing/queries.js";
 import type * as billing_stripe from "../billing/stripe.js";
+import type * as billing_subscriptions from "../billing/subscriptions.js";
 import type * as billing_types from "../billing/types.js";
 import type * as crons from "../crons.js";
 import type * as email_send from "../email/send.js";
@@ -59,6 +60,7 @@ declare const fullApi: ApiFromModules<{
   "billing/polar": typeof billing_polar;
   "billing/queries": typeof billing_queries;
   "billing/stripe": typeof billing_stripe;
+  "billing/subscriptions": typeof billing_subscriptions;
   "billing/types": typeof billing_types;
   crons: typeof crons;
   "email/send": typeof email_send;
