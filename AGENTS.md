@@ -1,4 +1,4 @@
-# Agent Context — tanstack-starter-template
+# Agent Context — Haypile
 
 This file is the canonical context for AI coding agents (Claude Code, Cursor, Codex,
 etc.) working in this repo. Read it before making changes. Same content applies in
@@ -6,7 +6,7 @@ etc.) working in this repo. Read it before making changes. Same content applies 
 
 ## What this repo is
 
-**bookmarks** — a unified, always-synced home for everything a user has saved across
+**Haypile** — a unified, always-synced home for everything a user has saved across
 the internet (X bookmarks, GitHub stars, YouTube liked, Pinterest pins, Reddit saves,
 browser bookmarks), with **multimodal search**: "red car" surfaces the actual image or
 video moment, not just text matches.
