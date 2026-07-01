@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { formatRelativeTime } from "@/lib/format";
 import { SOURCES, type SourceId } from "@/lib/sources";
-import { cn } from "@/lib/utils";
 
 const SOURCE_HINT: Record<SourceId, string> = {
   x: "your bookmarks",
@@ -135,16 +134,31 @@ export function ConnectSources() {
 }
 
 function CoverageMeter({ connected, total }: { connected: number; total: number }) {
+  const radius = 20;
+  const circumference = 2 * Math.PI * radius;
+  const fraction = total > 0 ? connected / total : 0;
   return (
-    <div className="flex flex-col items-start gap-1.5 sm:items-end">
-      <span className="text-sm font-medium">
-        {connected} of {total} connected
-      </span>
-      <div className="flex gap-1" aria-hidden="true">
-        {Array.from({ length: total }, (_, index) => (
-          <span key={index} className={cn("size-2 rounded-full", index < connected ? "bg-primary" : "bg-border")} />
-        ))}
+    <div className="flex items-center gap-3">
+      <div className="relative size-12">
+        <svg viewBox="0 0 48 48" className="size-12 -rotate-90" aria-hidden="true">
+          <circle cx="24" cy="24" r={radius} fill="none" strokeWidth="4" className="stroke-border" />
+          <circle
+            cx="24"
+            cy="24"
+            r={radius}
+            fill="none"
+            strokeWidth="4"
+            strokeLinecap="round"
+            className="stroke-primary transition-[stroke-dashoffset] duration-500 ease-out"
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference * (1 - fraction)}
+          />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold tabular-nums">
+          {connected}/{total}
+        </span>
       </div>
+      <span className="text-sm text-muted-foreground">connected</span>
     </div>
   );
 }

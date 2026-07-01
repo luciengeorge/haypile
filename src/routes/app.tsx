@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useSignOut } from "@/hooks/use-sign-out";
 import { getSession } from "@/lib/functions/get-session";
@@ -73,19 +74,7 @@ function AppLayout() {
           </Link>
         </SidebarHeader>
         <SidebarContent className="px-2">
-          <SidebarMenu>
-            {NAV.map((item) => (
-              <SidebarMenuItem key={item.to}>
-                <SidebarMenuButton
-                  isActive={item.exact ? pathname === item.to : pathname.startsWith(item.to)}
-                  render={<Link to={item.to} />}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
+          <NavMenu pathname={pathname} />
         </SidebarContent>
         <SidebarFooter>
           <AccountMenu name={session.user.name} email={session.user.email} image={session.user.image} />
@@ -105,6 +94,29 @@ function AppLayout() {
         </main>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+function NavMenu({ pathname }: { pathname: string }) {
+  // Close the mobile sheet after navigating; on desktop this is a no-op.
+  const { isMobile, setOpenMobile } = useSidebar();
+  return (
+    <SidebarMenu>
+      {NAV.map((item) => (
+        <SidebarMenuItem key={item.to}>
+          <SidebarMenuButton
+            isActive={item.exact ? pathname === item.to : pathname.startsWith(item.to)}
+            onClick={() => {
+              if (isMobile) setOpenMobile(false);
+            }}
+            render={<Link to={item.to} />}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
   );
 }
 
