@@ -53,7 +53,7 @@ async function fetchPageText(url: string): Promise<string | null> {
     const timer = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(url, {
       signal: controller.signal,
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; bookmarks/1.0; +https://github.com/luciengeorge/bookmarks)" },
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; haypile/1.0; +https://github.com/luciengeorge/haypile)" },
     }).finally(() => clearTimeout(timer));
     if (!res.ok) return null;
     if (!(res.headers.get("content-type") ?? "").includes("text/html")) return null;

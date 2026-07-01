@@ -1,4 +1,4 @@
-# bookmarks
+# Haypile
 
 A unified, always-synced home for everything you've saved across the internet, with
 **multimodal search**: type "red car" and the actual image or video moment surfaces —
