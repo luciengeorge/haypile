@@ -4,7 +4,10 @@ import type { DataModel } from "../_generated/dataModel";
 
 import { authComponent } from "../betterAuth/auth";
 import { type PlanId, planFromProductId, planMeetsRequirement } from "../lib/plans";
+import { type Entitlement, resolveEntitlement, type SubStatus } from "./logic";
 import { polar } from "./polar";
+
+export type { Entitlement, SubStatus };
 
 type AnyCtx = GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel> | GenericActionCtx<DataModel>;
 
@@ -56,45 +59,23 @@ function parseAdminUserIds(): string[] {
     .filter(Boolean);
 }
 
-export type SubStatus = "trialing" | "active" | "past_due" | "comped" | "canceled" | "none";
-
-export type Entitlement = {
-  plan: PlanId;
-  status: SubStatus;
-  trialEndsAt: number | null;
-  hasAccess: boolean;
-};
-
-// trialing/active/past_due keep access (past_due = Polar dunning window); everything
-// else (canceled, unpaid, incomplete, no sub) is locked out.
-const ACCESS_STATUSES = new Set<SubStatus>(["trialing", "active", "past_due", "comped"]);
-
-function normalizeStatus(status: string | null | undefined): SubStatus {
-  if (status === "trialing" || status === "active" || status === "past_due" || status === "canceled") return status;
-  return status ? "canceled" : "none";
-}
-
 /**
  * The full access picture for a user: plan, subscription status, trial end, and
  * whether they can use the app. No auth session required — safe for background jobs.
+ * Does the IO (env + subscription fetch), then delegates to the pure `resolveEntitlement`.
  */
 export async function getEntitlement(ctx: AnyCtx, userId: string): Promise<Entitlement> {
-  if (!process.env.POLAR_ACCESS_TOKEN) {
-    return { plan: "pro", status: "active", trialEndsAt: null, hasAccess: true };
-  }
-  if (parseAdminUserIds().includes(userId)) {
-    return { plan: "pro", status: "comped", trialEndsAt: null, hasAccess: true };
-  }
-  const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId });
-  if (!subscription) return { plan: "free", status: "none", trialEndsAt: null, hasAccess: false };
-  const status = normalizeStatus(subscription.status);
-  const trialEndsAt = subscription.trialEnd ? Date.parse(subscription.trialEnd) : null;
-  return {
-    plan: planForProductId(subscription.productId),
-    status,
-    trialEndsAt: Number.isNaN(trialEndsAt) ? null : trialEndsAt,
-    hasAccess: ACCESS_STATUSES.has(status),
-  };
+  const hasToken = Boolean(process.env.POLAR_ACCESS_TOKEN);
+  const isAdmin = parseAdminUserIds().includes(userId);
+  const subscription =
+    hasToken && !isAdmin ? await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId }) : null;
+
+  return resolveEntitlement({
+    hasToken,
+    isAdmin,
+    plan: planForProductId(subscription?.productId),
+    subscription: subscription ? { status: subscription.status, trialEnd: subscription.trialEnd } : null,
+  });
 }
 
 // Resolve a plan from a Polar product ID, matching both the monthly and annual products.

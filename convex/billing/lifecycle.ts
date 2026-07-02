@@ -4,9 +4,9 @@ import { internal } from "../_generated/api";
 import { internalMutation } from "../_generated/server";
 import { authComponent } from "../betterAuth/auth";
 import { getEntitlement } from "./gating";
+import { computeGraceFields, isLapsed } from "./logic";
 
 const DAY = 86_400_000;
-const GRACE_DAYS = 30;
 const WARN_DAYS = 3; // send the "data will be deleted" email this many days before purge
 
 function formatDate(ms: number): string {
@@ -33,8 +33,7 @@ export const syncSubscription = internalMutation({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .unique();
 
-    const lapsed = endedAt !== null || status === "canceled" || status === "unpaid";
-    const now = Date.now();
+    const grace = computeGraceFields(status, endedAt, row?.accessEndedAt ?? null, Date.now());
 
     let fields: {
       status: string;
@@ -44,9 +43,8 @@ export const syncSubscription = internalMutation({
       purgeAt?: number;
       graceEndingSentAt?: number;
     };
-    if (lapsed) {
-      const accessEndedAt = row?.accessEndedAt ?? endedAt ?? now;
-      fields = { status, customerId, subscriptionId, accessEndedAt, purgeAt: accessEndedAt + GRACE_DAYS * DAY };
+    if (isLapsed(status, endedAt)) {
+      fields = { status, customerId, subscriptionId, accessEndedAt: grace.accessEndedAt, purgeAt: grace.purgeAt };
     } else {
       // Active/trialing/past_due → clear any grace state (setting to undefined removes the field).
       fields = {
