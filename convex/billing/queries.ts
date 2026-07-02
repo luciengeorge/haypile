@@ -1,9 +1,34 @@
 import { v } from "convex/values";
 
-import { action, query } from "../_generated/server";
+import { internal } from "../_generated/api";
+import { action, internalAction, internalMutation, query } from "../_generated/server";
 import { authComponent } from "../betterAuth/auth";
 import { planForProductId } from "./gating";
 import { polar } from "./polar";
+
+/**
+ * Import Polar's products into the component's local table. Products are what
+ * `getCurrentSubscription` resolves a subscription against — if a subscription's
+ * product isn't synced, that query throws "Product not found". Run once per
+ * deployment (products created before the webhook was live never synced):
+ *   npx convex run billing/queries:syncProducts --prod
+ * New/edited products stay synced automatically via the product.* webhooks.
+ */
+export const syncProducts = internalAction({
+  args: {},
+  handler: async (ctx) => {
+    await polar.syncProducts(ctx);
+  },
+});
+
+// Webhook callbacks run in a mutation ctx (no scheduler for actions), so product
+// webhooks hop through here to kick off the syncProducts action.
+export const scheduleSyncProducts = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    await ctx.scheduler.runAfter(0, internal.billing.queries.syncProducts, {});
+  },
+});
 
 /**
  * Returns the current authenticated user's subscription (or null).

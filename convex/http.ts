@@ -45,6 +45,14 @@ polar.registerRoutes(http, {
       endedAt: event.data.endedAt ? event.data.endedAt.getTime() : null,
     });
   },
+  // Keep the component's product table current. Without synced products,
+  // getCurrentSubscription throws "Product not found" and crashes entitlement checks.
+  onProductCreated: async (ctx) => {
+    await ctx.runMutation(internal.billing.queries.scheduleSyncProducts, {});
+  },
+  onProductUpdated: async (ctx) => {
+    await ctx.runMutation(internal.billing.queries.scheduleSyncProducts, {});
+  },
 });
 
 export default http;
