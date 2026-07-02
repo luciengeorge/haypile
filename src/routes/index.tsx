@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
     seo({
       title: "Haypile: find anything you ever saved",
       description:
-        "Haypile makes everything you've bookmarked searchable: text, images, video and links across X, YouTube, Reddit, Pinterest, GitHub and your browser. Search it all in plain words.",
+        "Search everything you've saved, in plain words. Haypile indexes text, images, video and links across X, YouTube, Reddit, Pinterest and more.",
       path: "/",
     }),
   component: LandingPage,

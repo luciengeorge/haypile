@@ -26,6 +26,11 @@ const securityHeaders = {
   "X-Frame-Options": "DENY",
 };
 
+// Public brand/share assets are fetched cross-origin (OG scrapers, favicon services,
+// PWA installers), so they need Cross-Origin-Resource-Policy: cross-origin. The global
+// "same-origin" default otherwise blocks them (ERR_BLOCKED_BY_RESPONSE.NotSameOrigin).
+const publicAssetHeaders = { ...securityHeaders, "Cross-Origin-Resource-Policy": "cross-origin" };
+
 export default defineNitroConfig({
   routeRules: {
     "/**": {
@@ -37,5 +42,12 @@ export default defineNitroConfig({
         ...securityHeaders,
       },
     },
+    "/og-image.png": { headers: publicAssetHeaders },
+    "/favicon.ico": { headers: publicAssetHeaders },
+    "/favicon.svg": { headers: publicAssetHeaders },
+    "/apple-touch-icon.png": { headers: publicAssetHeaders },
+    "/icon-192.png": { headers: publicAssetHeaders },
+    "/icon-512.png": { headers: publicAssetHeaders },
+    "/manifest.json": { headers: publicAssetHeaders },
   },
 });
