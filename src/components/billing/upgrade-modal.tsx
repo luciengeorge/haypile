@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
+import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 type Plan = "starter" | "pro";
@@ -43,6 +44,7 @@ type UpgradeModalProps = {
 
 export function UpgradeModal({ trigger, defaultPlan = "pro", reason }: UpgradeModalProps) {
   const createCheckout = useAction(api.billing.queries.createCheckout);
+  const { capture } = useAnalytics();
   const [selected, setSelected] = useState<Plan>(defaultPlan);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +52,7 @@ export function UpgradeModal({ trigger, defaultPlan = "pro", reason }: UpgradeMo
 
   const handleUpgrade = async () => {
     setIsLoading(true);
+    capture(AnalyticsEvent.checkoutStarted, { plan: selected, cycle, context: "upgrade_modal" });
     try {
       const successUrl =
         typeof window !== "undefined" ? `${window.location.origin}/app/settings/billing?success=1` : "/";
