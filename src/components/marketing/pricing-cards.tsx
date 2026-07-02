@@ -29,7 +29,7 @@ const TIERS: Tier[] = [
 
 export function PricingCards({ cycle = "monthly" }: { cycle?: BillingCycle }) {
   return (
-    <div className="mx-auto grid w-full max-w-3xl gap-5 sm:grid-cols-2">
+    <div className="mx-auto grid w-full max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
       {TIERS.map((tier) => {
         const plan = PLANS[tier.id];
         const price = cycle === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
