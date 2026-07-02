@@ -49,7 +49,7 @@ export function HeroSearchPreview() {
         <kbd className="rounded-md bg-muted px-1.5 py-0.5 text-[0.625rem] font-medium text-muted-foreground">⌘K</kbd>
       </div>
 
-      <div className="flex items-center justify-between px-1.5 py-3 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-1.5 py-3 text-xs text-muted-foreground">
         <span>
           <span className="font-medium text-foreground">12 results</span> · across 6 sources
         </span>
