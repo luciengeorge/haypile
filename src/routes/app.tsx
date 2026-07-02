@@ -36,7 +36,9 @@ import { useSignOut } from "@/hooks/use-sign-out";
 import { getSession } from "@/lib/functions/get-session";
 import { redirectWithToast } from "@/lib/functions/redirect-with-toast";
 import { getInitials } from "@/lib/initials";
+import { isNavActive } from "@/lib/nav";
 import { seo } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app")({
   head: () =>
@@ -115,7 +117,7 @@ function AppLayout() {
             <HaypileLockup size={22} />
           </Link>
         </header>
-        <main className="flex-1 px-4 py-8 lg:px-10 lg:py-10">
+        <main className="flex-1 px-4 pt-8 pb-24 lg:px-10 lg:py-10">
           <LimitBanner
             plan={entitlement.plan}
             itemCount={entitlement.itemCount}
@@ -124,6 +126,7 @@ function AppLayout() {
           />
           <Outlet />
         </main>
+        <MobileTabBar pathname={pathname} />
       </SidebarInset>
     </SidebarProvider>
   );
@@ -137,6 +140,35 @@ function AppLoading() {
   );
 }
 
+// Primary nav on mobile: a bottom tab bar mirroring the sidebar (hidden on lg+, where
+// the sidebar takes over). Additive — the sidebar sheet still opens via the top header.
+function MobileTabBar({ pathname }: { pathname: string }) {
+  return (
+    <nav
+      aria-label="Primary"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background/95 backdrop-blur-sm lg:hidden"
+    >
+      {NAV.map((item) => {
+        const active = isNavActive(item.to, pathname, item.exact);
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium [&>svg]:size-5",
+              active ? "text-primary" : "text-muted-foreground",
+            )}
+          >
+            {item.icon}
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 function NavMenu({ pathname }: { pathname: string }) {
   // Close the mobile sheet after navigating; on desktop this is a no-op.
   const { isMobile, setOpenMobile } = useSidebar();
@@ -145,7 +177,7 @@ function NavMenu({ pathname }: { pathname: string }) {
       {NAV.map((item) => (
         <SidebarMenuItem key={item.to}>
           <SidebarMenuButton
-            isActive={item.exact ? pathname === item.to : pathname.startsWith(item.to)}
+            isActive={isNavActive(item.to, pathname, item.exact)}
             onClick={() => {
               if (isMobile) setOpenMobile(false);
             }}
