@@ -10,6 +10,9 @@ import { internalAction } from "../_generated/server";
 import AccountDeletedEmail from "./templates/accountDeleted";
 import ChangeEmail from "./templates/changeEmail";
 import DeleteAccount from "./templates/deleteAccount";
+import GraceEndingEmail from "./templates/graceEnding";
+import LimitApproachingEmail from "./templates/limitApproaching";
+import LimitReachedEmail from "./templates/limitReached";
 import MagicLinkEmail from "./templates/magicLink";
 import ResetPasswordEmail from "./templates/resetPassword";
 import VerifyEmail from "./templates/verify";
@@ -25,6 +28,9 @@ const TEMPLATES = {
   deleteAccount: DeleteAccount,
   accountDeleted: AccountDeletedEmail,
   weeklyDigest: WeeklyDigestEmail,
+  limitApproaching: LimitApproachingEmail,
+  limitReached: LimitReachedEmail,
+  graceEnding: GraceEndingEmail,
 } as const;
 
 type TemplateName = keyof typeof TEMPLATES;
@@ -53,6 +59,9 @@ export const sendEmail = internalAction({
       v.literal("deleteAccount"),
       v.literal("accountDeleted"),
       v.literal("weeklyDigest"),
+      v.literal("limitApproaching"),
+      v.literal("limitReached"),
+      v.literal("graceEnding"),
     ),
     props: v.any(),
   },
