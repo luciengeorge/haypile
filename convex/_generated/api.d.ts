@@ -10,6 +10,8 @@
 
 import type * as billing_gating from "../billing/gating.js";
 import type * as billing_index from "../billing/index.js";
+import type * as billing_lifecycle from "../billing/lifecycle.js";
+import type * as billing_limits from "../billing/limits.js";
 import type * as billing_polar from "../billing/polar.js";
 import type * as billing_queries from "../billing/queries.js";
 import type * as billing_stripe from "../billing/stripe.js";
@@ -60,6 +62,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   "billing/gating": typeof billing_gating;
   "billing/index": typeof billing_index;
+  "billing/lifecycle": typeof billing_lifecycle;
+  "billing/limits": typeof billing_limits;
   "billing/polar": typeof billing_polar;
   "billing/queries": typeof billing_queries;
   "billing/stripe": typeof billing_stripe;
