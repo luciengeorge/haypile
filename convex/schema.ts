@@ -111,7 +111,7 @@ export default defineSchema({
 
   /**
    * Denormalized per-user item count for the usage meter / cap. Kept in sync on
-   * item insert (and any future delete) — avoids collect()-ing every item, which
+   * item insert (and any future delete), avoids collect()-ing every item, which
    * would hit Convex's 16MB read cap past a few thousand saves.
    */
   itemCounts: defineTable({

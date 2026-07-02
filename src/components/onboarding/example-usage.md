@@ -1,10 +1,10 @@
-# Onboarding wizard — usage
+# Onboarding wizard, usage
 
 Pattern for gating first-time users through a setup flow.
 
 ## 1. Add `onboardedAt` to your user table
 
-You can either extend the better-auth `user` schema (advanced — requires CLI
+You can either extend the better-auth `user` schema (advanced, requires CLI
 regen) or add a sibling `userProfiles` table:
 
 ```ts
@@ -127,6 +127,6 @@ export const AnalyticsEvent = {
 
 - **Don't make every step blocking**. Pre-fill from OAuth data where you can.
 - **Allow skip** for non-essential steps (e.g. profile photo).
-- **Persist progress** if your flow is >3 steps — write each completed step
+- **Persist progress** if your flow is >3 steps, write each completed step
   to `userProfiles.completedSteps: string[]` so users can resume.
 - **Capture drop-off** via PostHog funnels on `onboarding_step_viewed`.

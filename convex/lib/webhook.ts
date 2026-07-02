@@ -2,7 +2,7 @@
  * Webhook signature verification helpers.
  *
  * Used for inbound webhooks from third parties that aren't covered by a
- * Convex component (Polar handles its own verification — see polar.ts).
+ * Convex component (Polar handles its own verification, see polar.ts).
  * Use this when wiring webhooks from X, GitHub, Stripe-direct, Linear, etc.
  *
  * Usage in convex/http.ts:
@@ -38,7 +38,7 @@ interface VerifyHmacArgs {
 /**
  * Constant-time HMAC verification. Works in Convex's V8 runtime via Web Crypto.
  *
- * Tolerates `signature` with or without `sha256=` prefix — strip it before calling.
+ * Tolerates `signature` with or without `sha256=` prefix, strip it before calling.
  */
 export async function verifyHmac({
   payload,

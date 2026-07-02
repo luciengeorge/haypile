@@ -1,7 +1,7 @@
 import type { BillingAdapter } from "./types";
 
 /**
- * Stripe adapter — STUB ONLY. Polar is the default.
+ * Stripe adapter, STUB ONLY. Polar is the default.
  *
  * To activate:
  *   1. `pnpm add @convex-dev/stripe stripe`

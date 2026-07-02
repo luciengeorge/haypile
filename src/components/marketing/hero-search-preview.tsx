@@ -8,7 +8,7 @@ type Row = {
 
 const ROWS: Row[] = [
   {
-    title: "Self-employment tax — Schedule C deductions",
+    title: "Self-employment tax, Schedule C deductions",
     meta: "Image · saved from Pinterest · Apr 2026",
     score: "0.69",
     tag: "Image",

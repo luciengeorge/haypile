@@ -7,7 +7,7 @@ type Props = { plan: PlanId; itemCount: number; cap: number; pct: number };
 
 /**
  * App-wide usage banner. Warns at 80% of the plan cap, then flips to a "reached"
- * state at 100% (indexing paused). Only shown to non-Pro plans — Pro is the upgrade
+ * state at 100% (indexing paused). Only shown to non-Pro plans, Pro is the upgrade
  * target, so there's nothing to nudge toward.
  */
 export function LimitBanner({ plan, itemCount, cap, pct }: Props) {

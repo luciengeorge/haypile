@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { Button, Heading, Section, Text } from "@react-email/components";
 
 /**
- * Shared email building blocks — Haypile "Mineral" brand.
- * - BRAND_COLOR   — CTA/accent hex (defaults to verdigris)
- * - SUPPORT_EMAIL — reply-to / help address (falls back to RESEND_FROM_EMAIL)
- * - EMAIL_SIGNOFF — signature line, e.g. "— The Haypile team"
+ * Shared email building blocks, Haypile "Mineral" brand.
+ * - BRAND_COLOR, CTA/accent hex (defaults to verdigris)
+ * - SUPPORT_EMAIL, reply-to / help address (falls back to RESEND_FROM_EMAIL)
+ * - EMAIL_SIGNOFF, signature line, e.g. ", The Haypile team"
  */
 
 export function brandColor(): string {
@@ -78,7 +78,7 @@ export function SecurityNotice({ action }: { action: string }) {
         {support ? (
           <>
             {" "}
-            — or email{" "}
+, or email{" "}
             <a href={`mailto:${support}`} style={{ color: "#2e7d6e" }}>
               {support}
             </a>{" "}

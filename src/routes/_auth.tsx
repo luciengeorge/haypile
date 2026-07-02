@@ -33,7 +33,7 @@ function AuthLayout() {
           </p>
           <p className="max-w-md leading-relaxed text-primary-foreground/70">
             A pika gathers all season into one kept pile, dug back into all winter. Haypile does the same with
-            everything you bookmark across the internet — searchable in plain language, the moment you need it.
+            everything you bookmark across the internet, searchable in plain language, the moment you need it.
           </p>
         </div>
         <p className="text-sm text-primary-foreground/60">© 2026 Haypile</p>

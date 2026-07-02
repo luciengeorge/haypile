@@ -19,7 +19,7 @@ export default function GraceEndingEmail({ name, deleteOn, appUrl, appName }: Gr
       <EmailHeading>Your data will be deleted soon</EmailHeading>
       <Text style={{ color: "#1b1a18" }} className="text-base leading-6">
         {display}, your Haypile subscription ended, and your saved items are scheduled for deletion on{" "}
-        <strong>{deleteOn}</strong>. Reactivate before then to keep everything — searches, sources and all.
+        <strong>{deleteOn}</strong>. Reactivate before then to keep everything, searches, sources and all.
       </Text>
       <BrandButton href={`${base}/app/settings/billing`}>Reactivate my plan</BrandButton>
       <Section style={{ backgroundColor: "#f2eee5", border: "1px solid #e2dccf" }} className="my-6 rounded-lg px-4 py-3">

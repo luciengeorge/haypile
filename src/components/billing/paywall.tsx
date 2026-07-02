@@ -13,7 +13,7 @@ type PaywallProps = {
 
 /**
  * Inline paywall card. Drop this in place of any feature you want to gate.
- * Pair with a server-side `requirePlan(ctx, "pro")` for security — the paywall
+ * Pair with a server-side `requirePlan(ctx, "pro")` for security, the paywall
  * is presentation only.
  */
 export function Paywall({

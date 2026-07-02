@@ -71,7 +71,7 @@ function buildGenericOAuthConfig() {
           if (!res.ok) throw new Error(`X userinfo failed: ${res.status}`);
           const { data } = xUserInfoSchema.parse(await res.json());
           // confirmed_email is X-verified. Synthetic fallback only for the rare account
-          // without one — magic-link can attach a real address later.
+          // without one, magic-link can attach a real address later.
           const email = data.confirmed_email ?? `${data.username}@users.x.invalid`;
           return {
             id: data.id,
@@ -101,7 +101,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             },
           }
         : {}),
-      // Apple stubbed for V2 — uncomment + add APPLE_* env vars to enable.
+      // Apple stubbed for V2, uncomment + add APPLE_* env vars to enable.
       // ...(process.env.APPLE_CLIENT_ID
       //   ? {
       //       apple: {
@@ -132,7 +132,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     ],
     account: {
       // Lets an authenticated user attach data-source OAuth accounts (X, etc.).
-      // allowDifferentEmails: X is a data source, not an identity — its (synthetic)
+      // allowDifferentEmails: X is a data source, not an identity, its (synthetic)
       // email won't match the user's, so linking must not require an email match.
       accountLinking: { enabled: true, trustedProviders: ["x"], allowDifferentEmails: true },
     },

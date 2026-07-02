@@ -32,7 +32,7 @@ export const polar = new Polar(components.polar, {
 });
 
 /**
- * BillingAdapter façade — keeps callers provider-agnostic.
+ * BillingAdapter façade, keeps callers provider-agnostic.
  *
  * We deliberately do not use this for everything: most billing-aware code can call
  * `polar.*` directly to get full Polar features (trials, custom fields, etc.).
@@ -41,7 +41,7 @@ export const polar = new Polar(components.polar, {
 export const polarAdapter: BillingAdapter = {
   async createCheckout() {
     throw new Error(
-      "Use polar.createCheckoutSession(ctx, ...) directly from a Convex mutation — " +
+      "Use polar.createCheckoutSession(ctx, ...) directly from a Convex mutation, " +
         "the adapter façade is intentionally minimal because Polar's API is feature-rich.",
     );
   },

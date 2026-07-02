@@ -12,7 +12,7 @@ adapter code.
 ```
 syncJobs table          # one row per (user, source)
   ↑
-dispatcher.tick         # cron every 5 min — finds due jobs, fans out
+dispatcher.tick         # cron every 5 min, finds due jobs, fans out
   ↓
 run.runJob              # per-job action: loops pages → persist → mark success
   ↓
@@ -28,17 +28,17 @@ adapter.sync / persist  # per-source implementation (see ./adapters/)
 | `userId`        | string (matches betterAuth user.\_id)           | which user owns this sync                                   |
 | `source`        | string                                          | which adapter to use, e.g. `"github_stars"`                 |
 | `status`        | `"idle" \| "running" \| "failed" \| "disabled"` | current state                                               |
-| `cursor`        | optional string                                 | opaque pagination token — adapter encodes its own format    |
+| `cursor`        | optional string                                 | opaque pagination token, adapter encodes its own format    |
 | `nextRunAt`     | number (ms)                                     | the dispatcher only picks up rows where this is in the past |
 | `lastRunAt`     | optional number                                 | when the runner last started                                |
 | `lastSuccessAt` | optional number                                 | for "last synced X minutes ago" UI                          |
-| `attempts`      | number                                          | for exponential backoff — resets on success                 |
+| `attempts`      | number                                          | for exponential backoff, resets on success                 |
 | `error`         | optional string                                 | last error message; surfaces in /app/settings               |
 
 Indexes:
 
-- `by_user_source` on `["userId", "source"]` — for upserts + per-user UI queries
-- `by_status_next_run` on `["status", "nextRunAt"]` — used by the dispatcher
+- `by_user_source` on `["userId", "source"]`, for upserts + per-user UI queries
+- `by_status_next_run` on `["status", "nextRunAt"]`, used by the dispatcher
 
 ## Adding a new source
 
@@ -61,12 +61,12 @@ export const githubStarsAdapter: SyncAdapter = {
 
   async sync(ctx, { userId, cursor }) {
     // 1. Look up the OAuth token for this user. Implementation depends on your
-    //    OAuth storage — likely an `oauthTokens` table you wrote yourself.
+    //    OAuth storage, likely an `oauthTokens` table you wrote yourself.
     const token = await ctx.runQuery(internal.oauth.getToken, {
       userId,
       provider: "github",
     });
-    if (!token) throw new Error("No GitHub token — user disconnected");
+    if (!token) throw new Error("No GitHub token, user disconnected");
 
     // 2. Fetch one page using the cursor as a page number.
     const page = cursor ? Number(cursor) : 1;
@@ -92,7 +92,7 @@ export const githubStarsAdapter: SyncAdapter = {
 
   async persist(ctx, { userId, items }) {
     for (const item of items as GitHubStar[]) {
-      // Idempotent upsert keyed on externalId — runs may overlap on retries.
+      // Idempotent upsert keyed on externalId, runs may overlap on retries.
       const existing = await ctx.db
         .query("bookmarks")
         .withIndex("by_user_external", (q) =>
@@ -168,12 +168,12 @@ no longer in source):
 3. Or schedule a separate weekly full-resync that does the cleanup, leaving
    the regular hourly sync as additive-only (faster).
 
-The framework deliberately doesn't dictate this — your data model and freshness
+The framework deliberately doesn't dictate this, your data model and freshness
 needs vary too much.
 
 ## Concurrency + atomicity
 
-- One sync job per (user, source) — multiple dispatch ticks won't double-run
+- One sync job per (user, source), multiple dispatch ticks won't double-run
   because `markRunning` checks the current status.
 - `persistPage` runs inside a single Convex mutation, so item writes + cursor
   advance are atomic. A crash between pages re-runs the failed page (which is

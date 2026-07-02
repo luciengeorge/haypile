@@ -36,7 +36,7 @@ export default function LimitApproachingEmail({
       </Text>
       <BrandButton href={`${base}/app/settings/billing`}>Upgrade to Pro</BrandButton>
       <Text style={{ color: "#62655e" }} className="text-sm leading-5">
-        You can stay on {planName} — new saves just pause when you reach {cap.toLocaleString()}, and nothing is ever
+        You can stay on {planName}, new saves just pause when you reach {cap.toLocaleString()}, and nothing is ever
         deleted.
       </Text>
       <Signoff />

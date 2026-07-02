@@ -51,7 +51,7 @@ function VerifyEmailPage() {
       tone="primary"
       icon={<MailIcon />}
       title="Check your inbox"
-      body="We sent a verification link to your email. Click it to continue — it expires in an hour."
+      body="We sent a verification link to your email. Click it to continue, it expires in an hour."
     >
       <Button variant="outline" nativeButton={false} render={<Link to="/login" />}>
         Back to sign in

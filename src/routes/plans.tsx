@@ -81,7 +81,7 @@ function PlansPage() {
         <div className="flex flex-col items-center gap-2">
           <h1 className="font-display text-4xl font-semibold tracking-tight text-balance">Start your 7-day trial</h1>
           <p className="max-w-md text-center text-pretty text-muted-foreground">
-            Pick a plan to unlock Haypile. Free for 7 days — cancel anytime before it ends and you won't be charged.
+            Pick a plan to unlock Haypile. Free for 7 days, cancel anytime before it ends and you won't be charged.
           </p>
         </div>
         <CycleToggle cycle={cycle} onChange={setCycle} />
@@ -102,8 +102,7 @@ function PlansPage() {
       </div>
 
       <p className="mt-6 max-w-md text-center text-sm text-muted-foreground">
-        Card required. We remind you 3 days before your trial ends — cancel anytime before then and you won't be
-        charged.
+        Card required. We remind you 3 days before your trial ends, cancel anytime before then and you won't be charged.
       </p>
     </div>
   );

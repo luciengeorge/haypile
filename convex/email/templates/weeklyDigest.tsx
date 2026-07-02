@@ -31,7 +31,7 @@ export default function WeeklyDigestEmail({ name, items, appUrl, appName }: Week
   const base = appUrl ?? process.env.SITE_URL ?? "https://haypile.app";
 
   return (
-    <EmailLayout preview="From your Haypile — a few saves worth a second look" appName={appName}>
+    <EmailLayout preview="From your Haypile, a few saves worth a second look" appName={appName}>
       <EmailHeading>From your Haypile</EmailHeading>
       <Text style={{ color: "#1b1a18" }} className="text-base leading-6">
         {display}, a few things you saved and might want again:

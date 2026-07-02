@@ -2,7 +2,7 @@
  * Pricing plan definitions.
  *
  * `priceId` keys map your internal plan names to the IDs your billing provider uses.
- * Polar product IDs and Stripe price IDs are both opaque strings — set them via env
+ * Polar product IDs and Stripe price IDs are both opaque strings, set them via env
  * vars or hard-code per environment.
  *
  * Add `limits` per plan to drive feature gates (e.g. max bookmarks, max searches/day,
@@ -45,7 +45,7 @@ export const PLANS: Record<PlanId, Plan> = {
   },
   pro: {
     name: "Pro",
-    description: "Everything — including video & link search.",
+    description: "Everything, including video & link search.",
     priceId: {
       polar: process.env.POLAR_PRODUCT_PRO ?? null,
       stripe: process.env.STRIPE_PRICE_PRO ?? null,

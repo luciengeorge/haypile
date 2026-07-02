@@ -1,4 +1,4 @@
-// Fixed brand constants (not theme tokens — the mark is invariant across light/dark).
+// Fixed brand constants (not theme tokens, the mark is invariant across light/dark).
 const BONE = "#F2EEE5";
 const VERDIGRIS = "#2E7D6E";
 const GOLD = "#C2933A";

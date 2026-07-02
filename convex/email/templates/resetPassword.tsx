@@ -16,7 +16,7 @@ export default function ResetPasswordEmail({ url, appName }: ResetPasswordEmailP
       <Heading className="mt-0 mb-4 text-2xl font-bold text-gray-900">Reset your password</Heading>
       <Text className="text-base leading-6 text-gray-700">
         We received a request to reset the password for your {product} account. Choose a new password using the button
-        below — this link expires in 1 hour.
+        below, this link expires in 1 hour.
       </Text>
       <BrandButton href={url}>Reset password</BrandButton>
       <FallbackUrl url={url} />

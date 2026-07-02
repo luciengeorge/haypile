@@ -16,7 +16,7 @@ function LibraryPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Library</h1>
         <p className="text-pretty text-muted-foreground">
-          Everything you've saved, newest first — all of it searchable.
+          Everything you've saved, newest first, all of it searchable.
         </p>
       </header>
 

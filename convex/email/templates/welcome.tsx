@@ -16,7 +16,7 @@ export default function WelcomeEmail({ name, appName }: WelcomeEmailProps) {
     <EmailLayout preview={`Welcome to ${product}`} appName={appName}>
       <EmailHeading>Welcome, {display}</EmailHeading>
       <Text style={{ color: "#1b1a18" }} className="text-base leading-6">
-        {product} gathers everything you've saved across the internet into one pile — and brings it back to life
+        {product} gathers everything you've saved across the internet into one pile, and brings it back to life
         through search in plain language, the moment you need it.
       </Text>
       <Text style={{ color: "#1b1a18" }} className="text-base leading-6">
@@ -24,7 +24,7 @@ export default function WelcomeEmail({ name, appName }: WelcomeEmailProps) {
       </Text>
       <Text style={{ color: "#62655e" }} className="my-2 ml-1 text-base leading-7">
         • Connect a source so Haypile can start gathering
-        <br />• Search the way you'd describe it — “that red car”, “income tax”
+        <br />• Search the way you'd describe it, “that red car”, “income tax”
         <br />• Watch for your Monday “From your Haypile” digest
       </Text>
       <Signoff />

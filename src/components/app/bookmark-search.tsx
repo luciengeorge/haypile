@@ -92,7 +92,7 @@ export function BookmarkSearch() {
           spellCheck={false}
           enterKeyHint="search"
           aria-label="Search everything you've saved"
-          placeholder="Search everything you've saved — try “income tax”…"
+          placeholder="Search everything you've saved, try “income tax”…"
           className="h-12 rounded-xl pr-28 pl-11 text-base"
         />
         <Button type="submit" disabled={loading} className="absolute inset-y-0 right-1.5 my-auto h-9">
@@ -190,7 +190,7 @@ function NoSavesEmpty() {
         </EmptyMedia>
         <EmptyTitle className="font-display font-semibold">Nothing to search yet</EmptyTitle>
         <EmptyDescription>
-          Connect a source and Haypile indexes everything you've saved — then you can search it in plain language.
+          Connect a source and Haypile indexes everything you've saved, then you can search it in plain language.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

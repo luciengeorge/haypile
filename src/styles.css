@@ -54,7 +54,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Mineral — bone paper, ink, oxidized-copper verdigris, hay-gold accent */
+/* Mineral, bone paper, ink, oxidized-copper verdigris, hay-gold accent */
 :root {
   --background: #f2eee5;
   --foreground: #1b1a18;

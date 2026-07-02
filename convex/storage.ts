@@ -13,7 +13,7 @@ import { authComponent } from "./betterAuth/auth";
  * Architecture:
  * - `generateUploadUrl` returns a short-lived signed URL the client POSTs to
  * - `saveUpload` records the storage id alongside whatever metadata you need
- *   (path, mime, owning user) in your app's `uploads` table — TODO: add this
+ *   (path, mime, owning user) in your app's `uploads` table, TODO: add this
  *   table to convex/schema.ts when first product needs uploads
  * - `getDownloadUrl` returns a signed read URL for a stored file
  * - `deleteFile` removes the blob (e.g. when account is deleted)

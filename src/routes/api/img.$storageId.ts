@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Image proxy route — serves Convex-stored images via your own domain with
+ * Image proxy route, serves Convex-stored images via your own domain with
  * long-lived edge caching. Use as `<img src="/api/img/<storageId>" />`.
  *
  * Why: Convex storage URLs are short-lived (rotating signatures), so caching

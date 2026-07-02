@@ -15,11 +15,11 @@ import { internal } from "./_generated/api";
  */
 const crons = cronJobs();
 
-// Background sync dispatcher — scans for due syncJobs every 5 min and fans
+// Background sync dispatcher, scans for due syncJobs every 5 min and fans
 // out runner actions. See convex/sync/README.md for the full pattern.
 crons.interval("sync-dispatcher", { minutes: 5 }, internal.sync.dispatcher.tick);
 
-// Billing grace/purge sweep — warns before, then purges data 30 days after a
+// Billing grace/purge sweep, warns before, then purges data 30 days after a
 // subscription lapses. Re-checks live entitlement so reactivated users are spared.
 crons.daily("billing-grace-tick", { hourUTC: 3, minuteUTC: 0 }, internal.billing.lifecycle.graceTick);
 

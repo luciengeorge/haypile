@@ -141,7 +141,7 @@ function AppLoading() {
 }
 
 // Primary nav on mobile: a bottom tab bar mirroring the sidebar (hidden on lg+, where
-// the sidebar takes over). Additive — the sidebar sheet still opens via the top header.
+// the sidebar takes over). Additive, the sidebar sheet still opens via the top header.
 function MobileTabBar({ pathname }: { pathname: string }) {
   return (
     <nav

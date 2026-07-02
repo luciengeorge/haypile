@@ -8,7 +8,7 @@ import { polar } from "./polar";
 
 /**
  * Import Polar's products into the component's local table. Products are what
- * `getCurrentSubscription` resolves a subscription against — if a subscription's
+ * `getCurrentSubscription` resolves a subscription against, if a subscription's
  * product isn't synced, that query throws "Product not found". Run once per
  * deployment (products created before the webhook was live never synced):
  *   npx convex run billing/queries:syncProducts --prod
@@ -70,8 +70,8 @@ function checkoutProductId(plan: "starter" | "pro", cycle: "monthly" | "annual")
 
 /**
  * Action that creates a Polar checkout session for the authenticated user.
- * Must be an action — the Polar SDK uses fetch(), which queries/mutations can't.
- * Returns the checkout URL — the client redirects to it.
+ * Must be an action, the Polar SDK uses fetch(), which queries/mutations can't.
+ * Returns the checkout URL, the client redirects to it.
  */
 export const createCheckout = action({
   args: {

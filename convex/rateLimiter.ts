@@ -22,7 +22,7 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
   magicLink: { kind: "token bucket", rate: 5, period: HOUR, capacity: 3 },
   // Search: per-user query budget
   search: { kind: "token bucket", rate: 30, period: MINUTE, capacity: 10 },
-  // Sync: per-user budget across all third-party API fetches — protects
+  // Sync: per-user budget across all third-party API fetches, protects
   //   your upstream API allowances when a single user has many sources.
   syncSource: { kind: "token bucket", rate: 60, period: MINUTE, capacity: 20 },
   // Generic: per-second hot-loop guard

@@ -10,8 +10,7 @@ export type MutationCtx = GenericMutationCtx<DataModel>;
  * Spotify saves, etc.), register in `./registry.ts`, and the dispatcher takes
  * care of scheduling, retry, backoff, rate limiting, and observability.
  *
- * The split between `sync` (action — does network IO) and `persist` (mutation —
- * writes to db) is intentional: Convex actions can fetch but can't write
+ * The split between `sync` (action, does network IO) and `persist` (mutation,  * writes to db) is intentional: Convex actions can fetch but can't write
  * directly; mutations can write but can't fetch.
  *
  * Pagination is opaque: `cursor` is an arbitrary string the adapter encodes
@@ -24,13 +23,13 @@ export interface SyncAdapter {
 
   /**
    * Minimum delay between successful runs. Defaults to 1 hour.
-   * Adapters can override per-source — fast-moving sources (Twitter) might
+   * Adapters can override per-source, fast-moving sources (Twitter) might
    * want 10 min, slow-moving sources (Goodreads exports) might want daily.
    */
   intervalMs?: number;
 
   /**
-   * Fetch one page from the upstream API. Must be idempotent — the runner may
+   * Fetch one page from the upstream API. Must be idempotent, the runner may
    * retry the same cursor after a failure. Throw on transport / auth / rate
    * limit errors; the runner converts to backoff + retry.
    */
@@ -45,7 +44,7 @@ export interface SyncAdapter {
 
   /**
    * Persist a page of items into the adapter's destination table(s).
-   * Runs inside a mutation transaction alongside the cursor update — either
+   * Runs inside a mutation transaction alongside the cursor update, either
    * both happen or neither does.
    *
    * Use `externalId` columns + idempotent upserts so retries don't duplicate.

@@ -7,9 +7,9 @@ import { authComponent, createAuthOptions } from "./betterAuth/auth";
 // better-auth stores OAuth tokens plaintext (encryptOAuthTokens is off) in its
 // `account` table. Background sync has no session, so we read/refresh the row
 // directly by userId via the component adapter. accessTokenExpiresAt may come back
-// as ms, an ISO string, or a Date depending on the adapter path — normalize to ms.
+// as ms, an ISO string, or a Date depending on the adapter path, normalize to ms.
 const accountSchema = z.object({
-  accountId: z.string(), // the provider's user id (X numeric id) — used in API paths
+  accountId: z.string(), // the provider's user id (X numeric id), used in API paths
   accessToken: z.string().nullish(),
   refreshToken: z.string().nullish(),
   accessTokenExpiresAt: z.union([z.number(), z.string(), z.date()]).nullish(),

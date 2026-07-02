@@ -16,7 +16,7 @@ function DashboardPage() {
         <h1 className="font-display text-3xl font-semibold tracking-tight text-balance">
           Search everything{firstName ? `, ${firstName}` : ""}
         </h1>
-        <p className="text-muted-foreground">Ask in plain language — Haypile digs through everything you've saved.</p>
+        <p className="text-muted-foreground">Ask in plain language, Haypile digs through everything you've saved.</p>
       </header>
       <BookmarkSearch />
     </div>

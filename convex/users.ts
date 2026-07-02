@@ -9,7 +9,7 @@ import { authComponent } from "./betterAuth/auth";
 // sizes; `truncated` flags the rare overflow so nothing is silently dropped.
 const EXPORT_ITEM_CAP = 2000;
 // Items purged per scheduled batch. Kept small because deleting an item also reads
-// its itemVectors, and each embedding is ~12KB — a large batch would risk the 16MB
+// its itemVectors, and each embedding is ~12KB, a large batch would risk the 16MB
 // read cap for video-heavy accounts (up to ~15 vectors/item).
 const PURGE_BATCH = 25;
 
@@ -79,7 +79,7 @@ export const exportMyData = query({
 
 /**
  * Purge all app-owned data for a deleted user. Scheduled from the better-auth
- * `deleteUser.afterDelete` hook (auth tables — user/sessions/accounts — are removed
+ * `deleteUser.afterDelete` hook (auth tables, user/sessions/accounts, are removed
  * by better-auth itself). Self-reschedules a batch at a time until the items are
  * gone, then removes the per-user singleton rows.
  */

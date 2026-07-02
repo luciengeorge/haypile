@@ -35,7 +35,7 @@ export function LockedWall({ purgeAt }: { purgeAt: number | null }) {
         <div className="flex flex-col items-center gap-2.5 text-center">
           <h1 className="font-display text-3xl font-semibold tracking-tight">Your Haypile is paused</h1>
           <p className="text-pretty text-muted-foreground">
-            Your subscription ended. Everything you saved is safe for 30 more days — reactivate and pick up right where
+            Your subscription ended. Everything you saved is safe for 30 more days. Reactivate and pick up right where
             you left off.
           </p>
         </div>
