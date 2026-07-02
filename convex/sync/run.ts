@@ -3,11 +3,15 @@ import { v } from "convex/values";
 
 import { internal } from "../_generated/api";
 import { internalAction } from "../_generated/server";
+import { getEntitlement } from "../billing/gating";
 import { rateLimiter } from "../rateLimiter";
 import { getAdapter } from "./registry";
 import { defaultIntervalMs } from "./state";
 
 const MAX_PAGES_PER_RUN = 10;
+// Locked-out users are re-checked slowly instead of every dispatcher tick, so sync
+// resumes on its own within a few hours of reactivation without hot-looping meanwhile.
+const LAPSED_RECHECK_MS = 6 * 60 * 60 * 1000;
 
 /**
  * Run one sync job to completion (or until the page cap is hit).
@@ -30,6 +34,14 @@ export const runJob = internalAction({
     return await Sentry.startSpan({ name: "sync.runJob" }, async () => {
       const job = await ctx.runQuery(internal.sync.state.getJob, { jobId });
       if (!job || job.status !== "running") return;
+
+      // No active subscription (lapsed/canceled) → stop ingesting new items until
+      // the user reactivates. Cursor is preserved, so sync picks up where it left off.
+      const entitlement = await getEntitlement(ctx, job.userId);
+      if (!entitlement.hasAccess) {
+        await ctx.runMutation(internal.sync.state.markSuccess, { jobId, intervalMs: LAPSED_RECHECK_MS });
+        return;
+      }
 
       let adapter;
       try {
