@@ -22,6 +22,13 @@ export const myEntitlement = query({
     const cap = getPlanLimit(entitlement.plan, "maxItems") ?? 0;
     const pct = cap > 0 ? Math.min(100, Math.round((itemCount / cap) * 100)) : 0;
 
-    return { ...entitlement, itemCount, cap, pct };
+    // purgeAt (set by the Polar webhook on cancellation) drives the locked-wall
+    // deletion date; null until a subscription is actually cancelled.
+    const record = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .unique();
+
+    return { ...entitlement, itemCount, cap, pct, purgeAt: record?.purgeAt ?? null };
   },
 });
