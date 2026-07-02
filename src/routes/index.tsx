@@ -66,13 +66,13 @@ const MODALITIES = [
 
 function LandingPage() {
   return (
-    <div className="flex min-h-svh flex-col bg-background">
+    <div className="flex min-h-svh flex-col overflow-x-clip bg-background">
       <JsonLd data={LANDING_JSONLD} />
       <MarketingHeader />
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:py-24">
+        <section className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:py-24">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium tracking-[0.1em] text-primary uppercase">
               <span className="size-1.5 rounded-full bg-gold" />
@@ -127,7 +127,7 @@ function LandingPage() {
               Connect your accounts once. Haypile imports and indexes everything. Then you just ask.
             </p>
 
-            <div className="mt-14 grid gap-10 md:grid-cols-3">
+            <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3">
               {STEPS.map((step) => (
                 <div key={step.n} className="border-t border-border pt-5">
                   <p className="font-display text-3xl font-semibold text-primary tabular-nums">{step.n}</p>
@@ -141,7 +141,7 @@ function LandingPage() {
 
         {/* Multimodal */}
         <section className="bg-secondary/50">
-          <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2">
+          <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2">
             <MultimodalPreview />
             <div>
               <p className="text-xs font-medium tracking-[0.14em] text-primary uppercase">Multimodal search</p>
