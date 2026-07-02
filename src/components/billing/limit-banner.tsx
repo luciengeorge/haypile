@@ -17,7 +17,7 @@ export function LimitBanner({ plan, itemCount, cap, pct }: Props) {
 
   if (pct >= 100) {
     return (
-      <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-foreground px-5 py-4">
+      <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-foreground px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="flex flex-col gap-0.5">
           <span className="font-semibold text-background">You've reached your {cap.toLocaleString()}-save limit</span>
           <span className="text-[13px] text-background/70">
@@ -30,7 +30,7 @@ export function LimitBanner({ plan, itemCount, cap, pct }: Props) {
           trigger={
             <button
               type="button"
-              className="shrink-0 rounded-lg bg-[#c2933a] px-4 py-2 text-[13px] font-bold text-foreground"
+              className="shrink-0 rounded-lg bg-[#c2933a] px-4 py-2 text-center text-[13px] font-bold text-foreground"
             >
               Upgrade to Pro
             </button>
@@ -41,7 +41,7 @@ export function LimitBanner({ plan, itemCount, cap, pct }: Props) {
   }
 
   return (
-    <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-[#ead9b4] bg-[#fbf3e2] px-5 py-4">
+    <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[#ead9b4] bg-[#fbf3e2] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="flex flex-col gap-0.5">
         <span className="font-semibold text-foreground">
           You've indexed {itemCount.toLocaleString()} of {cap.toLocaleString()} saves
@@ -56,7 +56,7 @@ export function LimitBanner({ plan, itemCount, cap, pct }: Props) {
         trigger={
           <button
             type="button"
-            className="shrink-0 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground"
+            className="shrink-0 rounded-lg bg-primary px-4 py-2 text-center text-[13px] font-semibold text-primary-foreground"
           >
             Upgrade to Pro
           </button>

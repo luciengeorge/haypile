@@ -28,7 +28,7 @@ export function LockedWall({ purgeAt }: { purgeAt: number | null }) {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-background p-6">
-      <div className="flex w-full max-w-md flex-col items-center gap-5 rounded-3xl border bg-card px-10 py-11 shadow-[0_12px_40px_rgb(27_26_24/0.08)]">
+      <div className="flex w-full max-w-md flex-col items-center gap-5 rounded-3xl border bg-card px-6 py-10 shadow-[0_12px_40px_rgb(27_26_24/0.08)] sm:px-10 sm:py-11">
         <span className="flex size-14 items-center justify-center rounded-2xl bg-muted">
           <LockIcon />
         </span>
