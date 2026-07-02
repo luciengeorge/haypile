@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { api } from "@/../convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
 import { authClient } from "@/lib/auth-client";
 import { formatRelativeTime } from "@/lib/format";
 import { SOURCES, type SourceId } from "@/lib/sources";
@@ -21,6 +22,7 @@ export function ConnectSources() {
   const status = useQuery(api.sync.state.mySyncStatus);
   const connectedSources = useQuery(api.x.connectedSources);
   const runSourceNow = useMutation(api.sync.state.runSourceNow);
+  const { capture } = useAnalytics();
   const [busy, setBusy] = useState(false);
 
   const x = status?.find((source) => source.source === "x");
@@ -30,6 +32,7 @@ export function ConnectSources() {
 
   const connect = async () => {
     setBusy(true);
+    capture(AnalyticsEvent.sourceConnectStarted, { source: "x" });
     try {
       await authClient.oauth2.link({ providerId: "x", callbackURL: "/app/sources" });
     } catch (error) {

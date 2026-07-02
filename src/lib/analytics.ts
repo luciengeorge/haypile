@@ -16,6 +16,9 @@ export const AnalyticsEvent = {
   userLogoutStarted: "user_logout_started",
   userLogoutFailed: "user_logout_failed",
   userLoggedOut: "user_logged_out",
+  searchPerformed: "search_performed",
+  checkoutStarted: "checkout_started",
+  sourceConnectStarted: "source_connect_started",
 } as const;
 
 type AnalyticsEventName = (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent];

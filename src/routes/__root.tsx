@@ -7,6 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
+import { ConsentBanner } from "@/components/consent-banner";
 import { GlobalLoading } from "@/components/global-loading";
 import { NotFound } from "@/components/marketing/not-found";
 import { Toaster } from "@/components/ui/sonner";
@@ -14,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getToast } from "@/lib/functions/get-toast";
 
 import ConvexProvider from "../integrations/convex/provider";
-import { GoogleAnalyticsPageViews, GoogleAnalyticsScripts } from "../integrations/google-analytics/provider";
+import { GoogleAnalytics } from "../integrations/google-analytics/provider";
 import PostHogProvider from "../integrations/posthog/provider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
@@ -78,13 +79,13 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <GoogleAnalyticsScripts />
       </head>
       <body className="font-sans antialiased">
         <GlobalLoading />
         <Analytics />
         <SpeedInsights />
-        <GoogleAnalyticsPageViews />
+        <GoogleAnalytics />
+        <ConsentBanner />
         <ConvexProvider>
           <PostHogProvider>
             <TanStackQueryProvider>

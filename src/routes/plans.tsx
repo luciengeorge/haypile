@@ -8,6 +8,7 @@ import { type BillingCycle, PLANS, planPrice } from "@/../convex/lib/plans";
 import { HaypileMark } from "@/components/brand/haypile-mark";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
 import { getSession } from "@/lib/functions/get-session";
 import { seo } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -52,6 +53,7 @@ const PLAN_CARDS: PlanCardData[] = [
 function PlansPage() {
   const createCheckout = useAction(api.billing.queries.createCheckout);
   const entitlement = useQuery(api.billing.subscriptions.myEntitlement);
+  const { capture } = useAnalytics();
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
   const [loadingPlan, setLoadingPlan] = useState<Plan | null>(null);
 
@@ -61,6 +63,7 @@ function PlansPage() {
 
   const startTrial = async (plan: Plan) => {
     setLoadingPlan(plan);
+    capture(AnalyticsEvent.checkoutStarted, { plan, cycle, context: "plan_picker" });
     try {
       const successUrl = typeof window !== "undefined" ? `${window.location.origin}/app` : "/app";
       const { url } = await createCheckout({ plan, cycle, successUrl });

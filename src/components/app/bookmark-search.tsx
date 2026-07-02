@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { AnalyticsEvent, useAnalytics } from "@/lib/analytics";
 
 const resultSchema = z.object({
   _id: z.string(),
@@ -46,6 +47,7 @@ export function BookmarkSearch() {
   const search = useAction(api.search.search);
   const usage = useQuery(api.items.usage);
   const entitlement = useQuery(api.billing.subscriptions.myEntitlement);
+  const { capture } = useAnalytics();
   const formRef = useRef<HTMLFormElement>(null);
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,9 @@ export function BookmarkSearch() {
     setSource("all");
     try {
       const raw = await search({ query });
-      setResults(z.array(resultSchema).parse(raw));
+      const parsed = z.array(resultSchema).parse(raw);
+      setResults(parsed);
+      capture(AnalyticsEvent.searchPerformed, { result_count: parsed.length });
     } catch (error) {
       toast.error("Search failed", { description: error instanceof Error ? error.message : "Unknown error" });
     } finally {
