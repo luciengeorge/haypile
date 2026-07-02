@@ -1,9 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seo } from "@/lib/seo";
+
 const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 const LAST_UPDATED = "2026-07-01";
 
 export const Route = createFileRoute("/(legal)/_layout/cookies")({
+  head: () =>
+    seo({
+      title: "Cookie Policy · Haypile",
+      description: "The cookies and local storage Haypile uses, and why.",
+      path: "/cookies",
+    }),
   component: CookiesPage,
 });
 

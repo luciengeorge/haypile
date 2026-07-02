@@ -1,14 +1,48 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { planPrice } from "@/../convex/lib/plans";
+import { JsonLd } from "@/components/json-ld";
 import { BillingCycleToggle } from "@/components/marketing/billing-cycle-toggle";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { MarketingHeader } from "@/components/marketing/marketing-header";
 import { type BillingCycle, PricingCards } from "@/components/marketing/pricing-cards";
+import { seo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/pricing")({
+  head: () =>
+    seo({
+      title: "Pricing · Haypile",
+      description:
+        "Simple, honest pricing. Start a 7-day free trial, then £6/mo Starter or £12/mo Pro for video and link search. Cancel anytime before your trial ends.",
+      path: "/pricing",
+    }),
   component: PricingPage,
 });
+
+const PRICING_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Haypile",
+  description: "Search everything you've saved across the internet: text, images, video and links.",
+  brand: { "@type": "Brand", name: "Haypile" },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Starter",
+      price: String(planPrice("starter", "monthly")),
+      priceCurrency: "GBP",
+      url: `${SITE_URL}/pricing`,
+    },
+    {
+      "@type": "Offer",
+      name: "Pro",
+      price: String(planPrice("pro", "monthly")),
+      priceCurrency: "GBP",
+      url: `${SITE_URL}/pricing`,
+    },
+  ],
+};
 
 const FAQS = [
   {
@@ -34,6 +68,7 @@ function PricingPage() {
 
   return (
     <div className="flex min-h-svh flex-col bg-background">
+      <JsonLd data={PRICING_JSONLD} />
       <MarketingHeader />
 
       <main className="flex-1">
@@ -43,7 +78,8 @@ function PricingPage() {
             Simple, honest pricing.
           </h1>
           <p className="mx-auto mt-5 max-w-md leading-relaxed text-muted-foreground">
-            Start with a 7-day free trial — no credit card. Keep everything you've saved, searchable forever.
+            Start with a 7-day free trial. Cancel anytime before it ends. Keep everything you've saved, searchable
+            forever.
           </p>
 
           <div className="mt-9 flex justify-center">

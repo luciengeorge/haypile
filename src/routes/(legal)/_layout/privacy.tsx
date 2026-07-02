@@ -1,10 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seo } from "@/lib/seo";
+
 const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 const CONTACT_EMAIL = "privacy@luciengeorge.com";
 const LAST_UPDATED = "2026-07-01";
 
 export const Route = createFileRoute("/(legal)/_layout/privacy")({
+  head: () =>
+    seo({
+      title: "Privacy Policy · Haypile",
+      description: "How Haypile collects, uses and protects your personal data. Operated from the United Kingdom.",
+      path: "/privacy",
+    }),
   component: PrivacyPage,
 });
 

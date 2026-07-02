@@ -1,3 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /app
+Disallow: /api
+
+Sitemap: https://haypile.app/sitemap.xml

@@ -36,8 +36,16 @@ import { useSignOut } from "@/hooks/use-sign-out";
 import { getSession } from "@/lib/functions/get-session";
 import { redirectWithToast } from "@/lib/functions/redirect-with-toast";
 import { getInitials } from "@/lib/initials";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/app")({
+  head: () =>
+    seo({
+      title: "Haypile",
+      description: "Your searchable pile of everything you've saved.",
+      path: "/app",
+      noindex: true,
+    }),
   beforeLoad: async () => {
     const session = await getSession();
     if (!session) {
