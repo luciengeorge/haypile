@@ -1,8 +1,13 @@
 import type { ReactNode } from "react";
 
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, Outlet, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "convex/react";
 
+import { api } from "@/../convex/_generated/api";
 import { ImpersonationBanner } from "@/components/admin/impersonation-banner";
+import { LimitBanner } from "@/components/billing/limit-banner";
+import { LockedWall } from "@/components/billing/locked-wall";
+import { TrialPill } from "@/components/billing/trial-pill";
 import { HaypileLockup } from "@/components/brand/haypile-lockup";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -63,7 +68,19 @@ const NAV: NavItem[] = [
 function AppLayout() {
   const { session } = Route.useRouteContext();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const entitlement = useQuery(api.billing.subscriptions.myEntitlement);
   if (!session) return null;
+
+  // Gate: no active/trialing/past_due/comped subscription → no app. Never-subscribed
+  // users pick a plan; lapsed users see the reactivation wall (their data is held 30 days).
+  if (!entitlement) return <AppLoading />;
+  if (!entitlement.hasAccess) {
+    return entitlement.status === "none" ? (
+      <Navigate to="/plans" replace />
+    ) : (
+      <LockedWall purgeAt={entitlement.purgeAt} />
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -76,7 +93,8 @@ function AppLayout() {
         <SidebarContent className="px-2">
           <NavMenu pathname={pathname} />
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="gap-2">
+          <TrialPill status={entitlement.status} trialEndsAt={entitlement.trialEndsAt} />
           <AccountMenu name={session.user.name} email={session.user.email} image={session.user.image} />
         </SidebarFooter>
       </Sidebar>
@@ -90,10 +108,24 @@ function AppLayout() {
           </Link>
         </header>
         <main className="flex-1 px-4 py-8 lg:px-10 lg:py-10">
+          <LimitBanner
+            plan={entitlement.plan}
+            itemCount={entitlement.itemCount}
+            cap={entitlement.cap}
+            pct={entitlement.pct}
+          />
           <Outlet />
         </main>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+function AppLoading() {
+  return (
+    <div className="flex min-h-svh items-center justify-center bg-background">
+      <span className="size-6 animate-spin rounded-full border-2 border-muted border-t-primary motion-reduce:animate-none" />
+    </div>
   );
 }
 

@@ -5,6 +5,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
 import { authComponent } from "./betterAuth/auth";
+import { getEntitlement } from "./billing/gating";
 import { embedQuery } from "./embeddings/gemini";
 import { rateLimiter } from "./rateLimiter";
 
@@ -32,6 +33,9 @@ export const search = action({
   handler: async (ctx, { query, sources, limit }): Promise<Array<Record<string, unknown>>> => {
     const user = await authComponent.getAuthUser(ctx);
     if (!user) throw new Error("Not authenticated");
+
+    const entitlement = await getEntitlement(ctx, user._id);
+    if (!entitlement.hasAccess) throw new Error("Your subscription has ended. Reactivate to search again.");
 
     const ok = await rateLimiter.limit(ctx, "search", { key: user._id });
     if (!ok.ok) throw new Error("Rate limit exceeded. Try again shortly.");

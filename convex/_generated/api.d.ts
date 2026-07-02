@@ -10,9 +10,13 @@
 
 import type * as billing_gating from "../billing/gating.js";
 import type * as billing_index from "../billing/index.js";
+import type * as billing_lifecycle from "../billing/lifecycle.js";
+import type * as billing_limits from "../billing/limits.js";
+import type * as billing_logic from "../billing/logic.js";
 import type * as billing_polar from "../billing/polar.js";
 import type * as billing_queries from "../billing/queries.js";
 import type * as billing_stripe from "../billing/stripe.js";
+import type * as billing_subscriptions from "../billing/subscriptions.js";
 import type * as billing_types from "../billing/types.js";
 import type * as crons from "../crons.js";
 import type * as email_send from "../email/send.js";
@@ -21,6 +25,9 @@ import type * as email_templates__layout from "../email/templates/_layout.js";
 import type * as email_templates_accountDeleted from "../email/templates/accountDeleted.js";
 import type * as email_templates_changeEmail from "../email/templates/changeEmail.js";
 import type * as email_templates_deleteAccount from "../email/templates/deleteAccount.js";
+import type * as email_templates_graceEnding from "../email/templates/graceEnding.js";
+import type * as email_templates_limitApproaching from "../email/templates/limitApproaching.js";
+import type * as email_templates_limitReached from "../email/templates/limitReached.js";
 import type * as email_templates_magicLink from "../email/templates/magicLink.js";
 import type * as email_templates_resetPassword from "../email/templates/resetPassword.js";
 import type * as email_templates_verify from "../email/templates/verify.js";
@@ -56,9 +63,13 @@ import type {
 declare const fullApi: ApiFromModules<{
   "billing/gating": typeof billing_gating;
   "billing/index": typeof billing_index;
+  "billing/lifecycle": typeof billing_lifecycle;
+  "billing/limits": typeof billing_limits;
+  "billing/logic": typeof billing_logic;
   "billing/polar": typeof billing_polar;
   "billing/queries": typeof billing_queries;
   "billing/stripe": typeof billing_stripe;
+  "billing/subscriptions": typeof billing_subscriptions;
   "billing/types": typeof billing_types;
   crons: typeof crons;
   "email/send": typeof email_send;
@@ -67,6 +78,9 @@ declare const fullApi: ApiFromModules<{
   "email/templates/accountDeleted": typeof email_templates_accountDeleted;
   "email/templates/changeEmail": typeof email_templates_changeEmail;
   "email/templates/deleteAccount": typeof email_templates_deleteAccount;
+  "email/templates/graceEnding": typeof email_templates_graceEnding;
+  "email/templates/limitApproaching": typeof email_templates_limitApproaching;
+  "email/templates/limitReached": typeof email_templates_limitReached;
   "email/templates/magicLink": typeof email_templates_magicLink;
   "email/templates/resetPassword": typeof email_templates_resetPassword;
   "email/templates/verify": typeof email_templates_verify;

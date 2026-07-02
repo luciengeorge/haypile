@@ -2,6 +2,7 @@ import z from "zod";
 
 import { internal } from "../../_generated/api";
 import { planForUserId } from "../../billing/gating";
+import { checkItemLimit } from "../../billing/limits";
 import { bumpItemCount, getItemCount } from "../../items";
 import { getPlanLimit } from "../../lib/plans";
 import type { SyncAdapter } from "../types";
@@ -195,7 +196,8 @@ export const xAdapter: SyncAdapter = {
     // Plan item cap: once at the cap we still update existing saves, but stop
     // indexing *new* ones (the pricing promise: "pause indexing new items,
     // nothing is ever deleted"). Resumes automatically when the user upgrades.
-    const cap = getPlanLimit(await planForUserId(ctx, userId), "maxItems");
+    const plan = await planForUserId(ctx, userId);
+    const cap = getPlanLimit(plan, "maxItems");
     let count = await getItemCount(ctx, userId);
     for (const raw of items) {
       const item = persistItemSchema.parse(raw);
@@ -242,5 +244,7 @@ export const xAdapter: SyncAdapter = {
       count++;
       await ctx.scheduler.runAfter(0, internal.embeddings.pipeline.embedItem, { itemId });
     }
+
+    await checkItemLimit(ctx, userId, count, cap ?? 0, plan);
   },
 };

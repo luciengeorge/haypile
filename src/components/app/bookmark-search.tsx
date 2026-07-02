@@ -8,6 +8,7 @@ import type { SearchResult } from "@/components/app/search-result";
 
 import { api } from "@/../convex/_generated/api";
 import { SearchResults } from "@/components/app/search-results";
+import { VideoPaywall } from "@/components/billing/video-paywall";
 import { HaypileMark } from "@/components/brand/haypile-mark";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -44,6 +45,7 @@ const EXAMPLES = ["income tax", "that red car", "where I work", "css grid tricks
 export function BookmarkSearch() {
   const search = useAction(api.search.search);
   const usage = useQuery(api.items.usage);
+  const entitlement = useQuery(api.billing.subscriptions.myEntitlement);
   const formRef = useRef<HTMLFormElement>(null);
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -118,6 +120,10 @@ export function BookmarkSearch() {
             </button>
           ))}
         </div>
+      ) : null}
+
+      {!loading && !results && usage && usage.itemCount > 0 && entitlement && entitlement.plan !== "pro" ? (
+        <VideoPaywall />
       ) : null}
     </div>
   );

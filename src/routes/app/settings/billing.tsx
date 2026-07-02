@@ -4,8 +4,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
+import type { SubStatus } from "@/../convex/billing/gating";
+
 import { api } from "@/../convex/_generated/api";
-import { getPlanLimit, PLANS, type PlanId } from "@/../convex/lib/plans";
+import { PLANS } from "@/../convex/lib/plans";
 import { UsageBar } from "@/components/app/usage-bar";
 import { UpgradeModal } from "@/components/billing/upgrade-modal";
 import { Button } from "@/components/ui/button";
@@ -18,14 +20,33 @@ export const Route = createFileRoute("/app/settings/billing")({
   component: BillingPage,
 });
 
+const STATUS: Record<SubStatus, { label: string; tone: "positive" | "warn" | "muted" }> = {
+  trialing: { label: "Trial", tone: "positive" },
+  active: { label: "Active", tone: "positive" },
+  past_due: { label: "Past due", tone: "warn" },
+  comped: { label: "Complimentary", tone: "muted" },
+  canceled: { label: "Ended", tone: "muted" },
+  none: { label: "Ended", tone: "muted" },
+};
+
+function formatDate(ms: number): string {
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(ms);
+}
+
+function subline(status: SubStatus, trialEndsAt: number | null): string | null {
+  if (status === "trialing") return trialEndsAt ? `Trial ends ${formatDate(trialEndsAt)}` : "Free trial";
+  if (status === "past_due") return "Payment past due — update your card to keep access";
+  if (status === "comped") return "Complimentary access";
+  return null;
+}
+
 function BillingPage() {
   const { success } = Route.useSearch();
-  const sub = useQuery(api.billing.queries.mySubscription);
-  const usage = useQuery(api.items.usage);
+  const entitlement = useQuery(api.billing.subscriptions.myEntitlement);
   const openPortal = useAction(api.billing.queries.generateCustomerPortalUrl);
   const [busy, setBusy] = useState(false);
 
-  if (sub === undefined) {
+  if (!entitlement) {
     return (
       <div className="flex flex-col gap-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Plan & billing</h1>
@@ -34,12 +55,10 @@ function BillingPage() {
     );
   }
 
-  const plan: PlanId = sub?.plan ?? "free";
+  const { plan, status, trialEndsAt, itemCount, cap, pct } = entitlement;
   const meta = PLANS[plan];
-  const isPaid = plan !== "free";
-  const cap = getPlanLimit(plan, "maxItems") ?? 0;
-  const count = usage?.itemCount ?? 0;
-  const pct = cap > 0 ? Math.min(100, Math.round((count / cap) * 100)) : 0;
+  const badge = STATUS[status];
+  const detail = subline(status, trialEndsAt);
 
   const manageBilling = async () => {
     setBusy(true);
@@ -66,17 +85,17 @@ function BillingPage() {
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-0.5">
             <span className="font-medium">{meta.name}</span>
-            <span className="text-sm text-muted-foreground">
-              {isPaid ? `£${meta.monthlyPrice} / month` : "14-day trial · text & image search"}
-            </span>
+            {detail ? <span className="text-sm text-muted-foreground">{detail}</span> : null}
           </div>
           <span
             className={cn(
               "rounded-full px-2.5 py-1 text-xs font-medium tracking-wide uppercase",
-              isPaid ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground",
+              badge.tone === "positive" && "bg-primary/10 text-primary",
+              badge.tone === "warn" && "bg-[#fbf1de] text-[#b07e28]",
+              badge.tone === "muted" && "bg-muted text-muted-foreground",
             )}
           >
-            {isPaid ? "Active" : "Trial"}
+            {badge.label}
           </span>
         </div>
 
@@ -84,31 +103,23 @@ function BillingPage() {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium">Saves indexed this plan</span>
             <span className="text-muted-foreground tabular-nums">
-              {count.toLocaleString()} of {cap.toLocaleString()}
+              {itemCount.toLocaleString()} of {cap.toLocaleString()}
             </span>
           </div>
           <UsageBar percent={pct} />
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {isPaid ? (
-            <>
-              <UpgradeModal trigger={<Button>Change plan</Button>} defaultPlan={plan === "pro" ? "starter" : "pro"} />
-              <Button variant="ghost" onClick={manageBilling} disabled={busy}>
-                Manage billing
-              </Button>
-            </>
-          ) : (
-            <UpgradeModal trigger={<Button>Upgrade</Button>} />
-          )}
+          <UpgradeModal trigger={<Button>Change plan</Button>} defaultPlan={plan === "pro" ? "starter" : "pro"} />
+          <Button variant="ghost" onClick={manageBilling} disabled={busy}>
+            Manage billing
+          </Button>
         </div>
       </section>
 
-      {isPaid ? (
-        <p className="text-sm text-muted-foreground">
-          Your payment method, invoices, and cancellation live in the billing portal.
-        </p>
-      ) : null}
+      <p className="text-sm text-muted-foreground">
+        Your payment method, invoices, and cancellation live in the billing portal.
+      </p>
     </div>
   );
 }

@@ -4,7 +4,10 @@ import type { DataModel } from "../_generated/dataModel";
 
 import { authComponent } from "../betterAuth/auth";
 import { type PlanId, planFromProductId, planMeetsRequirement } from "../lib/plans";
+import { type Entitlement, resolveEntitlement, type SubStatus } from "./logic";
 import { polar } from "./polar";
+
+export type { Entitlement, SubStatus };
 
 type AnyCtx = GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel> | GenericActionCtx<DataModel>;
 
@@ -41,8 +44,38 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
  */
 export async function planForUserId(ctx: AnyCtx, userId: string): Promise<PlanId> {
   if (!process.env.POLAR_ACCESS_TOKEN) return "pro";
+  if (parseAdminUserIds().includes(userId)) return "pro";
   const subscription = await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId });
   return planForProductId(subscription?.productId);
+}
+
+// Comped accounts (currently = admins) get full Pro access without paying.
+function parseAdminUserIds(): string[] {
+  const raw = process.env.ADMIN_USER_IDS;
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+}
+
+/**
+ * The full access picture for a user: plan, subscription status, trial end, and
+ * whether they can use the app. No auth session required — safe for background jobs.
+ * Does the IO (env + subscription fetch), then delegates to the pure `resolveEntitlement`.
+ */
+export async function getEntitlement(ctx: AnyCtx, userId: string): Promise<Entitlement> {
+  const hasToken = Boolean(process.env.POLAR_ACCESS_TOKEN);
+  const isAdmin = parseAdminUserIds().includes(userId);
+  const subscription =
+    hasToken && !isAdmin ? await ctx.runQuery(polar.component.lib.getCurrentSubscription, { userId }) : null;
+
+  return resolveEntitlement({
+    hasToken,
+    isAdmin,
+    plan: planForProductId(subscription?.productId),
+    subscription: subscription ? { status: subscription.status, trialEnd: subscription.trialEnd } : null,
+  });
 }
 
 // Resolve a plan from a Polar product ID, matching both the monthly and annual products.
