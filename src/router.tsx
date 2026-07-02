@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/tanstackstart-react";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 
+import { ErrorScreen } from "./components/error-screen";
 import { getContext } from "./integrations/tanstack-query/root-provider";
 import { routeTree } from "./routeTree.gen";
 
@@ -22,6 +23,7 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
+    defaultErrorComponent: ErrorScreen,
   });
 
   return router;
