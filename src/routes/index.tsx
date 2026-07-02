@@ -1,5 +1,6 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
+import { JsonLd } from "@/components/json-ld";
 import { HeroSearchPreview } from "@/components/marketing/hero-search-preview";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { MarketingHeader } from "@/components/marketing/marketing-header";
@@ -7,6 +8,7 @@ import { MultimodalPreview } from "@/components/marketing/multimodal-preview";
 import { PricingCards } from "@/components/marketing/pricing-cards";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/functions/get-session";
+import { seo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   // Logged-in users skip the marketing homepage and land in the app.
@@ -14,8 +16,27 @@ export const Route = createFileRoute("/")({
     const session = await getSession();
     if (session) throw redirect({ to: "/app" });
   },
+  head: () =>
+    seo({
+      title: "Haypile — find anything you ever saved",
+      description:
+        "Haypile makes everything you've bookmarked searchable — text, images, video and links across X, YouTube, Reddit, Pinterest, GitHub and your browser. Search it all in plain words.",
+      path: "/",
+    }),
   component: LandingPage,
 });
+
+const LANDING_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Haypile",
+  applicationCategory: "ProductivityApplication",
+  operatingSystem: "Web",
+  url: SITE_URL,
+  description: "Search everything you've saved across the internet in plain words: text, images, video and links.",
+  offers: { "@type": "Offer", price: "6", priceCurrency: "GBP" },
+  publisher: { "@type": "Organization", name: "Haypile", url: SITE_URL, logo: `${SITE_URL}/icon-512.png` },
+};
 
 const SOURCES = ["X", "YouTube", "Reddit", "Pinterest", "GitHub", "Chrome"];
 
@@ -46,6 +67,7 @@ const MODALITIES = [
 function LandingPage() {
   return (
     <div className="flex min-h-svh flex-col bg-background">
+      <JsonLd data={LANDING_JSONLD} />
       <MarketingHeader />
 
       <main className="flex-1">
@@ -74,7 +96,9 @@ function LandingPage() {
                 See how it works
               </Button>
             </div>
-            <p className="mt-5 text-sm text-muted-foreground">7-day free trial · no credit card · cancel anytime</p>
+            <p className="mt-5 text-sm text-muted-foreground">
+              7-day free trial · cancel anytime before you're charged
+            </p>
           </div>
 
           <HeroSearchPreview />
@@ -153,7 +177,7 @@ function LandingPage() {
               Simple, honest pricing.
             </h2>
             <p className="mx-auto mt-4 max-w-md leading-relaxed text-muted-foreground">
-              Start with a 7-day free trial. No credit card required.
+              Start with a 7-day free trial. Cancel anytime before it ends.
             </p>
             <div className="mt-12">
               <PricingCards />

@@ -25,9 +25,9 @@ interface RouterContext {
 }
 
 const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
-const SITE_URL = import.meta.env.VITE_SITE_URL ?? "http://localhost:3000";
+const SITE_URL = (import.meta.env.VITE_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const TITLE = APP_NAME;
-const DESCRIPTION = "Find anything you ever saved — across every corner of the internet.";
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -35,26 +35,27 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     return { serverToast };
   },
   component: RootComponent,
+  // Global tags only. Per-page title/description/OG/canonical live in each route's
+  // `head` (via `seo()`); the root deliberately sets no canonical or og:url so pages
+  // don't all claim the homepage.
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: TITLE },
-      { name: "description", content: DESCRIPTION },
       { name: "theme-color", content: "#2e7d6e" },
       { name: "robots", content: "index, follow" },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: SITE_URL },
       { property: "og:site_name", content: APP_NAME },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Haypile — find anything you ever saved" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "canonical", href: SITE_URL },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },

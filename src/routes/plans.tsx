@@ -9,9 +9,17 @@ import { HaypileMark } from "@/components/brand/haypile-mark";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { getSession } from "@/lib/functions/get-session";
+import { seo } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/plans")({
+  head: () =>
+    seo({
+      title: "Choose your plan · Haypile",
+      description: "Pick a plan to start your Haypile trial.",
+      path: "/plans",
+      noindex: true,
+    }),
   beforeLoad: async () => {
     const session = await getSession();
     if (!session) throw redirect({ to: "/login" });

@@ -3,8 +3,10 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { HaypileLockup } from "@/components/brand/haypile-lockup";
 import { getSession } from "@/lib/functions/get-session";
 import { redirectWithToast } from "@/lib/functions/redirect-with-toast";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/_auth")({
+  head: () => seo({ title: "Sign in · Haypile", description: "Sign in to Haypile.", path: "/login", noindex: true }),
   beforeLoad: async () => {
     const session = await getSession();
     if (session) {

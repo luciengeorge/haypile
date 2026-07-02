@@ -1,10 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seo } from "@/lib/seo";
+
 const APP_NAME = import.meta.env.VITE_APP_NAME ?? "Haypile";
 const CONTACT_EMAIL = "support@luciengeorge.com";
 const LAST_UPDATED = "2026-07-01";
 
 export const Route = createFileRoute("/(legal)/_layout/terms")({
+  head: () =>
+    seo({
+      title: "Terms of Service · Haypile",
+      description: "The terms that govern your use of Haypile.",
+      path: "/terms",
+    }),
   component: TermsPage,
 });
 
