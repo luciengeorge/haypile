@@ -6,7 +6,7 @@ import z from "zod";
  * Reads the current better-auth session during SSR by hitting the app's own
  * `/api/auth/get-session` proxy with the incoming request's cookies, using an
  * absolute URL built from the request host. The better-auth *client* has no valid
- * server-side baseURL, so calling it here would throw — this avoids that.
+ * server-side baseURL, so calling it here would throw, this avoids that.
  *
  * The endpoint returns untrusted JSON, so we validate it. Returns `{ user }` or null.
  */

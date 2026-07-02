@@ -11,7 +11,7 @@ interface EmailLayoutProps {
 }
 
 /**
- * Shared layout for all transactional emails — Haypile "Mineral" brand (bone paper,
+ * Shared layout for all transactional emails, Haypile "Mineral" brand (bone paper,
  * ink, verdigris). Email-safe HTML via React Email's Tailwind wrapper; brand colors
  * are set as inline styles for reliable rendering across Gmail/Outlook/etc.
  */

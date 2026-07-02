@@ -2,7 +2,7 @@ import { xAdapter } from "./adapters/x";
 import type { SyncAdapter } from "./types";
 
 /**
- * Adapter registry — keyed by `name`. Each product registers its sources here.
+ * Adapter registry, keyed by `name`. Each product registers its sources here.
  *
  * Example for a bookmark app:
  *

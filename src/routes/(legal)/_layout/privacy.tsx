@@ -37,8 +37,8 @@ function PrivacyPage() {
           "Continue with X"), so we never store a password.
         </li>
         <li>
-          <strong>Saved content:</strong> the items you've saved on sources you connect (for example your X bookmarks) —
-          their text, media, links, and timestamps — which we index so you can search them.
+          <strong>Saved content:</strong> the items you've saved on sources you connect (for example your X bookmarks),
+          their text, media, links, and timestamps, which we index so you can search them.
         </li>
         <li>
           <strong>Connection tokens:</strong> OAuth access/refresh tokens for the sources you connect, used only to sync
@@ -65,13 +65,13 @@ function PrivacyPage() {
       <h2>Sub-processors</h2>
       <p>We share data only with providers that help us run {APP_NAME}:</p>
       <ul>
-        <li>Convex — application database and hosting</li>
-        <li>Vercel — web hosting</li>
-        <li>Google Vertex AI — generating search embeddings</li>
-        <li>Polar — payments (Merchant of Record)</li>
-        <li>Resend — transactional email</li>
-        <li>PostHog — product analytics</li>
-        <li>Sentry — error monitoring</li>
+        <li>Convex, application database and hosting</li>
+        <li>Vercel, web hosting</li>
+        <li>Google Vertex AI, generating search embeddings</li>
+        <li>Polar, payments (Merchant of Record)</li>
+        <li>Resend, transactional email</li>
+        <li>PostHog, product analytics</li>
+        <li>Sentry, error monitoring</li>
       </ul>
 
       <h2>Retention</h2>
@@ -83,13 +83,13 @@ function PrivacyPage() {
       <h2>Your rights</h2>
       <ul>
         <li>
-          <strong>Access / portability</strong> — download your data via Settings → Danger zone → Export.
+          <strong>Access / portability</strong>, download your data via Settings → Danger zone → Export.
         </li>
         <li>
-          <strong>Erasure</strong> — delete your account (and all saved data) via Settings → Danger zone.
+          <strong>Erasure</strong>, delete your account (and all saved data) via Settings → Danger zone.
         </li>
         <li>
-          <strong>Rectification</strong> — update your name and email via Settings → Profile.
+          <strong>Rectification</strong>, update your name and email via Settings → Profile.
         </li>
         <li>You may also object to or restrict processing, and complain to the UK ICO (or your local authority).</li>
       </ul>

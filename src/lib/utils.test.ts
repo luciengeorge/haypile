@@ -7,7 +7,7 @@ describe("cn", () => {
     expect(cn("a", "b")).toBe("a b");
   });
 
-  it("dedupes Tailwind classes — later wins", () => {
+  it("dedupes Tailwind classes, later wins", () => {
     expect(cn("p-2", "p-4")).toBe("p-4");
   });
 

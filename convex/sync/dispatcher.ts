@@ -13,7 +13,7 @@ const BATCH_SIZE = 100;
  * fans out one runner action per job.
  *
  * Batched at BATCH_SIZE to keep the dispatcher itself fast. At 100 jobs every
- * 5 min that's 28,800 sync runs/day per deployment — more than enough for any
+ * 5 min that's 28,800 sync runs/day per deployment, more than enough for any
  * solo product.
  */
 export const tick = internalAction({
@@ -27,7 +27,7 @@ export const tick = internalAction({
 
       for (const job of due) {
         const claimed = await ctx.runMutation(internal.sync.state.markRunning, { jobId: job._id });
-        if (!claimed) continue; // race lost — another tick got it
+        if (!claimed) continue; // race lost, another tick got it
         await ctx.scheduler.runAfter(0, internal.sync.run.runJob, { jobId: job._id });
       }
 

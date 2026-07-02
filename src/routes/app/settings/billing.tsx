@@ -35,7 +35,7 @@ function formatDate(ms: number): string {
 
 function subline(status: SubStatus, trialEndsAt: number | null): string | null {
   if (status === "trialing") return trialEndsAt ? `Trial ends ${formatDate(trialEndsAt)}` : "Free trial";
-  if (status === "past_due") return "Payment past due — update your card to keep access";
+  if (status === "past_due") return "Payment past due, update your card to keep access";
   if (status === "comped") return "Complimentary access";
   return null;
 }
@@ -77,7 +77,7 @@ function BillingPage() {
 
       {success ? (
         <p className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm font-medium text-primary">
-          Subscription active — welcome aboard.
+          Subscription active, welcome aboard.
         </p>
       ) : null}
 

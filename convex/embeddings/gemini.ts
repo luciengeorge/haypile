@@ -1,5 +1,5 @@
 /**
- * gemini-embedding-2 wrapper — the multimodal embedding engine.
+ * gemini-embedding-2 wrapper, the multimodal embedding engine.
  *
  * One model, one shared vector space for text + image + video (+ audio). A text
  * query and an image of the same concept land near each other, which is what
@@ -9,7 +9,7 @@
  * Node actions and the standalone spike script (scripts/spike-redcar.ts).
  *
  * Auth: Application Default Credentials (GOOGLE_CLOUD_PROJECT + ADC) is the primary
- * path — many GCP orgs disallow API keys via security policy. If VERTEX_API_KEY is
+ * path, many GCP orgs disallow API keys via security policy. If VERTEX_API_KEY is
  * set (org permitting), it takes precedence. Local ADC: `gcloud auth application-default login`.
  *
  * Docs: https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-multimodal-embeddings
@@ -33,7 +33,7 @@ export const EMBED_MODEL = "gemini-embedding-2";
 
 /**
  * Output vector size. 1536 fits Convex's vector index (max 4096) and is a good
- * quality/size tradeoff. gemini-embedding-2 is Matryoshka — outputs are
+ * quality/size tradeoff. gemini-embedding-2 is Matryoshka, outputs are
  * L2-normalized at non-default dims, so cosine similarity works directly.
  * MUST match the `dimensions` on the itemVectors vector index.
  */
@@ -44,11 +44,11 @@ let client: GoogleGenAI | undefined;
 export function getGeminiClient(): GoogleGenAI {
   if (client) return client;
 
-  // gemini-embedding-2 is served on the global/us/eu endpoints only — NOT regional
+  // gemini-embedding-2 is served on the global/us/eu endpoints only, NOT regional
   // (e.g. us-central1 returns 404). Default to global.
   const location = process.env.GOOGLE_CLOUD_LOCATION ?? "global";
 
-  // 1) Inline service-account JSON (the Convex prod path — env var string, no file).
+  // 1) Inline service-account JSON (the Convex prod path, env var string, no file).
   //    gemini-embedding-2 is Vertex-only and rejects plain API keys, so a service
   //    account is the credential that works on Convex's servers.
   const saJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -158,7 +158,7 @@ interface VideoSegmentInput {
  * Embed ONE time-window of a video → one vector tagged with [startSec, endSec).
  * Call repeatedly across windows (e.g. 15s segments) to get multi-vector
  * granularity so a brief "red car" moment is findable + deep-linkable, without
- * running ffmpeg ourselves — Gemini samples frames internally per window.
+ * running ffmpeg ourselves, Gemini samples frames internally per window.
  *
  * Limits: 1 video/call, ≤120s (no audio) / ≤80s (with audio). Chunk longer videos.
  */

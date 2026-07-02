@@ -111,7 +111,7 @@ function bestVideoUrl(m: XMedia): string | undefined {
   return mp4s.sort((a, b) => (b.bit_rate ?? 0) - (a.bit_rate ?? 0))[0]?.url;
 }
 
-// Skip X's own t.co media/quote-tweet links — only keep real external links.
+// Skip X's own t.co media/quote-tweet links, only keep real external links.
 const X_INTERNAL = /^https?:\/\/(www\.)?(x\.com|twitter\.com|pic\.x\.com|pic\.twitter\.com)/i;
 
 export const xAdapter: SyncAdapter = {
@@ -140,12 +140,12 @@ export const xAdapter: SyncAdapter = {
     const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
-      if (res.status === 401) throw new Error("X token revoked — reconnect");
+      if (res.status === 401) throw new Error("X token revoked, reconnect");
       // 402/403: the bookmarks endpoint isn't included on the app's X API access tier.
       if (res.status === 402 || res.status === 403) {
-        throw new Error(`X bookmarks require a paid X API tier (Basic+) — your app's plan doesn't allow it. ${detail.slice(0, 200)}`);
+        throw new Error(`X bookmarks require a paid X API tier (Basic+), your app's plan doesn't allow it. ${detail.slice(0, 200)}`);
       }
-      if (res.status === 429) throw new Error("X rate limited — try again later");
+      if (res.status === 429) throw new Error("X rate limited, try again later");
       throw new Error(`X bookmarks failed: ${res.status} ${detail.slice(0, 200)}`);
     }
 
@@ -202,7 +202,7 @@ export const xAdapter: SyncAdapter = {
     for (const raw of items) {
       const item = persistItemSchema.parse(raw);
       const text = clean(item.text);
-      const title = [...text].slice(0, 80).join(""); // code-point slice — never splits an emoji pair
+      const title = [...text].slice(0, 80).join(""); // code-point slice, never splits an emoji pair
       const author = item.author ? clean(item.author) : undefined;
       const media = item.media?.length ? item.media : undefined;
       const links = item.links?.length

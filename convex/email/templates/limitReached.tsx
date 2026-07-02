@@ -20,11 +20,11 @@ export default function LimitReachedEmail({ name, planName = "Starter", cap = 20
       <EmailHeading>You've reached your limit</EmailHeading>
       <Text style={{ color: "#1b1a18" }} className="text-base leading-6">
         {display}, you've indexed all <strong>{cap.toLocaleString()}</strong> of your {planName} saves, so new saves are
-        paused — nothing is deleted. Upgrade to Pro for <strong>20,000 saves</strong> and keep everything indexing.
+        paused, nothing is deleted. Upgrade to Pro for <strong>20,000 saves</strong> and keep everything indexing.
       </Text>
       <BrandButton href={`${base}/app/settings/billing`}>Upgrade to Pro</BrandButton>
       <Text style={{ color: "#62655e" }} className="text-sm leading-5">
-        Your saved items stay fully searchable — only new items pause until you upgrade.
+        Your saved items stay fully searchable, only new items pause until you upgrade.
       </Text>
       <Signoff />
     </EmailLayout>

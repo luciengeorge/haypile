@@ -18,9 +18,9 @@ export const Route = createFileRoute("/")({
   },
   head: () =>
     seo({
-      title: "Haypile — find anything you ever saved",
+      title: "Haypile: find anything you ever saved",
       description:
-        "Haypile makes everything you've bookmarked searchable — text, images, video and links across X, YouTube, Reddit, Pinterest, GitHub and your browser. Search it all in plain words.",
+        "Haypile makes everything you've bookmarked searchable: text, images, video and links across X, YouTube, Reddit, Pinterest, GitHub and your browser. Search it all in plain words.",
       path: "/",
     }),
   component: LandingPage,
@@ -49,12 +49,12 @@ const STEPS = [
   {
     n: "02",
     title: "We make it searchable",
-    body: "Every save — text, image, video, link — is read and indexed by AI, including what's inside the media.",
+    body: "Every save, whether text, image, video or link, is read and indexed by AI, including what's inside the media.",
   },
   {
     n: "03",
     title: "Search in plain words",
-    body: "Ask for what you remember. Haypile finds it by meaning — not just exact keywords or tags.",
+    body: "Ask for what you remember. Haypile finds it by meaning, not just exact keywords or tags.",
   },
 ];
 
@@ -83,7 +83,7 @@ function LandingPage() {
             </h1>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
               Text search only reads captions and tags. Haypile reads <span className="text-foreground">inside</span>{" "}
-              your saves — the pixels in a screenshot, the moment in a video, the page behind a link — so you can find
+              your saves, the pixels in a screenshot, the moment in a video, the page behind a link, so you can find
               anything across X, YouTube, Reddit, Pinterest, GitHub and your browser just by describing it.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -146,7 +146,7 @@ function LandingPage() {
             <div>
               <p className="text-xs font-medium tracking-[0.14em] text-primary uppercase">Multimodal search</p>
               <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight text-balance sm:text-[2.75rem]">
-                It reads your images and videos — not just the words.
+                It reads your images and videos, not just the words.
               </h2>
               <p className="mt-5 max-w-md leading-relaxed text-muted-foreground">
                 Most tools only match text. Haypile embeds the actual pixels and frames, so you can find a screenshot, a

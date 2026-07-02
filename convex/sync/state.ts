@@ -126,13 +126,13 @@ export const getJob = internalQuery({
 export const findDueJobs = internalQuery({
   args: { now: v.number(), limit: v.number() },
   handler: async (ctx, { now, limit }) => {
-    // Idle jobs whose nextRunAt is in the past — the dispatch candidates.
+    // Idle jobs whose nextRunAt is in the past, the dispatch candidates.
     const idle = await ctx.db
       .query("syncJobs")
       .withIndex("by_status_next_run", (q) => q.eq("status", "idle").lte("nextRunAt", now))
       .take(limit);
 
-    // Stuck "running" jobs — runner crashed or timed out, reap + retry.
+    // Stuck "running" jobs, runner crashed or timed out, reap + retry.
     const stuck = await ctx.db
       .query("syncJobs")
       .withIndex("by_status_next_run", (q) => q.eq("status", "running").lte("nextRunAt", now - STUCK_RUN_MS))

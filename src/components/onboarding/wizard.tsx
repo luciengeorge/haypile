@@ -13,7 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 export interface WizardStep {
-  /** Stable id — used to track completion in analytics + persistence. */
+  /** Stable id, used to track completion in analytics + persistence. */
   id: string;
   title: string;
   description?: string;
@@ -32,7 +32,7 @@ interface WizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onComplete: () => void | Promise<void>;
-  /** Allow closing via X / Escape / backdrop. Default false — forces completion. */
+  /** Allow closing via X / Escape / backdrop. Default false, forces completion. */
   dismissible?: boolean;
   /** Track step changes for analytics. */
   onStepChange?: (stepId: string, index: number) => void;

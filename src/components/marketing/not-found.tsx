@@ -19,7 +19,7 @@ export function NotFound() {
             This one slipped out of the pile.
           </h1>
           <p className="mx-auto mt-5 max-w-md leading-relaxed text-muted-foreground">
-            We couldn't find that page — but everything you've actually saved is still right where you left it.
+            We couldn't find that page, but everything you've actually saved is still right where you left it.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Button size="lg" nativeButton={false} render={<Link to="/" />}>

@@ -32,7 +32,7 @@ export async function getItemCount(ctx: MutationCtx, userId: string): Promise<nu
 }
 
 /**
- * Adjust a user's denormalized video count — the COGS-critical Pro cap. Applied as a
+ * Adjust a user's denormalized video count, the COGS-critical Pro cap. Applied as a
  * delta from the embed pipeline (idempotent: re-embedding the same item nets 0).
  */
 export async function bumpVideoCount(ctx: MutationCtx, userId: string, delta: number): Promise<void> {
@@ -56,7 +56,7 @@ export const getForEmbed = internalQuery({
   },
 });
 
-/** Current video count for a user — the embed pipeline reads this to enforce the Pro video cap. */
+/** Current video count for a user, the embed pipeline reads this to enforce the Pro video cap. */
 export const videoUsage = internalQuery({
   args: { userId: v.string() },
   handler: async (ctx, { userId }) => {
@@ -120,7 +120,7 @@ export const markEmbedFailed = internalMutation({
   },
 });
 
-/** Item count for the usage meter — reads the denormalized counter (O(1)). */
+/** Item count for the usage meter, reads the denormalized counter (O(1)). */
 export const usage = query({
   args: {},
   handler: async (ctx) => {

@@ -1,7 +1,7 @@
 import type { PlanId } from "../lib/plans";
 
 /**
- * Pure billing decision logic — no Convex/ctx/env dependencies, so it's directly
+ * Pure billing decision logic, no Convex/ctx/env dependencies, so it's directly
  * unit-testable. The Convex functions (gating/limits/lifecycle) do the IO (fetch
  * subscription, send email, write rows) and delegate every decision here.
  */

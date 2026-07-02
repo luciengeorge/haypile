@@ -47,11 +47,11 @@ const PRICING_JSONLD = {
 const FAQS = [
   {
     q: 'What counts as a "saved item"?',
-    a: "Anything you've bookmarked on a connected source — a tweet, a YouTube video, a Pin, a link, a starred repo. Each one is indexed and made searchable.",
+    a: "Anything you've bookmarked on a connected source, a tweet, a YouTube video, a Pin, a link, a starred repo. Each one is indexed and made searchable.",
   },
   {
     q: "Do you train AI on my data?",
-    a: "Never. Your saves are embedded only to power your own private search — they're never used to train models or shared with anyone.",
+    a: "Never. Your saves are embedded only to power your own private search, they're never used to train models or shared with anyone.",
   },
   {
     q: "What happens if I hit my plan's limit?",
@@ -59,7 +59,7 @@ const FAQS = [
   },
   {
     q: "Can I cancel anytime?",
-    a: "Yes — cancel in one click. You'll keep full access until the end of your billing period.",
+    a: "Yes, cancel in one click. You'll keep full access until the end of your billing period.",
   },
 ];
 

@@ -14,7 +14,7 @@ type SeoInput = {
 /**
  * Per-route head tags: title, description, Open Graph, Twitter, canonical, robots.
  * Global tags (charset, icons, og:image, twitter:card, default title) stay in the root
- * route. Canonical/og:url are per-page here — the root deliberately sets neither, so
+ * route. Canonical/og:url are per-page here, the root deliberately sets neither, so
  * every page gets its own instead of all claiming the homepage.
  */
 export function seo({ title, description, path, noindex }: SeoInput) {

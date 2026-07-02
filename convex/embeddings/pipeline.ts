@@ -65,7 +65,7 @@ async function fetchPageText(url: string): Promise<string | null> {
 }
 
 /**
- * Embed one item into the shared vector space — multimodal. A single item (e.g. a
+ * Embed one item into the shared vector space, multimodal. A single item (e.g. a
  * tweet) fans out into many vectors: its text + each photo + each video + each
  * link's preview image and fetched page content. Each attachment is best-effort:
  * one failed image/link won't fail the whole item.
@@ -79,7 +79,7 @@ export const embedItem = internalAction({
     // Video + deep-link embedding (the COGS driver) are Pro-only; everyone gets text + image.
     const plan = await planForUserId(ctx, item.userId);
     const richMedia = allowsRichMedia(plan);
-    // Per-user video safety cap (COGS guardrail) — stop embedding videos past the plan limit.
+    // Per-user video safety cap (COGS guardrail), stop embedding videos past the plan limit.
     const maxVideos = getPlanLimit(plan, "maxVideos") ?? Number.POSITIVE_INFINITY;
     const userVideoCount = await ctx.runQuery(internal.items.videoUsage, { userId: item.userId });
     let itemVideos = 0; // videos embedded for THIS item this run

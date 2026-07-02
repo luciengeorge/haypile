@@ -25,7 +25,7 @@ function CookiesPage() {
       <h2>Essential</h2>
       <ul>
         <li>
-          <code>better-auth.session_token</code> — keeps you signed in. Required for the app to work.
+          <code>better-auth.session_token</code>, keeps you signed in. Required for the app to work.
         </li>
       </ul>
 

@@ -34,7 +34,7 @@ export function VideoPaywall() {
       <div className="flex items-center gap-3">
         <UpgradeModal
           defaultPlan="pro"
-          reason="Pro adds video & link search — jump to the exact moment in any saved video."
+          reason="Pro adds video & link search: jump to the exact moment in any saved video."
           trigger={
             <button
               type="button"

@@ -16,7 +16,7 @@ export default function DeleteAccount({ url, appName }: DeleteAccountProps) {
       <Heading className="mt-0 mb-4 text-2xl font-bold text-gray-900">Confirm account deletion</Heading>
       <Text className="text-base leading-6 text-gray-700">
         We received a request to permanently delete your {product} account and all associated data. This action is
-        irreversible. Confirm with the button below — the link expires in 24 hours.
+        irreversible. Confirm with the button below, the link expires in 24 hours.
       </Text>
       <BrandButton href={url} destructive>
         Delete my account

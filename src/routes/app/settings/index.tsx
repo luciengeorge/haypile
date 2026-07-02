@@ -157,7 +157,7 @@ function DangerSection() {
   const navigate = useNavigate();
   const sub = useQuery(api.billing.queries.mySubscription);
   // Deleting an account can't stop an active Merchant-of-Record subscription, so
-  // require cancellation (in the billing portal) first — avoids orphaned charges.
+  // require cancellation (in the billing portal) first, avoids orphaned charges.
   const hasActiveSub = Boolean(sub && sub.plan !== "free");
   const [confirmInput, setConfirmInput] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -225,7 +225,7 @@ function DangerSection() {
             <FieldLabel htmlFor="confirm-delete">Delete account</FieldLabel>
             <FieldDescription>
               Permanently removes your Haypile and all saves. Type{" "}
-              <span className="font-medium text-foreground">{expectedConfirm}</span> to confirm — you'll get a final
+              <span className="font-medium text-foreground">{expectedConfirm}</span> to confirm, you'll get a final
               email.
             </FieldDescription>
             <Input

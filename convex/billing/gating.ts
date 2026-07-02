@@ -17,7 +17,7 @@ type AnyCtx = GenericQueryCtx<DataModel> | GenericMutationCtx<DataModel> | Gener
  * Usage in a mutation/query/action:
  *   await requirePlan(ctx, "pro");
  *
- * Never trust client-side plan checks for security — every paid feature must call
+ * Never trust client-side plan checks for security, every paid feature must call
  * this from inside its Convex function.
  */
 export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> {
@@ -38,7 +38,7 @@ export async function requirePlan(ctx: AnyCtx, required: PlanId): Promise<void> 
 }
 
 /**
- * Resolve a user's plan by id, without an auth session — for background jobs like the
+ * Resolve a user's plan by id, without an auth session, for background jobs like the
  * embed pipeline. If billing isn't configured (no POLAR_ACCESS_TOKEN), returns "pro"
  * so dev / self-host keeps full features instead of being silently downgraded.
  */
@@ -61,7 +61,7 @@ function parseAdminUserIds(): string[] {
 
 /**
  * The full access picture for a user: plan, subscription status, trial end, and
- * whether they can use the app. No auth session required — safe for background jobs.
+ * whether they can use the app. No auth session required, safe for background jobs.
  * Does the IO (env + subscription fetch), then delegates to the pure `resolveEntitlement`.
  */
 export async function getEntitlement(ctx: AnyCtx, userId: string): Promise<Entitlement> {
