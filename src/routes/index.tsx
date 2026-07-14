@@ -9,6 +9,7 @@ import { PricingCards } from "@/components/marketing/pricing-cards";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/functions/get-session";
 import { seo, SITE_URL } from "@/lib/seo";
+import { WAITLIST_ENABLED } from "@/lib/waitlist";
 
 export const Route = createFileRoute("/")({
   // Logged-in users skip the marketing homepage and land in the app.
@@ -64,6 +65,9 @@ const MODALITIES = [
   { title: "Link contents", body: "We read the page behind every link you saved.", icon: LinkGlyph },
 ];
 
+const START_CTA_TO = WAITLIST_ENABLED ? "/waitlist" : "/signup";
+const START_CTA_LABEL = WAITLIST_ENABLED ? "Join the waitlist" : "Start free trial";
+
 function LandingPage() {
   return (
     <div className="flex min-h-svh flex-col overflow-x-clip bg-background">
@@ -87,8 +91,8 @@ function LandingPage() {
               anything across X, YouTube, Reddit, Pinterest, GitHub and your browser just by describing it.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button size="lg" nativeButton={false} render={<Link to="/signup" />}>
-                Start free trial
+              <Button size="lg" nativeButton={false} render={<Link to={START_CTA_TO} />}>
+                {START_CTA_LABEL}
                 <ArrowUpRight />
               </Button>
               <Button size="lg" variant="ghost" nativeButton={false} render={<Link to="/" hash="how-it-works" />}>
@@ -197,9 +201,9 @@ function LandingPage() {
                 size="lg"
                 className="bg-background text-foreground hover:bg-background/90"
                 nativeButton={false}
-                render={<Link to="/signup" />}
+                render={<Link to={START_CTA_TO} />}
               >
-                Start free trial
+                {START_CTA_LABEL}
                 <ArrowUpRight />
               </Button>
             </div>

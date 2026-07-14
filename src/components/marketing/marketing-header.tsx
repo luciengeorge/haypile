@@ -4,12 +4,22 @@ import { HaypileLockup } from "@/components/brand/haypile-lockup";
 import { MarketingAccountMenu } from "@/components/marketing/marketing-account-menu";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { WAITLIST_ENABLED } from "@/lib/waitlist";
 
-const NAV = [
+type NavItem = {
+  label: string;
+  to: "/" | "/pricing";
+  hash?: "how-it-works" | "sources";
+};
+
+const NAV: NavItem[] = [
   { label: "Features", to: "/", hash: "how-it-works" },
   { label: "Pricing", to: "/pricing", hash: undefined },
   { label: "Sources", to: "/", hash: "sources" },
-] as const;
+];
+
+const START_CTA_TO = WAITLIST_ENABLED ? "/waitlist" : "/signup";
+const START_CTA_LABEL = WAITLIST_ENABLED ? "Join the waitlist" : "Start free trial";
 
 export function MarketingHeader() {
   const { data: session } = authClient.useSession();
@@ -49,8 +59,8 @@ export function MarketingHeader() {
               >
                 Sign in
               </Button>
-              <Button size="sm" nativeButton={false} render={<Link to="/signup" />}>
-                Start free trial
+              <Button size="sm" nativeButton={false} render={<Link to={START_CTA_TO} />}>
+                {START_CTA_LABEL}
               </Button>
             </>
           )}

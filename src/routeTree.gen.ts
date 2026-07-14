@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WaitlistRouteImport } from './routes/waitlist'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as AppRouteImport } from './routes/app'
@@ -33,6 +34,11 @@ import { Route as legalLayoutTermsRouteImport } from './routes/(legal)/_layout/t
 import { Route as legalLayoutPrivacyRouteImport } from './routes/(legal)/_layout/privacy'
 import { Route as legalLayoutCookiesRouteImport } from './routes/(legal)/_layout/cookies'
 
+const WaitlistRoute = WaitlistRouteImport.update({
+  id: '/waitlist',
+  path: '/waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
+  '/waitlist': typeof WaitlistRoute
   '/check-email': typeof AuthCheckEmailRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
+  '/waitlist': typeof WaitlistRoute
   '/check-email': typeof AuthCheckEmailRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/plans': typeof PlansRoute
   '/pricing': typeof PricingRoute
+  '/waitlist': typeof WaitlistRoute
   '/(legal)/_layout': typeof legalLayoutRouteWithChildren
   '/_auth/check-email': typeof AuthCheckEmailRoute
   '/_auth/login': typeof AuthLoginRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/plans'
     | '/pricing'
+    | '/waitlist'
     | '/check-email'
     | '/login'
     | '/signup'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/plans'
     | '/pricing'
+    | '/waitlist'
     | '/check-email'
     | '/login'
     | '/signup'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/plans'
     | '/pricing'
+    | '/waitlist'
     | '/(legal)/_layout'
     | '/_auth/check-email'
     | '/_auth/login'
@@ -295,6 +307,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   PlansRoute: typeof PlansRoute
   PricingRoute: typeof PricingRoute
+  WaitlistRoute: typeof WaitlistRoute
   legalLayoutRoute: typeof legalLayoutRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiImgStorageIdRoute: typeof ApiImgStorageIdRoute
@@ -302,6 +315,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/waitlist': {
+      id: '/waitlist'
+      path: '/waitlist'
+      fullPath: '/waitlist'
+      preLoaderRoute: typeof WaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -538,6 +558,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   PlansRoute: PlansRoute,
   PricingRoute: PricingRoute,
+  WaitlistRoute: WaitlistRoute,
   legalLayoutRoute: legalLayoutRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImgStorageIdRoute: ApiImgStorageIdRoute,

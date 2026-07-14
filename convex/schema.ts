@@ -109,6 +109,12 @@ export default defineSchema({
     productUpdates: v.boolean(),
   }).index("by_user", ["userId"]),
 
+  waitlist: defineTable({
+    email: v.string(),
+    source: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_email", ["email"]),
+
   /**
    * Denormalized per-user item count for the usage meter / cap. Kept in sync on
    * item insert (and any future delete), avoids collect()-ing every item, which

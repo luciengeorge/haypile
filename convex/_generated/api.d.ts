@@ -52,6 +52,7 @@ import type * as sync_state from "../sync/state.js";
 import type * as sync_types from "../sync/types.js";
 import type * as userPrefs from "../userPrefs.js";
 import type * as users from "../users.js";
+import type * as waitlist from "../waitlist.js";
 import type * as x from "../x.js";
 
 import type {
@@ -105,6 +106,7 @@ declare const fullApi: ApiFromModules<{
   "sync/types": typeof sync_types;
   userPrefs: typeof userPrefs;
   users: typeof users;
+  waitlist: typeof waitlist;
   x: typeof x;
 }>;
 
