@@ -38,6 +38,7 @@ import type * as embeddings_pipeline from "../embeddings/pipeline.js";
 import type * as http from "../http.js";
 import type * as items from "../items.js";
 import type * as lib_plans from "../lib/plans.js";
+import type * as lib_waitlistEmail from "../lib/waitlistEmail.js";
 import type * as lib_webhook from "../lib/webhook.js";
 import type * as rag from "../rag.js";
 import type * as rateLimiter from "../rateLimiter.js";
@@ -92,6 +93,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   items: typeof items;
   "lib/plans": typeof lib_plans;
+  "lib/waitlistEmail": typeof lib_waitlistEmail;
   "lib/webhook": typeof lib_webhook;
   rag: typeof rag;
   rateLimiter: typeof rateLimiter;

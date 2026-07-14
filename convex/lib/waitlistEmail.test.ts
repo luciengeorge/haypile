@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseWaitlistEmail } from "./waitlist-email";
+import { parseWaitlistEmail } from "./waitlistEmail";
 
 describe("parseWaitlistEmail", () => {
   it("normalizes a valid email (trim + lowercase)", () => {

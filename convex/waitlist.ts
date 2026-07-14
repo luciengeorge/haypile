@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { mutation } from "./_generated/server";
-import { parseWaitlistEmail } from "./lib/waitlist-email";
+import { parseWaitlistEmail } from "./lib/waitlistEmail";
 import { rateLimiter } from "./rateLimiter";
 
 export const joinWaitlist = mutation({
