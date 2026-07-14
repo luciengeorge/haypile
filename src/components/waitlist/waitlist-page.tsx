@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useMutation } from "convex/react";
 import { useState, type FormEvent } from "react";
 
@@ -36,7 +37,9 @@ export function WaitlistPage() {
   return (
     <div className="flex min-h-svh flex-col overflow-x-clip bg-background text-foreground">
       <header className="flex w-full items-center justify-between px-5 py-6 sm:px-8 lg:px-16 lg:py-8">
-        <HaypileLockup size={40} className="gap-3" />
+        <Link to="/" aria-label="Haypile home">
+          <HaypileLockup size={40} className="gap-3" />
+        </Link>
         <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3.5 py-1.75">
           <div className="size-1.5 shrink-0 rounded-full bg-primary" />
           <div className="text-xs/4 font-medium tracking-[0.12em] text-primary uppercase">Coming soon</div>

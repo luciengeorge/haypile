@@ -1,11 +1,11 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
 import { JsonLd } from "@/components/json-ld";
-import { HeroSearchPreview } from "@/components/marketing/hero-search-preview";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { MarketingHeader } from "@/components/marketing/marketing-header";
 import { MultimodalPreview } from "@/components/marketing/multimodal-preview";
 import { PricingCards } from "@/components/marketing/pricing-cards";
+import { SearchPreview } from "@/components/search-preview";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/functions/get-session";
 import { seo, SITE_URL } from "@/lib/seo";
@@ -105,7 +105,7 @@ function LandingPage() {
             </p>
           </div>
 
-          <HeroSearchPreview />
+          <SearchPreview />
         </section>
 
         {/* Sources strip */}
