@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { PLANS, type PlanId } from "@/../convex/lib/plans";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { WAITLIST_ENABLED } from "@/lib/waitlist";
 
 export type BillingCycle = "monthly" | "annual";
 
@@ -26,6 +27,9 @@ const TIERS: Tier[] = [
     popular: true,
   },
 ];
+
+const START_CTA_TO = WAITLIST_ENABLED ? "/waitlist" : "/signup";
+const START_CTA_LABEL = WAITLIST_ENABLED ? "Join the waitlist" : "Start free trial";
 
 export function PricingCards({ cycle = "monthly" }: { cycle?: BillingCycle }) {
   return (
@@ -82,9 +86,9 @@ export function PricingCards({ cycle = "monthly" }: { cycle?: BillingCycle }) {
               variant={tier.popular ? "default" : "outline"}
               className="mt-7"
               nativeButton={false}
-              render={<Link to="/signup" />}
+              render={<Link to={START_CTA_TO} />}
             >
-              Start free trial
+              {START_CTA_LABEL}
             </Button>
           </div>
         );

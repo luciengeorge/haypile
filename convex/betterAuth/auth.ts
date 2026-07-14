@@ -50,6 +50,13 @@ const xUserInfoSchema = z.object({
 
 // Data-source OAuth connections (X bookmarks, etc.) via better-auth genericOAuth.
 // Tokens land in the `account` table; background sync reads them by userId (see convex/x.ts).
+// While the waitlist is live (WAITLIST_ENABLED=true on the Convex deployment) better-auth must
+// refuse NEW accounts from every entry point — magic link AND "Continue with X" — so /login can't
+// be used to sign up around the gate. Existing users (incl. admins) still sign in normally.
+function waitlistLocked(): boolean {
+  return process.env.WAITLIST_ENABLED === "true";
+}
+
 function buildGenericOAuthConfig() {
   const config = [];
   if (process.env.X_CLIENT_ID && process.env.X_CLIENT_SECRET) {
@@ -63,6 +70,7 @@ function buildGenericOAuthConfig() {
         scopes: ["tweet.read", "users.read", "users.email", "bookmark.read", "offline.access"],
       pkce: true,
       authentication: "basic" as const,
+      disableSignUp: waitlistLocked(),
         getUserInfo: async (tokens: { accessToken?: string }) => {
           const res = await fetch(
             "https://api.x.com/2/users/me?user.fields=confirmed_email,profile_image_url",
@@ -115,6 +123,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     plugins: [
       convex({ authConfig }),
       magicLink({
+        disableSignUp: waitlistLocked(),
         async sendMagicLink({ email, url }) {
           await getScheduler(ctx).runAfter(0, internal.email.send.sendEmail, {
             to: email,

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { createFileRoute, Link, Navigate, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
 import { api } from "@/../convex/_generated/api";
@@ -39,6 +39,7 @@ import { getInitials } from "@/lib/initials";
 import { isNavActive } from "@/lib/nav";
 import { seo } from "@/lib/seo";
 import { cn } from "@/lib/utils";
+import { WAITLIST_ENABLED } from "@/lib/waitlist";
 
 export const Route = createFileRoute("/app")({
   head: () =>
@@ -51,6 +52,8 @@ export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
     const session = await getSession();
     if (!session) {
+      if (WAITLIST_ENABLED) throw redirect({ to: "/waitlist" });
+
       await redirectWithToast({
         to: "/login",
         toast: { status: "info", description: "Please sign in to continue" },

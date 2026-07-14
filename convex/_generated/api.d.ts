@@ -38,6 +38,7 @@ import type * as embeddings_pipeline from "../embeddings/pipeline.js";
 import type * as http from "../http.js";
 import type * as items from "../items.js";
 import type * as lib_plans from "../lib/plans.js";
+import type * as lib_waitlistEmail from "../lib/waitlistEmail.js";
 import type * as lib_webhook from "../lib/webhook.js";
 import type * as rag from "../rag.js";
 import type * as rateLimiter from "../rateLimiter.js";
@@ -52,6 +53,7 @@ import type * as sync_state from "../sync/state.js";
 import type * as sync_types from "../sync/types.js";
 import type * as userPrefs from "../userPrefs.js";
 import type * as users from "../users.js";
+import type * as waitlist from "../waitlist.js";
 import type * as x from "../x.js";
 
 import type {
@@ -91,6 +93,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   items: typeof items;
   "lib/plans": typeof lib_plans;
+  "lib/waitlistEmail": typeof lib_waitlistEmail;
   "lib/webhook": typeof lib_webhook;
   rag: typeof rag;
   rateLimiter: typeof rateLimiter;
@@ -105,6 +108,7 @@ declare const fullApi: ApiFromModules<{
   "sync/types": typeof sync_types;
   userPrefs: typeof userPrefs;
   users: typeof users;
+  waitlist: typeof waitlist;
   x: typeof x;
 }>;
 
