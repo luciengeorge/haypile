@@ -1,15 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { useMutation } from "convex/react";
 import { useState, type FormEvent } from "react";
 
-import { api } from "@/../convex/_generated/api";
 import { HaypileLockup } from "@/components/brand/haypile-lockup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WaitlistTeaserCard } from "@/components/waitlist/waitlist-teaser-card";
+import { joinWaitlist } from "@/lib/functions/join-waitlist";
 
 export function WaitlistPage() {
-  const joinWaitlist = useMutation(api.waitlist.joinWaitlist);
   const [email, setEmail] = useState("");
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -24,7 +22,7 @@ export function WaitlistPage() {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      await joinWaitlist({ email: normalizedEmail, source: "waitlist" });
+      await joinWaitlist({ data: { email: normalizedEmail, source: "waitlist" } });
       setSubmittedEmail(normalizedEmail);
       setSubmitted(true);
     } catch (caught) {
