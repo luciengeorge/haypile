@@ -88,20 +88,6 @@ export function WaitlistPage() {
                   <div className="truncate text-sm/4.5 text-muted-foreground">{submittedEmail}</div>
                 </div>
               </div>
-              <div className="mt-4.5 flex flex-wrap items-center gap-2">
-                <div className="text-sm/4.5 text-muted-foreground">Want the behind-the-scenes?</div>
-                <a
-                  href="https://x.com/haypile"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 underline-offset-4 hover:underline"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="size-3.5 text-foreground">
-                    <path d="M18.9 2H22l-7 8 8.2 11h-6.4l-5-6.6L5 21H1.9l7.5-8.6L1 2h6.5l4.6 6.1z" />
-                  </svg>
-                  <span className="text-sm/4.5 font-semibold text-foreground">Follow @haypile</span>
-                </a>
-              </div>
             </>
           ) : (
             <>
