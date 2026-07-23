@@ -36,6 +36,7 @@ import type * as email_templates_welcome from "../email/templates/welcome.js";
 import type * as embeddings_gemini from "../embeddings/gemini.js";
 import type * as embeddings_pipeline from "../embeddings/pipeline.js";
 import type * as http from "../http.js";
+import type * as import_concierge from "../import/concierge.js";
 import type * as items from "../items.js";
 import type * as lib_plans from "../lib/plans.js";
 import type * as lib_waitlistEmail from "../lib/waitlistEmail.js";
@@ -91,6 +92,7 @@ declare const fullApi: ApiFromModules<{
   "embeddings/gemini": typeof embeddings_gemini;
   "embeddings/pipeline": typeof embeddings_pipeline;
   http: typeof http;
+  "import/concierge": typeof import_concierge;
   items: typeof items;
   "lib/plans": typeof lib_plans;
   "lib/waitlistEmail": typeof lib_waitlistEmail;
