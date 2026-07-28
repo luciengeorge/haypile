@@ -21,117 +21,117 @@ type Example = {
 // list swaps in step with the typewriter and shows off multimodal search across sources.
 const EXAMPLES: Example[] = [
   {
-    query: "crispy chili oil eggs",
+    query: "the local-first sync library I starred",
     results: [
-      {
-        kind: "image",
-        title: "Chili oil eggs, jammy yolk",
-        meta: "Image · saved from Pinterest · Feb 2026",
-        score: "0.69",
-        tone: "from-[#c88f5a] to-[#9c6634]",
-      },
-      { kind: "video", title: "60-second chili oil eggs", meta: "Video · 0:48 · saved from Instagram", score: "0.66" },
+      { kind: "link", title: "electric-sql / electric", meta: "Link · github.com · saved from GitHub", score: "0.76" },
       {
         kind: "link",
-        title: "The chili crisp taste test",
-        meta: "Link · seriouseats.com · saved from X",
-        score: "0.63",
+        title: "Local-first software: the essay",
+        meta: "Link · inkandswitch.com · saved from X",
+        score: "0.66",
       },
-    ],
-  },
-  {
-    query: "mid-century walnut credenza",
-    results: [
       {
-        kind: "image",
-        title: "Walnut credenza, tapered legs",
-        meta: "Image · saved from Pinterest · Nov 2025",
-        score: "0.72",
-        tone: "from-[#a9773f] to-[#6f4a24]",
-      },
-      { kind: "video", title: "Restoring a 1960s credenza", meta: "Video · 7:20 · saved from YouTube", score: "0.64" },
-      {
-        kind: "link",
-        title: "Where to buy real mid-century",
-        meta: "Link · apartmenttherapy.com · saved from X",
+        kind: "video",
+        title: "Local-first sync, explained",
+        meta: "Video · 12:30 · saved from YouTube",
         score: "0.61",
       },
     ],
   },
   {
-    query: "that reel about cold plunge benefits",
+    query: "thread comparing the open LLMs",
     results: [
-      {
-        kind: "video",
-        title: "Cold plunge, my first 30 days",
-        meta: "Video · 2:14 · saved from Instagram",
-        score: "0.74",
-      },
+      { kind: "link", title: "Open-weight models, ranked", meta: "Link · x.com · saved from X", score: "0.77" },
       {
         kind: "image",
-        title: "Backyard ice bath setup",
-        meta: "Image · saved from Pinterest · Dec 2025",
-        score: "0.65",
-        tone: "from-[#7fa8c9] to-[#3f6b90]",
+        title: "Benchmark table screenshot",
+        meta: "Image · screenshot · saved from X",
+        score: "0.68",
+        tone: "from-[#9aa0a6] to-[#5f6368]",
       },
       {
         kind: "link",
-        title: "Does cold exposure actually work?",
-        meta: "Link · hubermanlab.com · saved from Reddit",
+        title: "Which local model should you run?",
+        meta: "Link · simonwillison.net · saved from Reddit",
+        score: "0.61",
+      },
+    ],
+  },
+  {
+    query: "scandi bedroom with the low wooden bed",
+    results: [
+      {
+        kind: "image",
+        title: "Oak platform bed, linen throw",
+        meta: "Image · saved from Pinterest · Jan 2026",
+        score: "0.74",
+        tone: "from-[#c8a06a] to-[#8a6238]",
+      },
+      {
+        kind: "image",
+        title: "Muji-style minimal bedroom",
+        meta: "Image · saved from Pinterest · Nov 2025",
+        score: "0.66",
+        tone: "from-[#cfc8ba] to-[#8f887b]",
+      },
+      { kind: "video", title: "Small bedroom makeover", meta: "Video · 6:40 · saved from YouTube", score: "0.6" },
+    ],
+  },
+  {
+    query: "that miso salmon rice bowl",
+    results: [
+      {
+        kind: "image",
+        title: "Miso glazed salmon bowl",
+        meta: "Image · saved from Pinterest · Dec 2025",
+        score: "0.72",
+        tone: "from-[#d98a5a] to-[#a85a30]",
+      },
+      {
+        kind: "video",
+        title: "15-minute salmon rice bowl",
+        meta: "Video · 0:52 · saved from Instagram",
+        score: "0.65",
+      },
+      { kind: "link", title: "Weeknight miso salmon", meta: "Link · nytimes.com · saved from X", score: "0.6" },
+    ],
+  },
+  {
+    query: "portfolio with the huge serif hero",
+    results: [
+      {
+        kind: "image",
+        title: "Editorial portfolio, oversized serif",
+        meta: "Image · saved from Pinterest · Jan 2026",
+        score: "0.73",
+        tone: "from-[#9a958c] to-[#5f5b54]",
+      },
+      {
+        kind: "image",
+        title: "Awwwards serif landing page",
+        meta: "Image · saved from X",
+        score: "0.66",
+        tone: "from-[#b9bec4] to-[#7a7f86]",
+      },
+      {
+        kind: "link",
+        title: "Typography that carries a whole page",
+        meta: "Link · smashingmagazine.com · saved from X",
         score: "0.6",
       },
     ],
   },
   {
-    query: "the wifi password screenshot",
+    query: "the git branching workflow video",
     results: [
-      {
-        kind: "image",
-        title: "Back-of-router password",
-        meta: "Image · screenshot · saved from Photos",
-        score: "0.78",
-        tone: "from-[#9aa0a6] to-[#5f6368]",
-      },
-      {
-        kind: "image",
-        title: "Airbnb wifi note",
-        meta: "Image · screenshot · saved from browser",
-        score: "0.7",
-        tone: "from-[#8c8f95] to-[#585b60]",
-      },
+      { kind: "video", title: "Trunk-based vs git flow", meta: "Video · 8:05 · saved from YouTube", score: "0.75" },
       {
         kind: "link",
-        title: "How to find your wifi password",
-        meta: "Link · nordvpn.com · saved from X",
-        score: "0.58",
+        title: "A successful git branching model",
+        meta: "Link · nvie.com · saved from GitHub",
+        score: "0.64",
       },
-    ],
-  },
-  {
-    query: "brutalist house with the spiral staircase",
-    results: [
-      {
-        kind: "image",
-        title: "Concrete villa, béton brut",
-        meta: "Image · saved from Pinterest · Jan 2026",
-        score: "0.75",
-        tone: "from-[#b9b4ab] to-[#7d786f]",
-      },
-      { kind: "video", title: "Brutalist architecture tour", meta: "Video · 5:02 · saved from YouTube", score: "0.67" },
-      { kind: "link", title: "Brutalism's 2026 revival", meta: "Link · dezeen.com · saved from X", score: "0.62" },
-    ],
-  },
-  {
-    query: "thread on getting your first 100 users",
-    results: [
-      { kind: "link", title: "How I got my first 100 users", meta: "Link · x.com · saved from X", score: "0.77" },
-      { kind: "video", title: "0 to 100 users, a breakdown", meta: "Video · 9:30 · saved from YouTube", score: "0.66" },
-      {
-        kind: "link",
-        title: "The cold-start playbook",
-        meta: "Link · lennysnewsletter.com · saved from X",
-        score: "0.61",
-      },
+      { kind: "link", title: "Stop rebasing (hot take)", meta: "Link · x.com · saved from X", score: "0.59" },
     ],
   },
 ];
